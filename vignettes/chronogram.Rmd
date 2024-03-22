@@ -1,0 +1,199 @@
+---
+title: "The Whole Game"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The Whole Game}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 6
+)
+```
+
+
+This vignette is for the impatient and showcases the features of the chronogram package.
+
+## Load libraries
+
+```{r setup}
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+library(chronogram)
+```
+
+
+## Construct chronogram
+
+```{r}
+## Fictional example data ##
+data(smallstudy)
+
+
+ids <- smallstudy$small_study_ids
+start <- "01012020"
+end <- "10102021"
+meta <- smallstudy$small_study_metadata
+ab <- smallstudy$small_study_Ab
+
+small_study <- chronogram_skeleton(
+  ids = ids,
+  start_date = start,
+  end_date = end,
+  ## change this to your ID column name ##
+  col_ids = elig_study_id,
+  ## change this to your date column name ##
+  col_calendar_date = calendar_date
+)
+
+small_study <- chronogram(small_study, meta)
+
+small_study <- cg_add_experiment(small_study, ab)
+```
+
+## Plot trajectories
+
+Plot antibody responses over time for each individual, with a swimmer plot to summarise each individuals course.
+
+```{r}
+traj <- cg_plot(small_study,
+  y_values = serum_Ab_S
+)
+
+swimmer <- cg_plot_meta(small_study,
+  visit = serum_Ab_S
+)
+
+traj
+swimmer
+```
+
+### Customise plots
+
+Using ggplot2 or patchwork adjustments.
+
+```{r}
+lay <- "
+a
+a
+a
+b
+"
+(
+  (traj + labs(y = "anti-S IgG") + scale_y_log10()) /
+    (swimmer + theme(axis.text.y = element_blank()))
+) +
+  plot_layout(design = lay) &
+  plot_annotation(tag_levels = "A") &
+  theme_bw(base_size = 8) &
+  theme(legend.position = "none") &
+  theme(plot.tag = element_text(size = 16, face = "bold")) &
+  labs(x = "date")
+```
+
+## Subset data
+
+```{r}
+## upto 50d after dose 2 ##
+cg_after_dose_2 <- cg_window_by_metadata(small_study,
+  windowing_date_col = date_dose_2,
+  preceding_days = 0,
+  following_days = 50
+)
+
+## upto 21d before dose 2 ##
+cg_before_dose_2 <- cg_window_by_metadata(small_study,
+  windowing_date_col = date_dose_2,
+  preceding_days = 21,
+  following_days = 0
+)
+
+
+cg_after_dose_2 <- cg_after_dose_2 %>% mutate(cohort = "post D2")
+
+cg_before_dose_2 <- cg_before_dose_2 %>% mutate(cohort = "pre D2")
+
+cg_dose_2 <- bind_rows(cg_after_dose_2, cg_before_dose_2)
+
+cg_dose_2 <- cg_dose_2 %>% mutate(
+  cohort =
+    factor(cohort,
+      levels = c(
+        "pre D2",
+        "post D2"
+      )
+    )
+)
+```
+
+### Re-plot the subsetted data
+
+```{r}
+traj_2 <- cg_dose_2 %>%
+  cg_plot(.,
+    y_values = serum_Ab_S
+  )
+
+pd <- position_dodge(0.4)
+
+violin_2 <- cg_dose_2 %>%
+  ## geom_line fails if lots of NA rows provided ##
+  filter(!is.na(serum_Ab_S)) %>%
+  ggplot(aes(
+    x = cohort, y = serum_Ab_S,
+    group = elig_study_id
+  )) +
+  geom_point(position = pd) +
+  geom_line(position = pd)
+
+swimmer_2 <- cg_plot_meta(cg_dose_2,
+  visit = serum_Ab_S
+)
+
+
+lay2 <- "
+aac
+aac
+aa#
+bb#
+"
+
+(
+  (traj_2 +
+    labs(y = "anti-S IgG", x = "date") +
+    scale_y_log10()) +
+    (swimmer_2 +
+      labs(x = "date") +
+      theme(axis.text.y = element_blank())) +
+    (violin_2 +
+      labs(y = "anti-S IgG") +
+      scale_y_continuous(trans = "log10") +
+      annotation_logticks(sides = "l"))
+) +
+  plot_layout(design = lay2) &
+  plot_annotation(tag_levels = "A") &
+  theme_bw(base_size = 8) &
+  theme(legend.position = "none") &
+  theme(plot.tag = element_text(size = 16, face = "bold"))
+```
+
+Note that for participant 3, the sample ~50d before dose 2 is now excluded.
+
+## Summary
+
+Chronogram is now assembled and the relevant data to answer a (simple) biological question (does dose 2 boost anti-S IgG?) retrieved, plotted and readied for a statistical test.
+
+Please see the other vignettes for a deeper demonstration of chronogram functions.
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```
+

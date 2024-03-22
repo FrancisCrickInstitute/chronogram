@@ -1,0 +1,286 @@
+---
+title: "Chronogram assembly from SQL"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Chronogram assembly from SQL}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+```{r setup}
+library(chronogram)
+library(dplyr)
+library(dbplyr)
+library(DBI)
+library(RSQLite)
+library(ggplot2)
+```
+
+## Introduction
+
+Here we build a chronogram from an SQL database. We use an example derived from the de-identified PITCH dataset available here, under a CC-BY-4.0 licence: <https://data.mendeley.com/datasets/fyp26zjgmj/1> Published: 3 November 2021, DOI: 10.17632/fyp26zjgmj.1. Contributors: Rebecca Payne, Susan Hopkins, Victoria Hall, Christina Dold, Christopher Duncan, Alex Richter, Miles Carroll, Gavin Screaton, Thushan de Silva, Lance Turtle, Paul Klenerman, Susanna Dunachie, PITCH Consortium authors. The dataset supports Payne et al. **Immunogenicity of standard and extended dosing intervals of BNT162b2 mRNA vaccine** *Cell* 2021
+
+> **NOTE**
+>
+> Changes have been made to the de-identified public dataset (DOI: 10.17632/fyp26zjgmj.1).
+>
+> i.  the public data reports dates as MM/YYYY. To build a chronogram we have assigned randomly from 1-28 for DD in DD/MM/YYYY for dose 1, and used the available intervals in days to place the remaining data in date time. For illustration purposes, we need plausible DD/MM/YYYY dates - they are not real.
+>
+> ii. not all of the public dataset has been used in this example (some assays not included).
+>
+> If your motivation is to re-analyse Payne et al. for scientific reasons, do not use the example dataset in this package. Instead consult the de-identified Mendeley data (DOI: 10.17632/fyp26zjgmj.1), or the Cell manuscript's data and code availability statement.
+
+## Approach
+
+Use `dbplyr` to extract the relevant tibbles from an existing SQL database. These extracted tibbles are assembled with the chronogram constructor functions.
+
+> **Reminder**
+>
+> There are five required inputs:
+>
+> 1.  a list of participant or study IDs
+>
+> 2.  a start date
+>
+> 3.  an end date
+>
+> 4.  some metadata, stored against the identifier in #1.
+>
+> 5.  Experimental data, stored against the identifier in #1 and a date of sample.
+>
+> *1-3 are straightforward, so we start with 4*
+
+### Connect to SQL db
+
+```{r}
+## Connect to the sql database ##
+## here we use the shipped example database
+db_file <- system.file(
+  "extdata", "pitch-database-output.sqlite",
+  package = "chronogram"
+)
+
+## R covers most types of SQL. Here, we use SQLite.
+pitch_db <- DBI::dbConnect(RSQLite::SQLite(), db_file)
+
+dbplyr::src_dbi(pitch_db)
+```
+
+### Get metadata
+
+```{r}
+metadata <- tbl(
+  pitch_db,
+  ## give the name of the SQL table below ##
+  "metadata"
+)
+
+head(metadata)
+```
+
+The above leaves the data itself in the SQL db, but routes it through R to print the first few rows. For very large databases, where significant up-front filtering can take place, then most tidyverse verbs work here. For example, let's restrict the metadata participants from a single centre.
+
+```{r}
+metadata_filt <- tbl(
+  pitch_db,
+  ## give the name of the SQL table below ##
+  "metadata"
+) %>%
+  filter(Centre_code == 1)
+
+head(metadata_filt)
+```
+
+See the dbplyr documentation for further info: <https://dbplyr.tidyverse.org/index.html> .
+
+As our example is small, we want to move all the data into R, to do this use `dbplyr::collect()`.
+
+```{r}
+metadata <- tbl(
+  pitch_db,
+  ## give the name of the SQL table below ##
+  "metadata"
+) %>%
+  collect()
+
+metadata
+```
+
+#### Clean metadata
+
+The `dose_1_date` and `dose_2_date` columns have lost their DD-MM-YYYY formatting when the SQL db was constructed. Fix:
+
+```{r}
+metadata <- metadata %>%
+  mutate(across(ends_with("date"), ~
+    as.Date(.x, origin = "1970-01-01")))
+
+## show the relevant columns ##
+metadata %>%
+  select(ID, contains("date")) %>%
+  head()
+```
+
+Precisely what cleaning is needed will be study specific.
+
+### List of participant IDs
+
+Extract this from the SQL's master table (in our example, that's metadata table).
+
+```{r}
+studyId <- metadata$ID
+```
+
+### Start and end date
+
+We can use 1st Jan 2020 (i.e. pre-pandemic) as the start date, and the date of publication as the end date.
+
+```{r}
+## provide dates as character vectors DDMMYYYY ##
+start_date <- "01012020"
+end_date <- "03112021"
+```
+
+### Experimental data
+
+As we have a small study, and want to import all into a chronogram format, we can \`collect()\` the relevant SQL table, fix formatting and then be ready for chronogram assembly.
+
+For a large study where you only want a subset of the available SQL data, consider filtering to a smaller selection of participants, using a similar approach as for \`metadata_filt\` above. 
+
+For extremely large studies, several stages of chronogram assembly and annotation can be computationally expensive. Building a chronogram from massive studies (>40,000 participants, >2 years) fails on "lab issued" laptops. However, enough metadata can be pulled into R to select the participants relevant to a given analysis, so an analysis-relevant chronogram can be build. If the entirety of a massive study is required, the first option is to swap to a high-performance compute cluster (or a high end desktop). The second option, is to break the task into smaller components, and this is best performed by building and annotating chronograms for ~5000 individuals (so total number of rows < ~ 1,000,000), and writing each to disk with subsequent windowing, filtering, and selecting the chronograms in parallel. A third approach is to take the spirit of this package and push the computational work to the SQL server. This would likely require a solution specific to that study's SQL flavour, assumes the server has compute capacity (and the user permissions to utilise), and supporting SQL to that degree (for example, tidyverse verbs are variably translated to SQL flavours) is currently beyond the scope of this package and our team. We welcome hearing from users about their approaches with larger studies.
+
+#### Neutralisation data
+
+```{r}
+## Collect the experimental data from SQL ##
+nAb_data <- tbl(
+  pitch_db,
+  ## give the name of the SQL table below ##
+  "nAb_data"
+) %>%
+  collect()
+
+
+## Again, the date needs re-formatting ##
+nAb_data %>%
+  head()
+
+nAb_data <- nAb_data %>%
+  mutate(across(ends_with("date"), ~
+    as.Date(.x, origin = "1970-01-01")))
+```
+
+#### MSD data
+
+```{r}
+## Collect the experimental data from SQL ##
+MSD_data <- tbl(
+  pitch_db,
+  ## give the name of the SQL table below ##
+  "MSD_data"
+) %>%
+  collect()
+
+
+## Again, the date needs re-formatting ##
+MSD_data %>%
+  head()
+
+MSD_data <- MSD_data %>%
+  mutate(across(ends_with("date"), ~
+    as.Date(.x, origin = "1970-01-01")))
+```
+
+### Assemble chronogram
+
+Now we have the relevant objects in memory and cleaned, we can assemble a chronogram.
+
+```{r}
+pitch_chronogram_skeleton <- chronogram_skeleton(
+  ids = studyId,
+  start_date = start_date,
+  end_date = end_date,
+  col_ids = ID,
+  col_calendar_date = calendar_date
+)
+```
+
+```{r}
+pitch_chronogram <- chronogram(
+  pitch_chronogram_skeleton, metadata
+)
+```
+
+```{r}
+pitch_chronogram <- cg_add_experiment(
+  pitch_chronogram,
+  nAb_data
+)
+
+pitch_chronogram <- cg_add_experiment(
+  pitch_chronogram,
+  MSD_data
+)
+
+pitch_chronogram
+```
+
+### Annotate chronogram and analyse
+
+Now that assembly is complete the next step is to annotate the chronogram (find and label infection episodes, count the number of exposures from vaccination, infection and in total). Check out the annotation vignettes for usage examples.
+
+Let's plot some results from the un-annotated PITCH dataset.
+
+```{r}
+pitch_chronogram %>%
+  filter(!is.na(Cov_2S_MSD)) %>%
+  ggplot(aes(x = calendar_date, y = Cov_2S_MSD)) +
+  geom_point(shape = 20, alpha = 0.4) +
+  scale_y_log10() +
+  facet_grid(. ~ Previous_infection + Vaccine_interval,
+    labeller = "label_both"
+  ) +
+  theme_bw() +
+  labs(main = "SARS-CoV-2 Spike binding Ab")
+
+## -----
+pitch_chronogram %>%
+  filter(!is.na(OC43_S)) %>%
+  ggplot(aes(x = calendar_date, y = OC43_S)) +
+  geom_point(shape = 20, alpha = 0.4) +
+  scale_y_log10() +
+  facet_grid(. ~ Previous_infection + Vaccine_interval,
+    labeller = "label_both"
+  ) +
+  theme_bw() +
+  labs(main = "OC43 [a common coronavirus] Spike binding Ab")
+```
+
+As expected - SARS-CoV-2 binding IgG is boosted by Covid vaccination, whereas binding IgG against OC43's spike is not boosted by Covid vaccination.
+
+> **NOTE**
+>
+> As highlighted earlier, changes have been made to the de-identified public dataset (DOI: 10.17632/fyp26zjgmj.1).
+>
+> If your motivation is to re-analyse Payne et al. for scientific reasons, do not use the example dataset in this package. Instead consult the de-identified Mendeley data (DOI: 10.17632/fyp26zjgmj.1), and the data and code availability statement of Payne et al. **Immunogenicity of standard and extended dosing intervals of BNT162b2 mRNA vaccine** *Cell* 2021.
+>
+
+
+## Summary
+
+This vignette shows a stepwise approach to move data from SQL to chronogram. Whilst the clean-up code is study/database specific, it is re-usable throughout that study. We suggest combining the equivalent code for your study into an Rscript - or series of Rscripts - to run non-interactively, for example whilst you're off for coffee or as a scheduled task.
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```

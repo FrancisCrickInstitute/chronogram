@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+inst/doc
+/doc/
+/Meta/
+.DS_Store
+# Payne dataset - do not git/bundle #
+PayneEtAl.zip
+fyp26zjgmj-1

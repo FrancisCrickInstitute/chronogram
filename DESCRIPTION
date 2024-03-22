@@ -1,0 +1,49 @@
+Package: chronogram
+Title: Chronogram: Adaptive Data Casting for Pandemic Data Analysis
+Version: 1.0.0
+Authors@R: c(
+    person("Edward", "Carr", email="edward.carr@ucl.ac.uk", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9343-4593")),
+    person("David", "Greenwood", email="david.greenwood@crick.ac.uk", role = c("aut")),
+    person("Marianne", "Shawe-Taylor", email="marianne.shawetaylor@crick.ac.uk", role = c("aut"))
+    )       
+Description: A system to "cast" laboratory and clinical data 
+    into a tidy-like data structure. 
+    This allows rapid, intuititive integration of different data 
+    sources - for example, PCR, viral sequencing and participant 
+    symptom diaries - and bridges the gap between a laboratory
+    information management system (LIMS) and a data structure to allow testing of biological hypotheses. 
+    A chronogram has a flexible design not limited to a particular
+    pathogen, vaccine schedule, or experimental assays.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: 
+    DBI,
+    dbplyr,
+    dplyr,
+    gginnards,
+    ggplot2,
+    glue,
+    lobstr,
+    lubridate,
+    magrittr,
+    patchwork,    
+    purrr,
+    rlang (>= 0.4.11),
+    RSQLite,
+    stringr,
+    tibble,
+    tidyr,
+    vctrs
+Suggests: 
+    rmarkdown,
+    knitr,
+    testthat (>= 3.0.0),
+    roxygen2
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+LazyData: true
+Depends: 
+    R (>= 2.10)

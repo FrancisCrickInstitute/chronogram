@@ -1,0 +1,258 @@
+---
+title: "Chronogram assembly"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Chronogram assembly}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dplyr)
+library(lubridate)
+library(chronogram)
+```
+
+## Introduction
+
+A chronogram offers a dynamic solution to real world datasets, not limited to a particular pathogen, vaccine schedule, or experimental assay. The core functionality of chronogram is its ability to expand out dates from your dataset, constructing a comprehensive chronological list. Such a structure can prove invaluable, especially in scenarios where pinpointing precise timepoints is essential. Here, we provide an illustration of how to incorporate your data into a chronogram. Once adapted for your study, the same code can be used and extended as subsequent data or assays become available.
+
+
+## TLDR
+
+```{r}
+data(smallstudy)
+
+cg <- cg_assemble(
+  start_date = "01012020",
+  end_date = "10102021",
+  ## the provided metadata ##
+  metadata = smallstudy$small_study_metadata,
+  ## the column name in the metadata that contains participant IDs ##
+  metadata_ids_col = elig_study_id,
+  ## column name for dates ##
+  calendar_date_col = calendar_date,
+  ## the provided experiment data (we have 1 assay, so a list of 1) ##
+  experiment_data_list = list(smallstudy$small_study_Ab)
+)
+
+## Use cg_add_experiment() for extra assays ##
+
+## cg_save() and cg_load() offer a route to save to disk ##
+## - metadata de-duplicated on disk & cg_load check object ##
+## - save() and load() will work but not encouraged ##
+```
+
+## Requirements
+
+There are five required inputs:
+
+1. a list of participant or study IDs
+
+2. a start date
+
+3. an end date
+
+4. some metadata, stored against the identifier in #1.
+
+5. Experimental data, stored against the identifier in #1 and a date of sample.
+
+>__NOTE__
+>
+> i. the start date, and end date should be the before and after the earliest and latest _data_ available. For example, if your study collected information on prior symptoms at enrolment, and you want to include those in your analysis, use a suitably early start date.
+>
+> ii. the list of study IDs could be provided by a column in metadata (or experimental data). For clarity, we show it separately.
+>
+> iii. there are no limits to the number of experimental data sources.
+
+## In brief
+
+`cg_assemble()` wraps the following functions. The use of these functions is the focus of the rest of the vignette.
+
+```{r}
+## Fictional example data ##
+data(smallstudy)
+
+## 5 requirements ##
+ids <- smallstudy$small_study_ids
+
+start <- "01012020"
+end <- "10102021"
+
+meta <- smallstudy$small_study_metadata
+ab <- smallstudy$small_study_Ab # here, we just have antibody data
+
+
+## Make a chronogram ##
+small_study <- chronogram_skeleton(
+  ids = ids,
+  start_date = start,
+  end_date = end,
+  ## change this to your ID column name ##
+  col_ids = elig_study_id,
+  ## change this to your date column name ##
+  col_calendar_date = calendar_date
+)
+
+small_study <- chronogram(
+  small_study,
+  meta
+)
+
+small_study <- cg_add_experiment(
+  small_study,
+  ab
+)
+
+small_study
+
+## Use cg_add_experiment() for extra assays ##
+```
+
+
+
+## Step-by-step
+
+### Generate a chronogram_skeleton object
+
+The `chronogram_skeleton()` helper function creates an object which:
+- contains two columns: calendar_date (name is set with  `col_calendar_date`), elig_study_id (name is set with `col_ids`).
+- contains a row for each participant for each day.
+
+```{r}
+## Fictional example data ##
+data(smallstudy)
+
+## 5 requirements ##
+ids <- smallstudy$small_study_ids
+
+start <- "01012020"
+end <- "10102021"
+
+meta <- smallstudy$small_study_metadata
+ab <- smallstudy$small_study_Ab # here, we just have antibody data
+
+
+## Make a chronogram_skeleton ##
+small_study <- chronogram_skeleton(
+  ids = ids,
+  start_date = start,
+  end_date = end,
+  ## change this to your ID column name ##
+  col_ids = elig_study_id,
+  ## change this to your date column name ##
+  col_calendar_date = calendar_date
+)
+```
+
+It comes with a print format, to allow manual checking that you have generated the expected results.
+
+```{r}
+small_study
+```
+
+Or you may want to try: `View(small_study)` via Rstudio.
+
+This chronogram_skeleton is the framework onto which we will add metadata, and experimental data.
+
+The provided `col_ids` and `col_calendar_date` are stored as attributes of `small_study`, so the user does not have to enter them again. Chronogram assumes you are adding on data indexed by those column names.
+
+>__NOTE__
+>
+> Your study may have data stored under 'StudyID' or 'PID' etc. This is fine: adjust `col_ids = use_whatever_your_StudyID_is`.
+>
+> Similarly, your study may use 'date', or 'date_on_mars'. Adjust: `col_calendar_date = use_whatever_your_Study_uses_for_dates`.
+>
+
+Dates are in `ddmmyyyy` format (anything that `lubridate::dmy()` can interpret will work). Providing dates in other formats is likely to fail with an error. There is a special case for US formatted dates where dd<=12 and mm<=12:
+
+```{r}
+chronogram_skeleton(
+  ids = ids,
+  start_date = "01012020",
+  ## 1st Dec 2020, provided in mmddyyyy ##
+  end_date = "12012020",
+  col_ids = elig_study_id,
+  col_calendar_date = calendar_date
+)
+```
+
+The above is interpreted as 12-day interval. Swap to ddmmyyy to get the expected 11 months:
+
+```{r}
+chronogram_skeleton(
+  ids = ids,
+  start_date = "01012020",
+  ## 1st Dec 2020, provided in the correct ddmmyyyy ##
+  end_date = "01122020",
+  col_ids = elig_study_id,
+  col_calendar_date = calendar_date
+)
+```
+
+### Generate a chronogram object
+
+Here, we combine the outline data structure (a chronogram_skeleton object) with the metadata. Each line of metadata is repeated for every row of that individual. This is a shortcut to providing useful for selecting samples that meet particular characteristics (eg antibody testing 14-21d after dose 2) and for plotting based on these characteristics. The extra memory occupied by this repetition is ~25-50kB for this example.
+
+The metadata contains age, sex, dates and formulations of doses 1 and 2 (values are plausible, but fictitious). The provided metadata is a tibble, and care has been taken to provide columns of relevant classes (factors, dates etc).
+
+```{r}
+head(meta)
+```
+
+The assembly of a chronogram is a join between the chronogram_skeleton and the metadata. 
+
+```{r}
+small_study <- chronogram(
+  small_study,
+  meta
+)
+small_study
+```
+
+###  Add experimental data to chronogram object
+
+The experimental data provided is for a serum anti-S IgG and a serum anti-N IgG (again: plausible, but fictitious). The experimental data is provided with both a study ID and a calendar date. The data will be joined by these variables: their column names must match exactly to the main chronogram. The date to use is the date of the sample, rather than the assay date (which may be months or years later if the sample was frozen). Be wary of duplicates or shared columns when adding experimental data - a warning is provided for any shared columns.
+
+
+```{r}
+head(ab)
+```
+
+We are going to add just this one set of experimental data, but there is no limit to the number of experiments you could add. The process assumes that all runs of the same assay are added at once. For example, if you had 10 runs of anti-S and anti-N (i.e. 10 objects that looked like `ab`), you should combine these by `bind_rows()` to make one long object and then proceed to `cg_add_experiment()`.
+
+
+```{r}
+small_study <- cg_add_experiment(
+  small_study,
+  ab
+)
+
+small_study
+
+## Use cg_add_experiment() for extra assays ##
+```
+
+You might have run the same assay on several different materials, such as anti-S and anti-N IgG testing on serum and mucosal sampling. Labelling your data columns in a system like `source_test_type` (eg serum_Ab_S vs nasal_Ab_S vs BAL_Ab_S etc) is advantageous, as it makes analysis easier. If you wanted to grab all the S IgG data, perhaps to pass to ggplot2, you can use `small.study %>% select(contains("Ab_S"))`. This is not mandatory, and you can still build with whatever column names you like (aside from the `col_ids` and `col_calendar_date` that are required).
+
+If you have complex data that cannot be reduced to a single entry (eg. scRNAseq data), then adding a column like: `PBMC_scRNAseq = run/not_run`, is useful as you can handily subset your final chronogram down to an object that looks like `colData` or `annData` for Bioconductor's 10x analysis, Seurat, or scanpy: `small_study %>% filter(PBMC_scRNAseq == "run")`.
+
+If your data are already in an SQL (or similar) database, consider using dbplyr to generate a metadata tibble and experimental data tibbles.
+
+## Summary
+
+We have constructed a chronogram from a small study of n=3 individuals with a simple set of metadata and a single experimental assay.
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```
+
