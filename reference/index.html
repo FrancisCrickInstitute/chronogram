@@ -38,9 +38,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="assembly">Assembly<a class="anchor" aria-label="anchor" href="#assembly"></a></h2>
 
-
+      <div class="section-desc"><p>Assemble a chronogram, or add new data.</p></div>
 
 
     </div><div class="section level2">
@@ -50,10 +50,10 @@
 
       <dl><dt>
 
-          <code><a href="built_smallstudy.html">built_smallstudy</a></code>
+          <code><a href="cg_assemble.html">cg_assemble()</a></code>
 
         </dt>
-        <dd>Small study: pre-built chronogram</dd>
+        <dd>Wrapper to assemble chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="cg_add_experiment.html">cg_add_experiment()</a></code>
@@ -66,7 +66,18 @@
 
         </dt>
         <dd>A helper function to add treatment data to a chronogram</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="annotate">Annotate<a class="anchor" aria-label="anchor" href="#annotate"></a></h2>
+
+      <div class="section-desc"><p>Annotate a chronogram</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="cg_annotate_antigenic_history.html">cg_annotate_antigenic_history()</a></code>
 
@@ -108,43 +119,18 @@
 
         </dt>
         <dd>Calculate and assign flags based on vaccine history</dd>
-      </dl><dl><dt>
+      </dl></div><div class="section level2">
+      <h2 id="filter-window-select">Filter, window &amp; select<a class="anchor" aria-label="anchor" href="#filter-window-select"></a></h2>
 
-          <code><a href="cg_assemble.html">cg_assemble()</a></code>
+      <div class="section-desc"><p>Sub-cohort a chronogram</p></div>
 
-        </dt>
-        <dd>Wrapper to assemble chronogram</dd>
-      </dl><dl><dt>
 
-          <code><a href="cg_load.html">cg_load()</a></code>
+    </div><div class="section level2">
 
-        </dt>
-        <dd>A helper function to load a chronogram</dd>
-      </dl><dl><dt>
 
-          <code><a href="cg_plot.html">cg_plot()</a></code>
 
-        </dt>
-        <dd>cg_plot</dd>
-      </dl><dl><dt>
 
-          <code><a href="cg_plot_meta.html">cg_plot_meta()</a></code>
-
-        </dt>
-        <dd>cg_plot_meta</dd>
-      </dl><dl><dt>
-
-          <code><a href="cg_save.html">cg_save()</a></code>
-
-        </dt>
-        <dd>A helper function to save a chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="cg_select_visit.html">cg_select_visit()</a></code>
-
-        </dt>
-        <dd>Select a visit within a windowed chronogram</dd>
-      </dl><dl><dt>
+      <dl><dt>
 
           <code><a href="cg_window_by_episode.html">cg_window_by_episode()</a></code>
 
@@ -164,17 +150,97 @@
         <dd>Take a window of dates from a chronogram: with respect to visits.</dd>
       </dl><dl><dt>
 
-          <code><a href="check_experiment.html">check_experiment()</a></code>
+          <code><a href="cg_select_visit.html">cg_select_visit()</a></code>
 
         </dt>
-        <dd>check ExperimentalData</dd>
-      </dl><dl><dt>
+        <dd>Select a visit within a windowed chronogram</dd>
+      </dl></div><div class="section level2">
+      <h2 id="io">IO<a class="anchor" aria-label="anchor" href="#io"></a></h2>
 
-          <code><a href="check_metadata.html">check_metadata()</a></code>
+      <div class="section-desc"><p>Save and load a chronogram</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="cg_save.html">cg_save()</a></code>
 
         </dt>
-        <dd>check metadata</dd>
+        <dd>A helper function to save a chronogram</dd>
       </dl><dl><dt>
+
+          <code><a href="cg_load.html">cg_load()</a></code>
+
+        </dt>
+        <dd>A helper function to load a chronogram</dd>
+      </dl></div><div class="section level2">
+      <h2 id="example-datasets">Example datasets<a class="anchor" aria-label="anchor" href="#example-datasets"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="smallstudy.html">smallstudy</a></code>
+
+        </dt>
+        <dd>Small study</dd>
+      </dl><dl><dt>
+
+          <code><a href="built_smallstudy.html">built_smallstudy</a></code>
+
+        </dt>
+        <dd>Small study: pre-built chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="pitch_chronogram.html">pitch_chronogram</a></code>
+
+        </dt>
+        <dd>PITCH study: pre-built chronogram</dd>
+      </dl></div><div class="section level2">
+      <h2 id="plots">Plots<a class="anchor" aria-label="anchor" href="#plots"></a></h2>
+
+      <div class="section-desc"><p>Visualise chronogram using <code>ggplot2</code></p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="cg_plot.html">cg_plot()</a></code>
+
+        </dt>
+        <dd>cg_plot</dd>
+      </dl><dl><dt>
+
+          <code><a href="cg_plot_meta.html">cg_plot_meta()</a></code>
+
+        </dt>
+        <dd>cg_plot_meta</dd>
+      </dl></div><div class="section level2">
+      <h2 id="chronogram-class">chronogram class<a class="anchor" aria-label="anchor" href="#chronogram-class"></a></h2>
+
+      <div class="section-desc"><p>S3 constructor, helper and validator functions</p></div>
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="chronogram.html">chronogram()</a></code>
 
@@ -186,66 +252,6 @@
 
         </dt>
         <dd>A helper function to build the chronogram skeleton, a two column index, for chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="dplyr_reconstruct.cg_tbl.html">dplyr_reconstruct(<i>&lt;cg_tbl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Dplyr reconstruct for chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="dplyr_reconstruct.grouped_cg_df.html">dplyr_reconstruct(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Dplyr reconstruct for grouped chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_row_slice(<i>&lt;cg_tbl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Dplyr row slice for chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="dplyr_row_slice.grouped_cg_df.html">dplyr_row_slice(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Dplyr row slice for grouped chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="glimpse.cg_tbl.html">glimpse(<i>&lt;cg_tbl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Glimpse S3 method for chronogram objects (class cg_tbl)</dd>
-      </dl><dl><dt>
-
-          <code><a href="glimpse.grouped_cg_df.html">glimpse(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Glimpse S3 method for grouped chronogram objects (class grouped_cg_df)</dd>
-      </dl><dl><dt>
-
-          <code><a href="glimpse_experiment_data.cg_tbl.html">glimpse_experiment_data()</a></code>
-
-        </dt>
-        <dd>Glimpse S3 method for experiment data from chronogram objects (class cg_tbl)</dd>
-      </dl><dl><dt>
-
-          <code><a href="glimpse_metadata.cg_tbl.html">glimpse_metadata()</a></code>
-
-        </dt>
-        <dd>Glimpse S3 method for metadata from chronogram objects (class cg_tbl)</dd>
-      </dl><dl><dt>
-
-          <code><a href="group_by.cg_tbl.html">group_by(<i>&lt;cg_tbl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Group-by chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="group_data_trim.html">group_data_trim()</a></code>
-
-        </dt>
-        <dd>dplyr:::group_data_trim</dd>
       </dl><dl><dt>
 
           <code><a href="new_chronogram.html">new_chronogram()</a></code>
@@ -272,10 +278,81 @@
         <dd>new_tbl2chronogram</dd>
       </dl><dl><dt>
 
-          <code><a href="pitch_chronogram.html">pitch_chronogram</a></code>
+          <code><a href="check_experiment.html">check_experiment()</a></code>
 
         </dt>
-        <dd>PITCH study: pre-built chronogram</dd>
+        <dd>check ExperimentalData</dd>
+      </dl><dl><dt>
+
+          <code><a href="check_metadata.html">check_metadata()</a></code>
+
+        </dt>
+        <dd>check metadata</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_chronogram.html">validate_chronogram()</a></code>
+
+        </dt>
+        <dd>validate chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_chronogram_skeleton.html">validate_chronogram_skeleton()</a></code>
+
+        </dt>
+        <dd>validate chronogram skeleton</dd>
+      </dl></div><div class="section level2">
+      <h2 id="extending-dplyr-tibble">Extending dplyr, tibble<a class="anchor" aria-label="anchor" href="#extending-dplyr-tibble"></a></h2>
+
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="dplyr_reconstruct.cg_tbl.html">dplyr_reconstruct(<i>&lt;cg_tbl&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Dplyr reconstruct for chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="dplyr_reconstruct.grouped_cg_df.html">dplyr_reconstruct(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Dplyr reconstruct for grouped chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_row_slice(<i>&lt;cg_tbl&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Dplyr row slice for chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="dplyr_row_slice.grouped_cg_df.html">dplyr_row_slice(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Dplyr row slice for grouped chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="group_by.cg_tbl.html">group_by(<i>&lt;cg_tbl&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Group-by chronogram</dd>
+      </dl><dl><dt>
+
+          <code><a href="group_data_trim.html">group_data_trim()</a></code>
+
+        </dt>
+        <dd>dplyr:::group_data_trim</dd>
+      </dl><dl><dt>
+
+          <code><a href="ungroup.grouped_cg_df.html">ungroup(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
+
+        </dt>
+        <dd>ungroup-by chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="print.cg_skl_tbl.html">print(<i>&lt;cg_skl_tbl&gt;</i>)</a></code>
@@ -290,30 +367,31 @@
         <dd>print chronogram</dd>
       </dl><dl><dt>
 
-          <code><a href="smallstudy.html">smallstudy</a></code>
+          <code><a href="glimpse.cg_tbl.html">glimpse(<i>&lt;cg_tbl&gt;</i>)</a></code>
 
         </dt>
-        <dd>Small study</dd>
+        <dd>Glimpse S3 method for chronogram objects (class cg_tbl)</dd>
       </dl><dl><dt>
 
-          <code><a href="ungroup.grouped_cg_df.html">ungroup(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
+          <code><a href="glimpse.grouped_cg_df.html">glimpse(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
 
         </dt>
-        <dd>ungroup-by chronogram</dd>
+        <dd>Glimpse S3 method for grouped chronogram objects (class grouped_cg_df)</dd>
       </dl><dl><dt>
 
-          <code><a href="validate_chronogram.html">validate_chronogram()</a></code>
+          <code><a href="glimpse_experiment_data.cg_tbl.html">glimpse_experiment_data()</a></code>
 
         </dt>
-        <dd>validate chronogram</dd>
+        <dd>Glimpse S3 method for experiment data from chronogram objects (class cg_tbl)</dd>
       </dl><dl><dt>
 
-          <code><a href="validate_chronogram_skeleton.html">validate_chronogram_skeleton()</a></code>
+          <code><a href="glimpse_metadata.cg_tbl.html">glimpse_metadata()</a></code>
 
         </dt>
-        <dd>validate chronogram skeleton</dd>
+        <dd>Glimpse S3 method for metadata from chronogram objects (class cg_tbl)</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">
