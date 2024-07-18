@@ -2,18 +2,55 @@ url: https://franciscrickinstitute.github.io/chronogram/
 template:
   bootstrap: 5
 
+
 reference:
 - title: Assembly
   desc:  Assemble a chronogram, or add new data.
 - contents:
-  - starts_with("cg_ass|cg_add")
+  - cg_assemble
+  - starts_with("cg_add")
 
 - title: Annotate
   desc: Annotate a chronogram
 - contents:
   - starts_with("cg_annot")
 
-- title: Rest
-  desc: Functions yet to group
+- title: Filter, window & select
+  desc: Sub-cohort a chronogram
 - contents:
-  - contains( paste( letters[1:25], collapse = "|" ) )
+  - starts_with("cg_window")
+  - starts_with("cg_select")
+
+- title: IO
+  desc: Save and load a chronogram
+- contents:
+  - cg_save
+  - cg_load
+
+- title: Example datasets
+- contents:
+  - smallstudy
+  - built_smallstudy
+  - pitch_chronogram
+
+- title: Plots
+  desc: Visualise chronogram using `ggplot2`
+- contents:
+  - contains("plot")
+
+- title: chronogram class
+  desc: S3 constructor, helper and validator functions
+- contents:
+  - chronogram
+  - chronogram_skeleton
+  - contains("new")
+  - contains("check")
+  - contains("validate")
+
+- title: Extending dplyr, tibble
+- contents:
+  - contains("dplyr")
+  - contains("group_")
+  - contains("ungroup")
+  - contains("print")
+  - contains("glimpse")
