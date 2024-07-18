@@ -7,3 +7,13 @@ reference:
   desc:  Assemble a chronogram, or add new data.
 - contents:
   - starts_with("cg_ass|cg_add")
+
+- title: Annotate
+  desc: Annotate a chronogram
+- contents:
+  - starts_with("cg_annot")
+
+- title: Rest
+  desc: Functions yet to group
+- contents:
+  - contains( paste( letters[1:25], collapse = "|" ) )
