@@ -29,5 +29,27 @@ check_metadata <- function(x, cg_skeleton = NULL) {
     )
   }
 
+  ### metadata should not have duplicated ids ###
+  if (!is.null(ids_column_name)) {
+    stopifnot(
+      {
+        n <- NULL # suppress global binding note
+      "Invalid metadata: IDs are repeated" =
+        xx <- x %>%
+        dplyr::group_by(
+          dplyr::across(
+            dplyr::all_of(
+              c(ids_column_name)
+              )
+            )
+          ) %>%
+        dplyr::tally() %>%
+        dplyr::pull(n)
+
+      all(xx < 2) == TRUE
+      }
+    )
+  }
+
   return(TRUE)
 }

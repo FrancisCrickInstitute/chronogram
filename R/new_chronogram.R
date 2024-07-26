@@ -1,6 +1,6 @@
 #' new chronogram
 #'
-#' @param x a tbl, a daughter of a join between a cg_skl_tbl and
+#' @param x a tbl, a daughter of a join between a chronogram skeleton and
 #'   one (or more) objects coerced to a tbl.
 #' @param metadata_cols the column names from the metadata tibble
 #' @param ... passed to `new_tibble()`. Adds grouping support.
@@ -17,8 +17,8 @@ new_chronogram <- function(x,
                            metadata_cols,
                            ...) {
   stopifnot(
-    "provided object does not inherit cg_skl_tbl class" =
-      inherits(x, "cg_skl_tbl")
+    "provided object does not inherit tbl_df class" =
+      inherits(x, "tbl_df")
   )
 
   stopifnot(
@@ -28,11 +28,6 @@ new_chronogram <- function(x,
 
   ## Set first class to cg_tbl ##
   class(x) <- c("cg_tbl", class(x))
-
-  ## remove the cg_skl_tbl class ##
-  class(x) <- class(x)[
-    !grepl(class(x), pattern = "cg_skl_tbl")
-  ]
 
   ## remove the col_ids from metadata column names ##
   col_ids <- attributes(x)$col_ids

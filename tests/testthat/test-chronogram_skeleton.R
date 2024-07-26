@@ -11,7 +11,7 @@ small_study <- chronogram::chronogram_skeleton(
 test_that("chronogram_skeleton: correct class", {
   expect_s3_class(
     small_study,
-    "cg_skl_tbl"
+    "tbl_df"
   )
 })
 
@@ -79,3 +79,45 @@ test_that(
     )
   }
 )
+
+test_that(
+  "chronogram_skeleton: includes an ID column in attributes",
+  {
+    expect_false(
+      is.na(attributes(small_study)$col_ids) |
+        is.null(attributes(small_study)$col_ids)
+    )
+  }
+)
+
+test_that(
+  "chronogram_skeleton: includes an date column in attributes",
+  {
+    expect_false(
+      is.na(attributes(small_study)$col_calendar_date) |
+        is.null(attributes(small_study)$col_calendar_date)
+    )
+  }
+)
+
+
+test_that(
+  "chronogram_skeleton: date column in attributes is a column name",
+  {
+    expect_true(
+      attributes(small_study)$col_calendar_date %in% colnames(small_study)
+    )
+  }
+)
+
+test_that(
+  "chronogram_skeleton: ID column in attributes is a column name",
+  {
+    expect_true(
+      attributes(small_study)$col_ids %in% colnames(small_study)
+    )
+  }
+)
+
+
+

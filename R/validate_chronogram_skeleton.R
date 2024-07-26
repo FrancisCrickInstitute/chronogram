@@ -1,13 +1,13 @@
 #' validate chronogram skeleton
 #'
-#' @param x a chronogram skeleton object (class cg_skl_tbl)
+#' @param x a chronogram skeleton object (class tbl_df, with attributes that record IDs and date columns)
 #'
-#' @return Errors, or TRUE if valid cg_skl_tbl
+#' @return Errors, or TRUE if valid chronogram skeleton
 #'
 validate_chronogram_skeleton <- function(x) {
   stopifnot(
     "Invalid cg_skeleton: Wrong class. Use 'chronogram_skeleton()'" =
-      inherits(x, "cg_skl_tbl") == TRUE
+      inherits(x, "tbl_df") == TRUE
   )
 
   stopifnot(

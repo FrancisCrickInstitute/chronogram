@@ -9,7 +9,7 @@
 #'  rlang::enquo(an_unquoted_string)
 #' @param ids_col provided as rlang::enquo(an_unquoted_string)
 #'
-#' @return x a tibble with class cg_skl_tbl
+#' @return x a tibble with attributes to identify `calendar_date_col` and `ids_col`.
 #'
 #' @seealso [chronogram::chronogram_skeleton()]
 #'
@@ -54,8 +54,6 @@ new_chronogram_skeleton <- function(x,
   )
 
   attributes(x) <- attributes_x
-
-  class(x) <- c("cg_skl_tbl", class(x))
 
   return(x)
 }
