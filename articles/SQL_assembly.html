@@ -172,12 +172,12 @@ of sample.</p></li>
 <span><span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.46.0 [/home/runner/work/_temp/Library/chronogram/extdata/pitch-database-output.sqlite]</span></span></span>
 <span><span class="co">#&gt;      ID Centre_code Previous_infection Vaccine_interval dose_1_date dose_2_date</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">4</span>001           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>608       <span style="text-decoration: underline;">18</span>692</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">4</span>002           4 Y                  SHORT                  <span style="text-decoration: underline;">18</span>650       <span style="text-decoration: underline;">18</span>681</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">4</span>003           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>612       <span style="text-decoration: underline;">18</span>682</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">4</span>004           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>624       <span style="text-decoration: underline;">18</span>695</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">4</span>005           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>623       <span style="text-decoration: underline;">18</span>728</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">4</span>006           4 N                  LONG                   <span style="text-decoration: underline;">18</span>655       <span style="text-decoration: underline;">18</span>704</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">4</span>001           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>615       <span style="text-decoration: underline;">18</span>699</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">4</span>002           4 Y                  SHORT                  <span style="text-decoration: underline;">18</span>639       <span style="text-decoration: underline;">18</span>670</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">4</span>003           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>597       <span style="text-decoration: underline;">18</span>667</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">4</span>004           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>605       <span style="text-decoration: underline;">18</span>676</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">4</span>005           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>602       <span style="text-decoration: underline;">18</span>707</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">4</span>006           4 N                  LONG                   <span style="text-decoration: underline;">18</span>628       <span style="text-decoration: underline;">18</span>677</span></span></code></pre></div>
 <p>The above leaves the data itself in the SQL db, but routes it through
 R to print the first few rows. For very large databases, where
 significant up-front filtering can take place, then most tidyverse verbs
@@ -196,12 +196,12 @@ single centre.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># Database: sqlite 3.46.0 [/home/runner/work/_temp/Library/chronogram/extdata/pitch-database-output.sqlite]</span></span></span>
 <span><span class="co">#&gt;      ID Centre_code Previous_infection Vaccine_interval dose_1_date dose_2_date</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">1</span>001           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>653       <span style="text-decoration: underline;">18</span>718</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">1</span>002           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>637       <span style="text-decoration: underline;">18</span>708</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">1</span>003           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>602       <span style="text-decoration: underline;">18</span>658</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">1</span>004           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>638       <span style="text-decoration: underline;">18</span>709</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">1</span>005           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>652       <span style="text-decoration: underline;">18</span>715</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">1</span>007           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>629       <span style="text-decoration: underline;">18</span>692</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">1</span>001           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>639       <span style="text-decoration: underline;">18</span>704</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">1</span>002           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>652       <span style="text-decoration: underline;">18</span>723</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">1</span>003           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>616       <span style="text-decoration: underline;">18</span>672</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">1</span>004           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>651       <span style="text-decoration: underline;">18</span>722</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">1</span>005           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>634       <span style="text-decoration: underline;">18</span>697</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">1</span>007           1 Y                  LONG                   <span style="text-decoration: underline;">18</span>653       <span style="text-decoration: underline;">18</span>716</span></span></code></pre></div>
 <p>See the dbplyr documentation for further info: <a href="https://dbplyr.tidyverse.org/index.html" class="external-link uri">https://dbplyr.tidyverse.org/index.html</a> .</p>
 <p>As our example is small, we want to move all the data into R, to do
 this use <code>dbplyr::collect()</code>.</p>
@@ -217,16 +217,16 @@ this use <code>dbplyr::collect()</code>.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 587 × 6</span></span></span>
 <span><span class="co">#&gt;       ID Centre_code Previous_infection Vaccine_interval dose_1_date dose_2_date</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">4</span>001           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>608       <span style="text-decoration: underline;">18</span>692</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">4</span>002           4 Y                  SHORT                  <span style="text-decoration: underline;">18</span>650       <span style="text-decoration: underline;">18</span>681</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">4</span>003           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>612       <span style="text-decoration: underline;">18</span>682</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">4</span>004           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>624       <span style="text-decoration: underline;">18</span>695</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">4</span>005           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>623       <span style="text-decoration: underline;">18</span>728</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">4</span>006           4 N                  LONG                   <span style="text-decoration: underline;">18</span>655       <span style="text-decoration: underline;">18</span>704</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">4</span>007           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>603       <span style="text-decoration: underline;">18</span>674</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">4</span>008           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>607       <span style="text-decoration: underline;">18</span>708</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">4</span>009           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>606       <span style="text-decoration: underline;">18</span>677</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">4</span>010           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>607       <span style="text-decoration: underline;">18</span>678</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">4</span>001           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>615       <span style="text-decoration: underline;">18</span>699</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">4</span>002           4 Y                  SHORT                  <span style="text-decoration: underline;">18</span>639       <span style="text-decoration: underline;">18</span>670</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">4</span>003           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>597       <span style="text-decoration: underline;">18</span>667</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">4</span>004           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>605       <span style="text-decoration: underline;">18</span>676</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">4</span>005           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>602       <span style="text-decoration: underline;">18</span>707</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">4</span>006           4 N                  LONG                   <span style="text-decoration: underline;">18</span>628       <span style="text-decoration: underline;">18</span>677</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">4</span>007           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>611       <span style="text-decoration: underline;">18</span>682</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">4</span>008           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>602       <span style="text-decoration: underline;">18</span>703</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">4</span>009           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>609       <span style="text-decoration: underline;">18</span>680</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">4</span>010           4 Y                  LONG                   <span style="text-decoration: underline;">18</span>614       <span style="text-decoration: underline;">18</span>685</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 577 more rows</span></span></span></code></pre></div>
 <div class="section level4">
 <h4 id="clean-metadata">Clean metadata<a class="anchor" aria-label="anchor" href="#clean-metadata"></a>
@@ -246,12 +246,12 @@ Fix:</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 3</span></span></span>
 <span><span class="co">#&gt;      ID dose_1_date dose_2_date</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">4</span>001 2020-12-12  2021-03-06 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">4</span>002 2021-01-23  2021-02-23 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">4</span>003 2020-12-16  2021-02-24 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">4</span>004 2020-12-28  2021-03-09 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">4</span>005 2020-12-27  2021-04-11 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">4</span>006 2021-01-28  2021-03-18</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">4</span>001 2020-12-19  2021-03-13 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">4</span>002 2021-01-12  2021-02-12 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">4</span>003 2020-12-01  2021-02-09 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">4</span>004 2020-12-09  2021-02-18 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">4</span>005 2020-12-06  2021-03-21 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">4</span>006 2021-01-01  2021-02-19</span></span></code></pre></div>
 <p>Precisely what cleaning is needed will be study specific.</p>
 </div>
 </div>
@@ -321,11 +321,11 @@ studies.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 6</span></span></span>
 <span><span class="co">#&gt;      ID calendar_date Victoria  Beta Gamma Delta</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   561         <span style="text-decoration: underline;">18</span>813       10    10    46 10   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   568         <span style="text-decoration: underline;">18</span>744       10    10    10 10   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   447         <span style="text-decoration: underline;">18</span>679       92    10   132 10   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>   561         <span style="text-decoration: underline;">18</span>810       10    10    46 10   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>   568         <span style="text-decoration: underline;">18</span>753       10    10    10 10   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>   447         <span style="text-decoration: underline;">18</span>680       92    10   132 10   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>   557            <span style="color: #BB0000;">NA</span>      115    10   290 10   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   564         <span style="text-decoration: underline;">18</span>729       10    10    24 10   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>   564         <span style="text-decoration: underline;">18</span>754       10    10    24 10   </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>   581         <span style="text-decoration: underline;">18</span>715       46    10    43 10</span></span>
 <span></span>
 <span><span class="va">nAb_data</span> <span class="op">&lt;-</span> <span class="va">nAb_data</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
@@ -394,19 +394,8 @@ assemble a chronogram.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pitch_chronogram</span></span>
-<span><span class="co">#&gt; A chronogram:</span></span>
-<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
-<span><span class="co">#&gt;  IDs column:    ID </span></span>
-<span><span class="co">#&gt;  Starts on:     2020-01-01 </span></span>
-<span><span class="co">#&gt;  Ends on:       2021-11-03 </span></span>
-<span><span class="co">#&gt;  Contains:      587  unique participant IDs</span></span>
-<span><span class="co">#&gt;  Windowed:      FALSE </span></span>
-<span><span class="co">#&gt;  Spanning:      673 - 673 days [min-max per participant]</span></span>
-<span><span class="co">#&gt;  Metadata:      Centre_code, Previous_infection, Vaccine_interval, dose_1_date, dose_2_date </span></span>
-<span><span class="co">#&gt;  Size:          64.84 MB </span></span>
-<span><span class="co">#&gt;  Pkg_version:   1.0.0 [used to build this cg]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 395,051 × 23</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     395,051 × 23</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
 <span><span class="co">#&gt;    calendar_date ID    Centre_code Previous_infection Vaccine_interval</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    100             0 Y                  LONG            </span></span>
@@ -424,7 +413,9 @@ assemble a chronogram.</p>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Beta &lt;int&gt;, Gamma &lt;int&gt;, Delta &lt;chr&gt;, Cov2_RBD_MSD &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Cov2_RBD_BAU &lt;dbl&gt;, Cov_2N_MSD &lt;dbl&gt;, Cov_2N_BAU &lt;dbl&gt;, Cov_2S_MSD &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   Cov_2S_BAU &lt;dbl&gt;, HKU1_S &lt;dbl&gt;, MERS_S &lt;dbl&gt;, NL63_S &lt;dbl&gt;, OC43_S &lt;dbl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   X229E_S &lt;dbl&gt;, Cov_1S &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   X229E_S &lt;dbl&gt;, Cov_1S &lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> ID</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> Centre_code, Previous_infection, Vaccine_interval, dose_1_date, dose_2_date</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="annotate-chronogram-and-analyse">Annotate chronogram and analyse<a class="anchor" aria-label="anchor" href="#annotate-chronogram-and-analyse"></a>
@@ -518,17 +509,17 @@ scheduled task.</p>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] tidyr_1.3.1       sass_0.4.9        utf8_1.2.4        generics_0.1.3   </span></span>
 <span><span class="co">#&gt;  [5] digest_0.6.36     magrittr_2.0.3    timechange_0.3.0  evaluate_0.24.0  </span></span>
-<span><span class="co">#&gt;  [9] grid_4.4.1        fastmap_1.2.0     blob_1.2.4        lobstr_1.1.2     </span></span>
-<span><span class="co">#&gt; [13] jsonlite_1.8.8    purrr_1.0.2       fansi_1.0.6       scales_1.3.0     </span></span>
-<span><span class="co">#&gt; [17] textshaping_0.4.0 jquerylib_0.1.4   cli_3.6.3         rlang_1.1.4      </span></span>
-<span><span class="co">#&gt; [21] bit64_4.0.5       munsell_0.5.1     withr_3.0.0       cachem_1.1.0     </span></span>
-<span><span class="co">#&gt; [25] yaml_2.3.9        tools_4.4.1       memoise_2.0.1     colorspace_2.1-0 </span></span>
-<span><span class="co">#&gt; [29] vctrs_0.6.5       R6_2.5.1          lifecycle_1.0.4   lubridate_1.9.3  </span></span>
-<span><span class="co">#&gt; [33] fs_1.6.4          bit_4.0.5         ragg_1.3.2        pkgconfig_2.0.3  </span></span>
-<span><span class="co">#&gt; [37] desc_1.4.3        pkgdown_2.1.0     pillar_1.9.0      bslib_0.7.0      </span></span>
-<span><span class="co">#&gt; [41] gtable_0.3.5      glue_1.7.0        systemfonts_1.1.0 highr_0.11       </span></span>
-<span><span class="co">#&gt; [45] xfun_0.45         tibble_3.2.1      tidyselect_1.2.1  knitr_1.48       </span></span>
-<span><span class="co">#&gt; [49] farver_2.1.2      htmltools_0.5.8.1 rmarkdown_2.27    compiler_4.4.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [9] grid_4.4.1        fastmap_1.2.0     blob_1.2.4        jsonlite_1.8.8   </span></span>
+<span><span class="co">#&gt; [13] purrr_1.0.2       fansi_1.0.6       scales_1.3.0      textshaping_0.4.0</span></span>
+<span><span class="co">#&gt; [17] jquerylib_0.1.4   cli_3.6.3         rlang_1.1.4       bit64_4.0.5      </span></span>
+<span><span class="co">#&gt; [21] munsell_0.5.1     withr_3.0.0       cachem_1.1.0      yaml_2.3.9       </span></span>
+<span><span class="co">#&gt; [25] tools_4.4.1       memoise_2.0.1     colorspace_2.1-0  vctrs_0.6.5      </span></span>
+<span><span class="co">#&gt; [29] R6_2.5.1          lifecycle_1.0.4   lubridate_1.9.3   fs_1.6.4         </span></span>
+<span><span class="co">#&gt; [33] bit_4.0.5         ragg_1.3.2        pkgconfig_2.0.3   desc_1.4.3       </span></span>
+<span><span class="co">#&gt; [37] pkgdown_2.1.0     pillar_1.9.0      bslib_0.7.0       gtable_0.3.5     </span></span>
+<span><span class="co">#&gt; [41] glue_1.7.0        systemfonts_1.1.0 highr_0.11        xfun_0.46        </span></span>
+<span><span class="co">#&gt; [45] tibble_3.2.1      tidyselect_1.2.1  knitr_1.48        farver_2.1.2     </span></span>
+<span><span class="co">#&gt; [49] htmltools_0.5.8.1 rmarkdown_2.27    compiler_4.4.1</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

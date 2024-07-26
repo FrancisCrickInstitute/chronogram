@@ -126,19 +126,8 @@ to infection episodes.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">small_study</span></span>
-<span><span class="co">#&gt; A chronogram:</span></span>
-<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
-<span><span class="co">#&gt;  IDs column:    elig_study_id </span></span>
-<span><span class="co">#&gt;  Starts on:     2020-01-01 </span></span>
-<span><span class="co">#&gt;  Ends on:       2021-10-10 </span></span>
-<span><span class="co">#&gt;  Contains:      3  unique participant IDs</span></span>
-<span><span class="co">#&gt;  Windowed:      FALSE </span></span>
-<span><span class="co">#&gt;  Spanning:      649 - 649 days [min-max per participant]</span></span>
-<span><span class="co">#&gt;  Metadata:      age, sex, dose_1, date_dose_1, dose_2, date_dose_2 </span></span>
-<span><span class="co">#&gt;  Size:          129.55 kB </span></span>
-<span><span class="co">#&gt;  Pkg_version:   1.0.0 [used to build this cg]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,947 × 10</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 10</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
 <span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
@@ -153,6 +142,8 @@ to infection episodes.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span>
 <span></span>
 <span><span class="co">## Use cg_add_experiment() for extra assays ##</span></span></code></pre></div>
 </div>
@@ -177,19 +168,8 @@ to infection episodes.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">small_study_inf</span></span>
-<span><span class="co">#&gt; A chronogram:</span></span>
-<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
-<span><span class="co">#&gt;  IDs column:    elig_study_id </span></span>
-<span><span class="co">#&gt;  Starts on:     2020-01-01 </span></span>
-<span><span class="co">#&gt;  Ends on:       2021-10-10 </span></span>
-<span><span class="co">#&gt;  Contains:      3  unique participant IDs</span></span>
-<span><span class="co">#&gt;  Windowed:      FALSE </span></span>
-<span><span class="co">#&gt;  Spanning:      649 - 649 days [min-max per participant]</span></span>
-<span><span class="co">#&gt;  Metadata:      age, sex, dose_1, date_dose_1, dose_2, date_dose_2 </span></span>
-<span><span class="co">#&gt;  Size:          168.98 kB </span></span>
-<span><span class="co">#&gt;  Pkg_version:   1.0.0 [used to build this cg]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,947 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
 <span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
@@ -205,21 +185,12 @@ to infection episodes.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;, LFT &lt;chr&gt;, PCR &lt;lgl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span>
 <span></span>
 <span><span class="va">small_study_inf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">PCR</span><span class="op">)</span></span>
-<span><span class="co">#&gt; A chronogram:</span></span>
-<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
-<span><span class="co">#&gt;  IDs column:    elig_study_id </span></span>
-<span><span class="co">#&gt;  Starts on:     2020-01-01 </span></span>
-<span><span class="co">#&gt;  Ends on:       2021-10-10 </span></span>
-<span><span class="co">#&gt;  Contains:      3  unique participant IDs</span></span>
-<span><span class="co">#&gt;  Windowed:      FALSE </span></span>
-<span><span class="co">#&gt;  Spanning:      649 - 649 days [min-max per participant]</span></span>
-<span><span class="co">#&gt;  Metadata:      age, sex, dose_1, date_dose_1, dose_2, date_dose_2 </span></span>
-<span><span class="co">#&gt;  Size:          168.98 kB </span></span>
-<span><span class="co">#&gt;  Pkg_version:   1.0.0 [used to build this cg]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,947 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 13</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
 <span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
@@ -234,7 +205,9 @@ to infection episodes.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;, LFT &lt;chr&gt;, PCR &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span></code></pre></div>
 <p><code>small_study</code> is now a chrongram with infection episodes,
 and serological data.</p>
 </div>
@@ -303,19 +276,8 @@ can tweak this with <code>episode_days</code>).</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3              -<span style="color: #BB0000;">Inf</span></span></span>
 <span></span>
 <span><span class="va">small_study_inf</span></span>
-<span><span class="co">#&gt; A chronogram:</span></span>
-<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
-<span><span class="co">#&gt;  IDs column:    elig_study_id </span></span>
-<span><span class="co">#&gt;  Starts on:     2020-01-01 </span></span>
-<span><span class="co">#&gt;  Ends on:       2021-10-10 </span></span>
-<span><span class="co">#&gt;  Contains:      3  unique participant IDs</span></span>
-<span><span class="co">#&gt;  Windowed:      FALSE </span></span>
-<span><span class="co">#&gt;  Spanning:      649 - 649 days [min-max per participant]</span></span>
-<span><span class="co">#&gt;  Metadata:      age, sex, dose_1, date_dose_1, dose_2, date_dose_2 </span></span>
-<span><span class="co">#&gt;  Size:          224.15 kB </span></span>
-<span><span class="co">#&gt;  Pkg_version:   1.0.0 [used to build this cg]</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,947 × 17</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 17</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
 <span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
 <span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
@@ -331,7 +293,9 @@ can tweak this with <code>episode_days</code>).</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;, LFT &lt;chr&gt;, PCR &lt;lgl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;, episode_present_flag &lt;chr&gt;, episode_number &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   episode_start &lt;date&gt;, episode_end &lt;date&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;">#   episode_start &lt;date&gt;, episode_end &lt;date&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span></code></pre></div>
 <p>You have the flexibility to configure <code>infection_cols</code> and
 <code>infection_present</code> to match any string on any column. The
 matching is performed as string matching. Care is required with matching
@@ -895,15 +859,15 @@ calls, with flexible and scalable logic.</p>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] jsonlite_1.8.8    compiler_4.4.1    tidyselect_1.2.1  tidyr_1.3.1      </span></span>
 <span><span class="co">#&gt;  [5] jquerylib_0.1.4   systemfonts_1.1.0 textshaping_0.4.0 yaml_2.3.9       </span></span>
-<span><span class="co">#&gt;  [9] fastmap_1.2.0     lobstr_1.1.2      R6_2.5.1          generics_0.1.3   </span></span>
-<span><span class="co">#&gt; [13] knitr_1.48        tibble_3.2.1      desc_1.4.3        lubridate_1.9.3  </span></span>
-<span><span class="co">#&gt; [17] bslib_0.7.0       pillar_1.9.0      rlang_1.1.4       utf8_1.2.4       </span></span>
-<span><span class="co">#&gt; [21] cachem_1.1.0      stringi_1.8.4     xfun_0.45         fs_1.6.4         </span></span>
-<span><span class="co">#&gt; [25] sass_0.4.9        timechange_0.3.0  cli_3.6.3         withr_3.0.0      </span></span>
-<span><span class="co">#&gt; [29] pkgdown_2.1.0     magrittr_2.0.3    digest_0.6.36     lifecycle_1.0.4  </span></span>
-<span><span class="co">#&gt; [33] vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0        ragg_1.3.2       </span></span>
-<span><span class="co">#&gt; [37] fansi_1.0.6       rmarkdown_2.27    purrr_1.0.2       tools_4.4.1      </span></span>
-<span><span class="co">#&gt; [41] pkgconfig_2.0.3   htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [9] fastmap_1.2.0     R6_2.5.1          generics_0.1.3    knitr_1.48       </span></span>
+<span><span class="co">#&gt; [13] tibble_3.2.1      desc_1.4.3        lubridate_1.9.3   bslib_0.7.0      </span></span>
+<span><span class="co">#&gt; [17] pillar_1.9.0      rlang_1.1.4       utf8_1.2.4        cachem_1.1.0     </span></span>
+<span><span class="co">#&gt; [21] stringi_1.8.4     xfun_0.46         fs_1.6.4          sass_0.4.9       </span></span>
+<span><span class="co">#&gt; [25] timechange_0.3.0  cli_3.6.3         withr_3.0.0       pkgdown_2.1.0    </span></span>
+<span><span class="co">#&gt; [29] magrittr_2.0.3    digest_0.6.36     lifecycle_1.0.4   vctrs_0.6.5      </span></span>
+<span><span class="co">#&gt; [33] evaluate_0.24.0   glue_1.7.0        ragg_1.3.2        fansi_1.0.6      </span></span>
+<span><span class="co">#&gt; [37] rmarkdown_2.27    purrr_1.0.2       tools_4.4.1       pkgconfig_2.0.3  </span></span>
+<span><span class="co">#&gt; [41] htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
