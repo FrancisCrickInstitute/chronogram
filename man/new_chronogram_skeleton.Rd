@@ -15,7 +15,7 @@ rlang::enquo(an_unquoted_string)}
 \item{ids_col}{provided as rlang::enquo(an_unquoted_string)}
 }
 \value{
-x a tibble with class cg_skl_tbl
+x a tibble with attributes to identify \code{calendar_date_col} and \code{ids_col}.
 }
 \description{
 A low level constructor function. Use the helper

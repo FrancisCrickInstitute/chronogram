@@ -1,130 +1,66 @@
-#' print chronogram
+#' Add a line to tbl header when printing a chronogram, or a grouped chronogram
 #'
-#' @param x a chronogram object (class tbl_chronogram)
-#' @param ... additional arguments passed to tibble print S3 generic
+#' @param x a chronogram, or a grouped chronogram
+#' (class tbl_chronogram or grouped_cg_df)
+#' @param ... passed to [pillar::tbl_sum()]
 #'
 #' @return print to console
-#' @examples
-#' \dontrun{
-#' ## a 3-person chronogram_skeleton ##
-#' small_study <- chronogram_skeleton(
-#'   col_ids = elig_study_id,
-#'   ids = c(1, 2, 3),
-#'   start_date = "01012020",
-#'   end_date = "10102021",
-#'   col_calendar_date = calendar_date
-#' )
 #'
-#' ## Create a tibble containing some metadata for our 3 individuals ##
-#' small_study_metadata <- tibble::tribble(
-#'   ~elig_study_id, ~age, ~sex, ~dose_1, ~date_dose_1, ~dose_2, ~date_dose_2,
-#'   1, 40, "F", "AZD1222", "05/01/2021", "AZD1222", "05/02/2021",
-#'   2, 45, "F", "BNT162b2", "05/01/2021", "BNT162b2", "05/02/2021",
-#'   3, 35, "M", "BNT162b2", "10/01/2021", "BNT162b2", "10/03/2021"
-#' )
+#' @importFrom pillar tbl_sum
+#' @seealso [summary()]
+#' @export
+#' @noRd
+
+tbl_sum.cg_tbl <- function(x, ...) {
+  default_header <- NextMethod()
+  c(default_header, "A chronogram" = cli::col_blue("try summary()"))
+}
+
+#' Add a line to tbl footer when printing a chronogram, or a grouped chronogram
+#' @importFrom pillar tbl_format_footer
+#' @param ... passed to [pillar::tbl_format_footer()]
+#' @export
+#' @noRd
+tbl_format_footer.cg_tbl <- function(x, setup, ...) {
+  default_footer <- NextMethod()
+
+  meta <- paste(attributes(x)$cols_metadata, collapse = ", ")
+
+  extra_info <- paste(
+                      cli::col_yellow("Dates:"),
+                      attributes(x)$col_calendar_date,
+                      "    ",
+                      cli::col_yellow(cli::symbol$star),
+                      cli::col_yellow("IDs:"),
+                      attributes(x)$col_ids)
+
+  extra_info_meta <- paste(cli::col_yellow("metadata:"), meta)
+
+  extra_footer <- paste0(
+    pillar::style_subtle(paste0("# ", cli::col_yellow(cli::symbol$star), " ", (extra_info))),
+    "\n",
+    pillar::style_subtle(paste0("# ", cli::col_yellow(cli::symbol$star), " ", (extra_info_meta)))
+    )
+  c(default_footer, extra_footer)
+}
+
+
+#' This is draft code to fine tune display of the pillars themselves.
 #'
-#' ## Set appropriate metadata column classes ##
-#' library(dplyr)
-#' small_study_metadata <- small_study_metadata %>%
-#'   mutate(across(c(sex, dose_1, dose_2), ~ as.factor(.x)))
+#' #' @importFrom pillar ctl_new_pillar
+#' #' @importFrom pillar new_pillar_component
+#' #' @importFrom pillar new_pillar
+#' #' @export
+#' ctl_new_pillar.cg_tbl <- function(controller, x, width, ..., title = NULL) {
+#'   out <- NextMethod()
 #'
-#' small_study_metadata <- small_study_metadata %>%
-#'   mutate(across(contains("date"), ~ lubridate::dmy(.x)))
-#'
-#' ## Make a chronogram ##
-#' small_study_chronogram <- chronogram(
-#'   small_study,
-#'   small_study_metadata
-#' )
-#'
-#' ## print, with default tibble options ##
-#' small_study_chronogram
-#'
-#' ## print, with eg 3 rows ##
-#' print(small_study_chronogram, n = 3)
+#'   pillar::new_pillar(list(
+#'     top_rule = pillar::new_pillar_component(list("========"), width = 8),
+#'     title = out$title,
+#'     type = out$type,
+#'     mid_rule = pillar::new_pillar_component(list("--------"), width = 8),
+#'     data = out$data,
+#'     bottom_rule = pillar::new_pillar_component(list("========"), width = 8)
+#'   ))
 #' }
-#' @export
-print.cg_tbl <- function(x, ...) {
-  calendar_date <- attributes(x)$col_calendar_date
-  ids_column_name <- attributes(x)$col_ids
-  version_number <- attributes(x)$cg_pkg_version
-  windowed <- attributes(x)$windowed
-  meta <- attributes(x)$cols_metadata
 
-  zz <- NULL # suppress no visible binding warning
-
-  over_min <- x %>%
-    dplyr::group_by(
-      dplyr::across(
-        dplyr::all_of(ids_column_name)
-      )
-    ) %>%
-    dplyr::summarise(zz = (dplyr::n())) %>%
-    dplyr::pull(zz) %>%
-    min(., na.rm = TRUE)
-
-  over_max <- x %>%
-    dplyr::group_by(
-      dplyr::across(
-        dplyr::all_of(ids_column_name)
-      )
-    ) %>%
-    dplyr::summarise(zz = (dplyr::n())) %>%
-    dplyr::pull(zz) %>%
-    max(., na.rm = TRUE)
-
-  cat(
-    ## use paste to prevent cat re-formating dates
-    paste(
-      "A chronogram:\n",
-      "Dates column: ", calendar_date, "\n",
-      "IDs column:   ", ids_column_name, "\n",
-      "Starts on:    ",
-      min(x %>% dplyr::pull(calendar_date)), "\n",
-      "Ends on:      ",
-      max(x %>% dplyr::pull(calendar_date)), "\n",
-      # "Spanning:     ",
-      # max(x %>% dplyr::pull( calendar_date )) -
-      #   min(x %>% dplyr::pull( calendar_date )),
-      # " days\n",
-      "Contains:     ",
-      x %>% dplyr::pull(ids_column_name) %>%
-        factor(.) %>% nlevels(.),
-      " unique participant IDs\n",
-      "Windowed:     ", windowed, "\n",
-      "Spanning:     ",
-      over_min,
-      "-",
-      over_max, "days [min-max per participant]\n",
-      "Metadata:     ",
-      paste(meta, collapse = ", "), "\n",
-      "Size:         ",
-      rlang::parse_bytes(
-        as.character(
-          lobstr::obj_size(x)
-        )
-      ), "\n",
-      "Pkg_version:  ",
-      version_number, "[used to build this cg]\n\n"
-    )
-  )
-  NextMethod(x, ...)
-}
-
-
-
-
-#' @export
-print.grouped_cg_df <- function(x, ...) {
-  groups <- dplyr::group_vars(x)
-
-  cat(
-    paste(
-      "A grouped chronogram", "\n",
-      "Groups:       ", paste(groups, collapse = ", "), "\n",
-      "... now printing chronogram view ...", "\n"
-    )
-  )
-
-  NextMethod(x, ...)
-}

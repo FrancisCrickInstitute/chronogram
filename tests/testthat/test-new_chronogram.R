@@ -17,15 +17,12 @@ by_hand_cg <- dplyr::left_join(
 
 
 
-test_that("input is not of class cg_skl_tbl", {
-  expect_error(
-    ## provide an input object of wrong class ##
-    new_chronogram(
+test_that("input chronogram skeleton is class tbl_df", {
+  expect_s3_class(
       metadata,
-      metadata
-    ),
-    "provided object does not inherit cg_skl_tbl class"
-  )
+      c("tbl_df", "tbl", "data.frame"),
+      exact = T
+    )
 })
 
 test_that("input metadata_cols not a character vector", {

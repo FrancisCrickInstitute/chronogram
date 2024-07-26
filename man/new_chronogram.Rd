@@ -7,7 +7,7 @@
 new_chronogram(x, metadata_cols, ...)
 }
 \arguments{
-\item{x}{a tbl, a daughter of a join between a cg_skl_tbl and
+\item{x}{a tbl, a daughter of a join between a chronogram skeleton and
 one (or more) objects coerced to a tbl.}
 
 \item{metadata_cols}{the column names from the metadata tibble}

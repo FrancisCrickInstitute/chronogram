@@ -7,10 +7,10 @@
 validate_chronogram_skeleton(x)
 }
 \arguments{
-\item{x}{a chronogram skeleton object (class cg_skl_tbl)}
+\item{x}{a chronogram skeleton object (class tbl_df, with attributes that record IDs and date columns)}
 }
 \value{
-Errors, or TRUE if valid cg_skl_tbl
+Errors, or TRUE if valid chronogram skeleton
 }
 \description{
 validate chronogram skeleton
