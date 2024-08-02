@@ -1,4 +1,4 @@
-#' Take a window of dates from a chronogram: with respect to episode
+#' Pick a window of dates from a chronogram: with respect to episode
 #' start.
 #'
 #' @param cg a chronogram
@@ -6,12 +6,12 @@
 #'   numbers. Default is `episode_number`.
 #' @param episode_handling which episode to reference. Must be one of
 #'   "first", "last", or "all".
-#' @param preceding_days used as filter( date > (date_col -
-#'   preceding_days) )
-#' @param following_days used as filter( date < (date_col +
-#'   following_days) )
+#' @param preceding_days used as `filter( date > (date_col -
+#'   preceding_days) )`
+#' @param following_days used as `filter( date < (date_col +
+#'   following_days) )`
 #'
-#' @return A subsetted chronogram
+#' @return A windowed chronogram
 #' @seealso [chronogram::cg_window_by_visit()],
 #'   [chronogram::cg_window_by_metadata()]
 #' @export

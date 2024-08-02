@@ -2,88 +2,58 @@
 % Please edit documentation in R/cg_add_experiment.R
 \name{cg_add_experiment}
 \alias{cg_add_experiment}
-\title{A helper function to add experimental data to a chronogram}
+\title{Add experimental data to a chronogram}
 \usage{
 cg_add_experiment(cg, experiment)
 }
 \arguments{
-\item{cg}{a chronogram object (class tbl_chronogram)}
+\item{cg}{a chronogram object (class cg_tbl)}
 
-\item{experiment}{a tibble containing experimental data (with
-columns: calendar_date, and the specified ID)}
+\item{experiment}{a tibble containing experimental data. The dates
+and IDs columns in cg must be present in \code{experiment}.}
 }
 \value{
-An object of chronogram class
+A chronogram
 }
 \description{
-A helper function to add experimental data to a chronogram
+Add experimental data to a chronogram
 }
 \examples{
-\dontrun{
-## a 3-person chronogram_skeleton ##
-small_study <- chronogram_skeleton(
-  col_ids = elig_study_id,
-  ids = c(1, 2, 3),
-  start_date = c("01012020"),
-  end_date = "10102021",
-  col_calendar_date = calendar_date
+## Example 1: A small study ##-------------------------------------
+data(built_smallstudy)
+
+## Setup ##
+cg <- built_smallstudy$chronogram
+
+infections_to_add <- tibble::tribble(
+  ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
+  "01102020", "1", "pos", NA, NA,
+  "11102020", "1", "pos", NA, "severe"
+)
+## Make calendar_date a date ##
+infections_to_add$calendar_date <- lubridate::dmy(
+  infections_to_add$calendar_date
+)
+## Add this new experiment data ##
+cg_added <- cg_add_experiment(cg, infections_to_add)
+
+## Example 2: Incorrect column names ##----------------------------
+
+## Setup as for Example 1 ##
+infections_to_add_renamed <- infections_to_add \%>\%
+dplyr::rename(ID = elig_study_id)
+
+## this fails ##
+try(
+cg_added_2 <- cg_add_experiment(cg, 
+infections_to_add_renamed)
 )
 
-## Create a tibble containing some metadata for our 3 individuals ##
-small_study_metadata <- tibble::tribble(
-  ~elig_study_id, ~age, ~sex, ~dose_1, ~date_dose_1, ~dose_2, ~date_dose_2,
-  1, 40, "F", "AZD1222", "05/01/2021", "AZD1222", "05/02/2021",
-  2, 45, "F", "BNT162b2", "05/01/2021", "BNT162b2", "05/02/2021",
-  3, 35, "M", "BNT162b2", "10/01/2021", "BNT162b2", "10/03/2021"
-)
-
-## Set appropriate metadata column classes ##
-small_study_metadata <- small_study_metadata \%>\%
-  mutate(across(c(sex, dose_1, dose_2), ~ as.factor(.x)))
-
-small_study_metadata <- small_study_metadata \%>\%
-  mutate(across(contains("date"), ~ lubridate::dmy(.x)))
-
-## Make a chronogram ##
-small_study_chronogram <- chronogram(
-  small_study,
-  small_study_metadata
-)
-
-
-## Create a tibble of exemplar experimental data ##
-# suggest naming assays as {source}_{test}, eg serum_Ab
-# as SARS-CoV-2 PCRs could be reasonably performed
-# on stool, blood, sputum, BAL etc.
-# chronogram package does not enforce any rules here.
-#
-small_study_Ab <-
-  tibble::tribble(
-    ~elig_study_id, ~calendar_date, ~serum_Ab_S, ~serum_Ab_N,
-    1, "05/01/2021", 500, 100,
-    1, "15/01/2021", 4000, 100,
-    1, "03/02/2021", 3750, 100,
-    1, "15/02/2021", 10000, 100,
-    2, "05/01/2021", 0, 0,
-    2, "15/01/2021", 4000 / 2, 0,
-    2, "03/02/2021", 3750 / 2, 0,
-    2, "15/02/2021", 10000 / 2, 0,
-    3, "05/01/2021", 0, 0,
-    3, "25/01/2021", 4000 / 2, 0,
-    3, "03/02/2021", 3750 / 2, 0,
-    3, "20/03/2021", 10000 / 2, 0
-  )
-
-small_study_Ab <- small_study_Ab \%>\%
-  mutate(across(contains("date"), ~ lubridate::dmy(.x)))
-
-## Add to chronogram ##
-small_study_chronogram <- cg_add_experiment(
-  small_study_chronogram,
-  small_study_Ab
-)
-}
+##------------------------------------------------------------------
 }
 \seealso{
-\code{\link[=chronogram_skeleton]{chronogram_skeleton()}}, \code{\link[=chronogram]{chronogram()}}
+\code{\link[=cg_assemble]{cg_assemble()}},
+\code{\link[=cg_add_treatment]{cg_add_treatment()}},
+\code{\link[=chronogram_skeleton]{chronogram_skeleton()}},
+\code{\link[=chronogram]{chronogram()}}
 }

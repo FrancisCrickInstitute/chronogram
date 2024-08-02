@@ -2,8 +2,7 @@
 % Please edit documentation in R/chronogram.R
 \name{chronogram}
 \alias{chronogram}
-\title{A helper function to build a chronogram, from a chronogram_skeleton and
-metadata}
+\title{Build a chronogram, from a chronogram_skeleton and metadata}
 \usage{
 chronogram(cg_skeleton, metadata)
 }
@@ -18,8 +17,7 @@ An object of chronogram class, with metadata spread across
 all calendar_dates.
 }
 \description{
-A helper function to build a chronogram, from a chronogram_skeleton and
-metadata
+Build a chronogram, from a chronogram_skeleton and metadata
 }
 \examples{
 \dontrun{

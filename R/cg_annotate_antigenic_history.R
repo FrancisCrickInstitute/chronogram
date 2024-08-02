@@ -1,6 +1,6 @@
 #' Calculate and assign flags based on infection history
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #'
 #' @param episode_number a character vector to identify the
 #'   episode_number column. Default is "episode_number".
@@ -20,12 +20,12 @@
 #' }
 #'
 cg_annotate_antigenic_history <- function(
-    x,
+    cg,
     episode_number = episode_number,
     dose_number = dose_number,
     episode_variant_summarised = episode_variant_summarised,
     ag_col = antigenic_history) {
-  attributes_x <- attributes(x)
+  attributes_x <- attributes(cg)
 
   ids_column_name <- attributes_x$col_ids
   calendar_date <- attributes_x$col_calendar_date
@@ -36,14 +36,14 @@ cg_annotate_antigenic_history <- function(
     )
 
   stopifnot(
-    "Chronogram x must contain a \"dose_number\" column,
+    "Chronogram must contain a \"dose_number\" column,
     showing number of doses at this calendar date.
     Consider using the cg_annotate_vaccines_count()
-    function first." = "dose_number" %in% colnames(x)
+    function first." = "dose_number" %in% colnames(cg)
   )
 
   ## make a vector of with times of individuals ##
-  y <- x %>%
+  y <- cg %>%
     tibble::as_tibble() %>%
     group_by({{ ids_column_name }}) %>%
     dplyr::filter(!is.na({{ episode_number }})) %>%
@@ -97,7 +97,7 @@ cg_annotate_antigenic_history <- function(
   ## that person does not have a combined
   ## reported ag_col.
 
-  z <- x %>%
+  z <- cg %>%
     tibble::as_tibble() %>%
     dplyr::group_by(
       dplyr::across(
@@ -130,7 +130,7 @@ cg_annotate_antigenic_history <- function(
 
   y <- dplyr::bind_rows(z, y)
 
-  y <- dplyr::left_join(x, y, by = ids_column_name)
+  y <- dplyr::left_join(cg, y, by = ids_column_name)
 
   validate_chronogram(y)
 

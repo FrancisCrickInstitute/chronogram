@@ -1,14 +1,12 @@
-#' Take a window of dates from a chronogram
-#'
-#' Works with respect to a column (eg date of dose 3).
+#' Pick a window before and after a metadata date column
 #'
 #' @param cg a chronogram
 #' @param windowing_date_col the column containing reference date (must repeat
 #'  the date for each row of that individual's record).
-#' @param preceding_days used as filter( date > (windowing_date_col -
-#'  preceding_days) )
-#' @param following_days used as filter( date < (windowing_date_col +
-#'  following_days) )
+#' @param preceding_days used as `filter( date > (windowing_date_col -
+#'  preceding_days) )`
+#' @param following_days used as `filter( date < (windowing_date_col +
+#'  following_days) )`
 #'
 #'
 #' @return A windowed chronogram

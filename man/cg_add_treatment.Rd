@@ -2,46 +2,60 @@
 % Please edit documentation in R/cg_add_treatment.R
 \name{cg_add_treatment}
 \alias{cg_add_treatment}
-\title{A helper function to add treatment data to a chronogram}
+\title{Add treatment data to a chronogram}
 \usage{
 cg_add_treatment(cg, treatment)
 }
 \arguments{
 \item{cg}{a chronogram object (class cg_tbl)}
 
-\item{treatment}{a tibble containing treatment dates (with columns:
-the specified calendar_date, and ID columns, defined with
-\code{\link[=chronogram_skeleton]{chronogram_skeleton()}})
-
-This code wraps the\code{cg_add_experiment} function.}
+\item{treatment}{a tibble containing treatment data. The dates
+and IDs columns in cg must be present in \code{experiment}.}
 }
 \value{
 A chronogram
 }
 \description{
-A helper function to add treatment data to a chronogram
+Add treatment data to a chronogram
 }
 \examples{
-\dontrun{
+## Example 1: A small study ##-------------------------------------
+library(dplyr)
+data(built_smallstudy)
 
-## Create a tibble of exemplar treatment data ##
+## Setup ##
+cg <- built_smallstudy$chronogram
+
+# Create a tibble of exemplar treatment data
 # Here, we have treated ID=1 with B cell depletion
 # therapy, rituximab (RTX).
-#
-small_study_treatment <-
+
+treatments_to_add <-
   tibble::tribble(
     ~elig_study_id, ~calendar_date, ~treatment,
     1, "01/02/2021", "RTX"
   )
-small_study_treatment <- small_study_treatment \%>\%
+  
+## Make calendar_date a date class ##
+treatments_to_add <- treatments_to_add \%>\%
   mutate(across(contains("date"), ~ lubridate::dmy(.x)))
+  
+## Add this new treatment data ##
+cg_added <- cg_add_experiment(cg, treatments_to_add)
 
-## Add to chronogram ##
-small_study_chronogram <- cg_add_treatment(
-  small_study_chronogram,
-  small_study_treatment
+## Example 2: Incorrect column names ##----------------------------
+
+## Setup as for Example 1 ##
+treatments_to_add_renamed <- treatments_to_add \%>\%
+dplyr::rename(ID = elig_study_id)
+
+## this fails ##
+try(
+cg_added_2 <- cg_add_experiment(cg, 
+treatments_to_add_renamed)
 )
-}
+
+##------------------------------------------------------------------
 }
 \seealso{
 \code{\link[=cg_add_experiment]{cg_add_experiment()}}

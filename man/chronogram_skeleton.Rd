@@ -2,8 +2,8 @@
 % Please edit documentation in R/chronogram_skeleton.R
 \name{chronogram_skeleton}
 \alias{chronogram_skeleton}
-\title{A helper function to build the chronogram skeleton, a two column index, for
-chronogram}
+\title{Build a chronogram skeleton, a two column index of IDs and calendar
+dates, a scaffold for a chronogram}
 \usage{
 chronogram_skeleton(
   ids = NULL,
@@ -34,8 +34,8 @@ User advised to change to suit.}
 A chronogram skeleton class
 }
 \description{
-A helper function to build the chronogram skeleton, a two column index, for
-chronogram
+Build a chronogram skeleton, a two column index of IDs and calendar
+dates, a scaffold for a chronogram
 }
 \examples{
 \dontrun{

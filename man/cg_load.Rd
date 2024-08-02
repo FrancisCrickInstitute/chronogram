@@ -2,7 +2,7 @@
 % Please edit documentation in R/cg_load.R
 \name{cg_load}
 \alias{cg_load}
-\title{A helper function to load a chronogram}
+\title{Load a chronogram}
 \usage{
 cg_load(file = NULL)
 }
@@ -13,7 +13,7 @@ cg_load(file = NULL)
 re-loaded chronogram
 }
 \description{
-A helper function to load a chronogram
+Load into memory a chronogram previously written to disk by \code{cg_save()}.
 }
 \examples{
 \dontrun{

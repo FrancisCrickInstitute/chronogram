@@ -1,6 +1,6 @@
-#' Find infections per individual
+#' Fill experimental, treatment or symptom information within an infection episode
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param col_to_fill the name of the column to fill within each
 #'   episode
 #' @param col_to_return the name of the returned, filled column
@@ -8,7 +8,7 @@
 #' @param episode_numbers_col The column name to use for episode
 #'   numbers. Default is `episode_number`, unquoted.
 #'
-#' @return x a chronogram, with episode data filled within each
+#' @return a chronogram, with episode data filled within each
 #'   episode.
 #' @export
 #'
@@ -58,12 +58,12 @@
 #'
 #' summary(test2$episode_number)
 #' }
-cg_annotate_episodes_fill <- function(x,
+cg_annotate_episodes_fill <- function(cg,
                                       col_to_fill,
                                       col_to_return,
                                       .direction = "down",
                                       episode_numbers_col = episode_number) {
-  attributes_x <- attributes(x)
+  attributes_x <- attributes(cg)
 
   quoted_episode_numbers_col <-
     rlang::as_name(
@@ -73,7 +73,7 @@ cg_annotate_episodes_fill <- function(x,
   ids_column_name <- attributes_x$col_ids
   calendar_date <- attributes_x$col_calendar_date
 
-  x <- x %>%
+  x <- cg %>%
     dplyr::ungroup()
 
   xx <- x %>%

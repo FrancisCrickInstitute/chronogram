@@ -2,7 +2,7 @@
 % Please edit documentation in R/cg_window_by_metadata.R
 \name{cg_window_by_metadata}
 \alias{cg_window_by_metadata}
-\title{Take a window of dates from a chronogram}
+\title{Pick a window before and after a metadata date column}
 \usage{
 cg_window_by_metadata(cg, windowing_date_col, preceding_days, following_days)
 }
@@ -12,17 +12,15 @@ cg_window_by_metadata(cg, windowing_date_col, preceding_days, following_days)
 \item{windowing_date_col}{the column containing reference date (must repeat
 the date for each row of that individual's record).}
 
-\item{preceding_days}{used as filter( date > (windowing_date_col -
-preceding_days) )}
+\item{preceding_days}{used as \code{filter( date > (windowing_date_col - preceding_days) )}}
 
-\item{following_days}{used as filter( date < (windowing_date_col +
-following_days) )}
+\item{following_days}{used as \code{filter( date < (windowing_date_col + following_days) )}}
 }
 \value{
 A windowed chronogram
 }
 \description{
-Works with respect to a column (eg date of dose 3).
+Pick a window before and after a metadata date column
 }
 \examples{
 \dontrun{

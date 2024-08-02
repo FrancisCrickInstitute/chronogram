@@ -2,9 +2,27 @@
 % Please edit documentation in R/utils-dplyr.R
 \name{dplyr_row_slice.cg_tbl}
 \alias{dplyr_row_slice.cg_tbl}
-\title{Dplyr row slice for chronogram}
+\alias{dplyr_col_modify.cg_tbl}
+\alias{dplyr_reconstruct.cg_tbl}
+\alias{dplyr_row_slice.grouped_cg_df}
+\alias{group_data_trim}
+\alias{dplyr_col_modify.grouped_cg_df}
+\alias{dplyr_reconstruct.grouped_cg_df}
+\title{Extending dplyr to chronogram}
 \usage{
 \method{dplyr_row_slice}{cg_tbl}(data, i, ...)
+
+\method{dplyr_col_modify}{cg_tbl}(data, cols)
+
+\method{dplyr_reconstruct}{cg_tbl}(data, template)
+
+\method{dplyr_row_slice}{grouped_cg_df}(data, i, ..., preserve = FALSE)
+
+group_data_trim(group_data)
+
+\method{dplyr_col_modify}{grouped_cg_df}(data, cols)
+
+\method{dplyr_reconstruct}{grouped_cg_df}(data, template)
 }
 \arguments{
 \item{data}{data}
@@ -12,15 +30,31 @@
 \item{i}{rows to eg slice}
 
 \item{...}{additional arguments}
+
+\item{cols}{columns to eg mutate}
+
+\item{template}{example class}
+
+\item{preserve}{FALSE}
+
+\item{group_data}{grouped dataset}
 }
 \value{
+a cg_tbl or a grouped_cg_tbl after a dplyr verb action
+
 a cg_tbl after a dplyr verb action
 }
 \description{
-As recommended here:
-https://dplyr.tidyverse.org/reference/dplyr_extending.html
+These functions extend the dplyr S3 methods to class cg_tbl and
+grouped_cg_tbl.
 }
 \details{
-Ensures dplyr verbs return a cg_tbl, rather than tbl.
-User can ignore.
+Approach recommended here:
+https://dplyr.tidyverse.org/reference/dplyr_extending.html
+
+The user can usually ignore, but documentation provided in case of
+and edge case is encountered.
+}
+\references{
+dplyr:::group_data_trim
 }

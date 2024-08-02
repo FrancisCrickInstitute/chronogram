@@ -5,13 +5,13 @@
 \title{Calculate and assign flags based on infection history}
 \usage{
 cg_annotate_episodes_count(
-  x,
+  cg,
   episode_number = episode_number,
   count_col = count_col
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{episode_number}{a character vector to use to label the ID
 column. Default is "episode_number".}
@@ -22,9 +22,9 @@ column. Default is "episode_number".}
 A subsetted chronogram
 }
 \description{
-This counts the total number of infections for each individual at
-the end of the study (or at that data freeze), and makes it
-available as a fresh column. this function should be run after
+Count the total number of infections for each individual at the end
+of the study (or at that data freeze), and make it available as a
+fresh column. \code{cg_annotate_episodes_count()} should be run after
 \code{cg_annotate_episodes_find()}. For the cumulative number of
 infections use \code{cg_annotate_episodes_find()} only.
 }

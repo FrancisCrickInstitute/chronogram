@@ -36,7 +36,7 @@ new_grouped_chronogram <- function(x, groups, ..., class = character()) {
 
 #' new_tbl2chronogram
 #'
-#' A wrapper function to coerce a tibble to a chronogram. This
+#' Coerce a tibble to a chronogram. This
 #' function handles grouped chronograms. See
 #' `chronogram::chronogram()` for a constructor.
 #'
@@ -63,11 +63,12 @@ new_tbl2chronogram <- function(x, ..., class = character()) {
 }
 
 
-#' Group-by chronogram
+#' group-by & ungroup-by chronogram
 #'
-#' An S3 implementation of `dplyr::group_by()` that accepts a
-#' chronogram and returns an object of `grouped_cg_df` class. This
-#' retains the attributes from the orginal chronogram.
+#' S3 implementation of `dplyr::group_by()` that accepts a chronogram
+#' and returns an object of `grouped_cg_df` class & the reverse
+#' `dplyr::ungroup_by()`.
+#' 
 #'
 #'
 #' @param .data input chronogram, cg_tbl
@@ -106,11 +107,11 @@ group_by.cg_tbl <- function(.data,
 #'
 #'
 #' @param x input chronogram, grouped_cg_df
-#' @param ..., arguments expected by group_by S3
 #'
 #' @importFrom dplyr ungroup
 #' @seealso [chronogram::group_by()]
 #'
+#' @rdname group_by.cg_tbl
 #' @exportS3Method
 ungroup.grouped_cg_df <- function(x, ...) {
   out <- NextMethod()

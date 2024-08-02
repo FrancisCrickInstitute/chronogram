@@ -2,10 +2,10 @@
 % Please edit documentation in R/cg_annotate_episodes_fill.R
 \name{cg_annotate_episodes_fill}
 \alias{cg_annotate_episodes_fill}
-\title{Find infections per individual}
+\title{Fill experimental, treatment or symptom information within an infection episode}
 \usage{
 cg_annotate_episodes_fill(
-  x,
+  cg,
   col_to_fill,
   col_to_return,
   .direction = "down",
@@ -13,7 +13,7 @@ cg_annotate_episodes_fill(
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{col_to_fill}{the name of the column to fill within each
 episode}
@@ -26,11 +26,11 @@ episode}
 numbers. Default is \code{episode_number}, unquoted.}
 }
 \value{
-x a chronogram, with episode data filled within each
+a chronogram, with episode data filled within each
 episode.
 }
 \description{
-Find infections per individual
+Fill experimental, treatment or symptom information within an infection episode
 }
 \examples{
 \dontrun{

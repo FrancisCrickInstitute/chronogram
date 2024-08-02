@@ -1,16 +1,20 @@
-#' Dplyr row slice for chronogram
+#' Extending dplyr to chronogram
 #'
-#' As recommended here:
+#' These functions extend the dplyr S3 methods to class cg_tbl and
+#' grouped_cg_tbl.
+#' 
+#' Approach recommended here:
 #' https://dplyr.tidyverse.org/reference/dplyr_extending.html
 #'
-#' Ensures dplyr verbs return a cg_tbl, rather than tbl.
-#' User can ignore.
+#' The user can usually ignore, but documentation provided in case of
+#' and edge case is encountered.
 #'
 #' @param data data
 #' @param i rows to eg slice
+#' @param cols columns to eg mutate
 #' @param ... additional arguments
 #'
-#' @return a cg_tbl after a dplyr verb action
+#' @return a cg_tbl or a grouped_cg_tbl after a dplyr verb action
 #' @importFrom dplyr dplyr_reconstruct
 #' @importFrom dplyr dplyr_row_slice
 #' @exportS3Method
@@ -24,6 +28,7 @@ dplyr_row_slice.cg_tbl <- function(data, i, ...) {
 }
 #' @importFrom dplyr dplyr_col_modify
 #' @exportS3Method
+#' @rdname dplyr_row_slice.cg_tbl
 dplyr_col_modify.cg_tbl <- function(data, cols) {
   out <- dplyr_col_modify(tibble::as_tibble(data), cols)
   dplyr_reconstruct(out, data)
@@ -59,19 +64,13 @@ dplyr_col_modify.cg_tbl <- function(data, cols) {
   return(res)
 }
 
-#' Dplyr reconstruct for chronogram
-#'
-#' As recommended here:
-#' https://dplyr.tidyverse.org/reference/dplyr_extending.html
-#'
-#' Ensures dplyr verbs return a cg_tbl, rather than tbl.
-#' User can ignore.
-#'
+
 #' @param data data
 #' @param template example class
 #'
 #' @return a cg_tbl after a dplyr verb action
 #' @exportS3Method
+#' @rdname dplyr_row_slice.cg_tbl
 dplyr_reconstruct.cg_tbl <- function(data, template) {
   class(data) <- class(template)
 
@@ -85,25 +84,16 @@ dplyr_reconstruct.cg_tbl <- function(data, template) {
   data
 }
 
-
-#' Dplyr row slice for grouped chronogram
-#'
-#' As recommended here:
-#' https://dplyr.tidyverse.org/reference/dplyr_extending.html
-#'
-#' Ensures dplyr verbs return a grouped_cg_df, rather than grouped_df.
-#' User can ignore.
 #'
 #' @param data data
 #' @param i rows to eg slice
 #' @param ... additional arguments
 #' @param preserve FALSE
 #'
-#' @return a grouped_cg_df after a dplyr verb action
 #' @importFrom dplyr dplyr_reconstruct
 #' @importFrom dplyr dplyr_row_slice
 #' @exportS3Method
-
+#' @rdname dplyr_row_slice.cg_tbl
 dplyr_row_slice.grouped_cg_df <- function(data, i, ..., preserve = FALSE) {
   ## derived from : dplyr:::dplyr_row_slice.grouped_df ##
   ## (as we want same in-data behaviour - grouped_cg_df has extra attributes)
@@ -130,20 +120,22 @@ dplyr_row_slice.grouped_cg_df <- function(data, i, ..., preserve = FALSE) {
   # attributes(data)$cols_metadata <- attributes(template)$cols_metadata
 }
 
-#' dplyr:::group_data_trim
-#'
 #' @param group_data grouped dataset
 #'
 #' @references dplyr:::group_data_trim
+#' 
 #' @export
-group_data_trim <- function(group_data) {
-  ## from dplyr:::group_data_trim ##
-  non_empty <- lengths(group_data$.rows) > 0
-  group_data[non_empty, , drop = FALSE]
+#' @rdname dplyr_row_slice.cg_tbl
+ group_data_trim <- function(group_data) {
+   ## from dplyr:::group_data_trim ##
+   non_empty <- lengths(group_data$.rows) > 0
+   group_data[non_empty, , drop = FALSE]
 }
+
 
 #' @importFrom dplyr dplyr_col_modify
 #' @exportS3Method
+ #' @rdname dplyr_row_slice.cg_tbl
 dplyr_col_modify.grouped_cg_df <- function(data, cols) {
   # out <- dplyr::grouped_df(data, vars = dplyr::group_vars(data))
   # out <- dplyr_col_modify(data, cols)
@@ -151,19 +143,12 @@ dplyr_col_modify.grouped_cg_df <- function(data, cols) {
   dplyr_reconstruct(out, data)
 }
 
-#' Dplyr reconstruct for grouped chronogram
-#'
-#' As recommended here:
-#' https://dplyr.tidyverse.org/reference/dplyr_extending.html
-#'
-#' Ensures dplyr verbs return a grouped_cg_df, rather than grouped_df.
-#' User can ignore.
-#'
+
 #' @param data data
 #' @param template example class
 #'
-#' @return a grouped_cg_df after a dplyr verb action
 #' @exportS3Method
+#' @rdname dplyr_row_slice.cg_tbl
 dplyr_reconstruct.grouped_cg_df <- function(data, template) {
   ## leans on dplyr grouped_df reconstruct function
   group_vars_to_use <- intersect(dplyr::group_vars(template), names(data))

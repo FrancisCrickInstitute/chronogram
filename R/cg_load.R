@@ -1,4 +1,6 @@
-#' A helper function to load a chronogram
+#' Load a chronogram
+#' 
+#' Load into memory a chronogram previously written to disk by `cg_save()`.
 #'
 #' @param file quoted filename. Include an extension.
 #'

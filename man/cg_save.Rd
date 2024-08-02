@@ -2,7 +2,7 @@
 % Please edit documentation in R/cg_save.R
 \name{cg_save}
 \alias{cg_save}
-\title{A helper function to save a chronogram}
+\title{Save a chronogram}
 \usage{
 cg_save(cg, file = NULL, ..., verbose = TRUE)
 }
@@ -19,7 +19,7 @@ cg_save(cg, file = NULL, ..., verbose = TRUE)
 INVISIBLE, a saved file
 }
 \description{
-A helper function to save a chronogram
+\code{cg_save()} saves a chronogram without duplicating data on disk.
 }
 \examples{
 \dontrun{

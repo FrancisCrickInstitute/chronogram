@@ -5,7 +5,7 @@
 \title{Calculate and assign flags based on infection history}
 \usage{
 cg_annotate_antigenic_history(
-  x,
+  cg,
   episode_number = episode_number,
   dose_number = dose_number,
   episode_variant_summarised = episode_variant_summarised,
@@ -13,7 +13,7 @@ cg_annotate_antigenic_history(
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{episode_number}{a character vector to identify the
 episode_number column. Default is "episode_number".}

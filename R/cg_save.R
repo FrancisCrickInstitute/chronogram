@@ -1,4 +1,6 @@
-#' A helper function to save a chronogram
+#' Save a chronogram
+#'
+#'`cg_save()` saves a chronogram without duplicating data on disk.
 #'
 #' @param cg a chronogram object (class cg_tbl)
 #' @param file quoted filename. Include an extension.

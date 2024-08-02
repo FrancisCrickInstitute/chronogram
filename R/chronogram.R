@@ -1,5 +1,4 @@
-#' A helper function to build a chronogram, from a chronogram_skeleton and
-#' metadata
+#' Build a chronogram, from a chronogram_skeleton and metadata
 #'
 #' @param cg_skeleton a cg_skeleton object
 #' @param metadata a tibble containing metadata and ID column name (and

@@ -4,19 +4,28 @@ template:
 
 
 reference:
-- title: Assembly
-  desc:  Assemble a chronogram, or add new data.
+- title: Assemble a chronogram & add data
+  desc:
 - contents:
   - cg_assemble
   - starts_with("cg_add")
 
-- title: Annotate
-  desc: Annotate a chronogram
+- title: Annotate a chronogram
+  desc:
+- subtitle: Episode annotation
+  desc: Find episodes from results (tests, symptoms) on different calendar days
 - contents:
-  - starts_with("cg_annot")
+  - cg_annotate_episodes_find
+  - cg_annotate_episodes_find_seroconversion
+  - cg_annotate_episodes_fill
+- subtitle: Episode counting
+- contents:
+  - cg_annotate_episodes_count
+  - cg_annotate_vaccines_count
+  - cg_annotate_exposures_count
+  - cg_annotate_antigenic_history
 
-- title: Filter, window & select
-  desc: Sub-cohort a chronogram
+- title: Filter, window & select a chronogram
 - contents:
   - starts_with("cg_window")
   - starts_with("cg_select")

@@ -6,7 +6,7 @@
 #'  biologically an infection - the difference between the two is
 #'  concomittant symptoms, or diagnostic testing).
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param episode_number the column containing infection episode
 #'  numbers. `cg_annotate_episodes_find()` Default is episode_number.
 #' @param N_seroconversion_episode_number the column name for resulting
@@ -18,7 +18,7 @@
 #' @param exposure_number the column name to return the cumulative
 #'  counter. Default is "exposure_number".
 #'
-#' @return x a chronogram, with episode numbers annotated
+#' @return a chronogram, with episode numbers annotated
 #' @seealso [chronogram::cg_annotate_episodes_find()]
 #' @export
 #'
@@ -65,17 +65,17 @@
 #' cg.final <- cg_annotate_exposures_count(cg)
 #' }
 cg_annotate_exposures_count <- function(
-    x,
+    cg,
     episode_number = episode_number,
     N_seroconversion_episode_number = N_seroconversion_episode_number,
     dose_number = dose_number,
     exposure_number = exposure_number) {
-  calendar_date <- attributes(x)$col_calendar_date
-  ids_column_name <- attributes(x)$col_ids
+  calendar_date <- attributes(cg)$col_calendar_date
+  ids_column_name <- attributes(cg)$col_ids
 
   ## remove the "star" from doses
   vaccine_number <- NULL ## stop visible binding note
-  xx <- x %>%
+  xx <- cg %>%
     dplyr::mutate(vaccine_number = as.numeric(gsub("star", "", {{ dose_number }})))
 
 
@@ -104,11 +104,11 @@ cg_annotate_exposures_count <- function(
       {{ exposure_number }}
     ))
 
-  x <- x %>%
+  cg <- cg %>%
     dplyr::left_join(y, by = c(
       {{ ids_column_name }},
       {{ calendar_date }}
     ))
 
-  return(x)
+  return(cg)
 }

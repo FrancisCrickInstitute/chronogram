@@ -14,7 +14,7 @@ new_tbl2chronogram(x, ..., class = character())
 \item{class}{a character vector of classes}
 }
 \description{
-A wrapper function to coerce a tibble to a chronogram. This
+Coerce a tibble to a chronogram. This
 function handles grouped chronograms. See
 \code{chronogram::chronogram()} for a constructor.
 }

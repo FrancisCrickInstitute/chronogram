@@ -1,7 +1,8 @@
-#' Take a window of dates from a chronogram: with respect to visits.
+#' Pick a window of dates from a chronogram: with respect to visits.
 #'
-#' This is a special case of cg_window_by_episode(, episode_handling =
-#' "all")
+#' This is a special case of `cg_window_by_episode()`. It treats the
+#' visit column as an episode, with the argument `episode_handling
+#' = "all"`.
 #'
 #' @param cg a chronogram
 #' @param visit_col a character vector to use to label the column with

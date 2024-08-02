@@ -5,7 +5,7 @@
 \title{Find infections per individual}
 \usage{
 cg_annotate_episodes_find(
-  x,
+  cg,
   infection_cols,
   infection_present,
   episode_days = 14,
@@ -15,7 +15,7 @@ cg_annotate_episodes_find(
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{infection_cols}{Columns that might contain information
 regarding infection status, such as symptoms, LFT results, PCR
@@ -24,18 +24,17 @@ results, or sequencing results.}
 \item{infection_present}{Strings used in each of \code{infection_cols}
 to indicate the presence of infection.}
 
-\item{episode_days}{The number of days within which to consider
-events a single episode. For example, is symptom onset 10d after
-a positive PCR test a single episode? Default is 14d.}
+\item{episode_days}{The number of days to scan forwards and
+backwards in time to consider events a single episode. For
+example, is symptom onset \verb{10d} after a positive PCR test a
+single episode? The default is \verb{14d}.}
 
 \item{episode_numbers_col}{The column name to use for episode
 numbers. Default is \code{episode_number} (unquoted).}
 
-\item{episode_start_col}{The column names to store the episode
-start and end dates (defaults: episode_start and episode_end, both unquoted).}
-
-\item{episode_end_col}{The column names to store the episode start
-and end dates (defaults: episode_start and episode_end, both unquoted).}
+\item{episode_start_col, episode_end_col}{The column names to store
+the episode start and end dates (defaults: \code{episode_start} and
+\code{episode_end}, both unquoted).}
 }
 \value{
 x a chronogram, with episode numbers annotated
@@ -44,9 +43,9 @@ x a chronogram, with episode numbers annotated
 Find infections per individual
 }
 \examples{
-\dontrun{
+## Example 1: A small study ##-------------------------------------
 data(built_smallstudy)
-small_study <- built_smallstudy$chronogram
+cg_small <- built_smallstudy$chronogram
 
 ## Simulate some infection data ##
 infections_to_add <- tibble::tribble(
@@ -62,35 +61,37 @@ infections_to_add$calendar_date <- lubridate::dmy(
   infections_to_add$calendar_date
 )
 ## add to chronogram
-small_study <- cg_add_experiment(small_study, infections_to_add)
+cg_small <- cg_add_experiment(cg_small, infections_to_add)
 
 ## now infection finding ##
-small_study_inf <- cg_annotate_episodes_find(small_study,
+cg_small_inf <- cg_annotate_episodes_find(cg_small,
   infection_cols = c("LFT", "PCR", "symptoms"),
   infection_present = c("pos", "Post", "^severe")
 )
-summary(small_study_inf$episode_number)
+summary(cg_small_inf$episode_number)
 
-## exact text matching ##
-test2 <- cg_annotate_episodes_find(small_study,
+## exact text matching ##------------------------------------------
+test2 <- cg_annotate_episodes_find(cg_small_inf,
   infection_cols = c("LFT", "PCR", "symptoms"),
   infection_present = c("Pos", "Post", "^mild")
 )
 summary(test2$episode_number)
 
 ## empty strings will error (as they otherwise match everything) ##
-test3a <- cg_annotate_episodes_find(small_study,
+test3a <- 
+try(
+cg_annotate_episodes_find(cg_small_inf,
   infection_cols = c("LFT", "PCR", "symptoms"),
   infection_present = c("pos", "Post", "")
 )
-## a 'random' string will not error ##
-test3b <- cg_annotate_episodes_find(small_study,
+)
+## a 'random' string will not error ##-----------------------------
+test3b <- try(
+cg_annotate_episodes_find(cg_small_inf,
   infection_cols = c("LFT", "PCR", "symptoms"),
   infection_present = c("pos", "Post", "a")
 )
-
-summary(test2$episode_number)
-}
+)
 }
 \seealso{
 \code{\link[=cg_annotate_episodes_find_seroconversion]{cg_annotate_episodes_find_seroconversion()}}

@@ -1,5 +1,5 @@
-#' A helper function to build the chronogram skeleton, a two column index, for
-#' chronogram
+#' Build a chronogram skeleton, a two column index of IDs and calendar
+#' dates, a scaffold for a chronogram
 #'
 #' @param ids a vector of study, or participant IDs.
 #' @param col_ids to label the ID
