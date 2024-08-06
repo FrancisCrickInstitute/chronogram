@@ -1,8 +1,9 @@
 #' Add treatment data to a chronogram
 #'
-#' @param cg a chronogram object (class cg_tbl)
-#' @param treatment a tibble containing treatment data. The dates
-#'   and IDs columns in cg must be present in `experiment`.
+#' @param cg a chronogram object (`class cg_tbl`)
+#' @param treatment a `tibble::tibble()` containing treatment data.
+#'   The dates and IDs columns in `cg` must be present in
+#'   `experiment`.
 #'
 #' @return A chronogram
 #' @seealso [chronogram::cg_add_experiment()]

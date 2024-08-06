@@ -16,7 +16,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
 #'
@@ -27,7 +26,6 @@
 #'   vaccine_date_stem = date_dose,
 #'   intermediate_days = 7
 #' )
-#' }
 #'
 cg_annotate_vaccines_count <- function(
     cg,

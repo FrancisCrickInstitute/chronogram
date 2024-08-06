@@ -36,16 +36,24 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
+#' ##Example 1: Small study##-----------------------------------------
+#' library(dplyr) # for dplyr::filter()
+#' 
 #' data("built_smallstudy")
 #'
 #' cg <- built_smallstudy$chronogram
-#' cg_annotate_episodes_find_seroconversion(cg,
+#' cg <- cg_annotate_episodes_find_seroconversion(cg,
 #'   serum_N_titre =
 #'     "serum_Ab_N"
 #' )
-#' }
+#' 
+#' ## ID==1 seroconverts to N ##
+#' ## Their first N seroconversion has dates associated ##
+#' ## Their later N positive tests are flagged without dates ##
+#' cg %>% 
+#' filter(N_seroconversion_episode_number == 1) %>% 
+#' cg_select(contains("episode"))
+#'##-------------------------------------------------------------------
 cg_annotate_episodes_find_seroconversion <- function(
     cg,
     serum_N_titre = NULL,

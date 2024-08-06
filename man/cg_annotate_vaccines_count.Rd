@@ -36,7 +36,6 @@ An annotated chronogram (class cg_tbl).
 Calculate and assign flags based on vaccine history
 }
 \examples{
-\dontrun{
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
 
@@ -47,6 +46,5 @@ cg <- cg_annotate_vaccines_count(cg,
   vaccine_date_stem = date_dose,
   intermediate_days = 7
 )
-}
 
 }

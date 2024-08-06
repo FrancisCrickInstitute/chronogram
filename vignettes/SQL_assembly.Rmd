@@ -16,18 +16,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(chronogram)
-library(dplyr)
-library(dbplyr)
-library(DBI)
-library(RSQLite)
-library(ggplot2)
-```
-
 ## Introduction
 
-Here we build a chronogram from an SQL database. We use an example derived from the de-identified PITCH dataset available here, under a CC-BY-4.0 licence: <https://data.mendeley.com/datasets/fyp26zjgmj/1> Published: 3 November 2021, DOI: 10.17632/fyp26zjgmj.1. Contributors: Rebecca Payne, Susan Hopkins, Victoria Hall, Christina Dold, Christopher Duncan, Alex Richter, Miles Carroll, Gavin Screaton, Thushan de Silva, Lance Turtle, Paul Klenerman, Susanna Dunachie, PITCH Consortium authors. The dataset supports Payne et al. **Immunogenicity of standard and extended dosing intervals of BNT162b2 mRNA vaccine** *Cell* 2021
+Here we build a chronogram from an SQL database. We use an example derived from the de-identified PITCH dataset available here, under a CC-BY-4.0 licence: <https://data.mendeley.com/datasets/fyp26zjgmj/1> Published: 3 November 2021, DOI: 10.17632/fyp26zjgmj.1
+
+Contributors: Rebecca Payne, Susan Hopkins, Victoria Hall, Christina Dold, Christopher Duncan, Alex Richter, Miles Carroll, Gavin Screaton, Thushan de Silva, Lance Turtle, Paul Klenerman, Susanna Dunachie, PITCH Consortium authors. The dataset supports Payne *et al.* **Immunogenicity of standard and extended dosing intervals of BNT162b2 mRNA vaccine** *Cell* 2021
 
 > **NOTE**
 >
@@ -38,6 +31,15 @@ Here we build a chronogram from an SQL database. We use an example derived from 
 > ii. not all of the public dataset has been used in this example (some assays not included).
 >
 > If your motivation is to re-analyse Payne et al. for scientific reasons, do not use the example dataset in this package. Instead consult the de-identified Mendeley data (DOI: 10.17632/fyp26zjgmj.1), or the Cell manuscript's data and code availability statement.
+
+```{r setup}
+library(chronogram)
+library(dplyr)
+library(dbplyr)
+library(DBI)
+library(RSQLite)
+library(ggplot2)
+```
 
 ## Approach
 
@@ -205,19 +207,12 @@ MSD_data <- MSD_data %>%
 Now we have the relevant objects in memory and cleaned, we can assemble a chronogram.
 
 ```{r}
-pitch_chronogram_skeleton <- chronogram_skeleton(
-  ids = studyId,
+pitch_chronogram <- cg_assemble(
   start_date = start_date,
   end_date = end_date,
-  col_ids = ID,
-  col_calendar_date = calendar_date
-)
-```
-
-```{r}
-pitch_chronogram <- chronogram(
-  pitch_chronogram_skeleton, metadata
-)
+  metadata =  metadata,
+  metadata_ids_col = ID,
+  calendar_date_col = calendar_date)
 ```
 
 ```{r}

@@ -16,7 +16,6 @@ re-loaded chronogram
 Load into memory a chronogram previously written to disk by \code{cg_save()}.
 }
 \examples{
-\dontrun{
 data("built_smallstudy")
 cg_orig <- built_smallstudy$chronogram
 ff <- tempfile()
@@ -25,7 +24,7 @@ cg_new <- cg_load(ff)
 
 summary(cg_new == cg_orig)
 identical(cg_new, cg_orig)
-}
+
 }
 \seealso{
 \code{\link[=cg_save]{cg_save()}}

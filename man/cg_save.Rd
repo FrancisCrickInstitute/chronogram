@@ -7,22 +7,21 @@
 cg_save(cg, file = NULL, ..., verbose = TRUE)
 }
 \arguments{
-\item{cg}{a chronogram object (class cg_tbl)}
+\item{cg}{a chronogram object (\verb{class cg_tbl})}
 
 \item{file}{quoted filename. Include an extension.}
 
 \item{...}{passed to \code{\link[base:save]{base::save()}}. For example, \code{compress}}
 
-\item{verbose}{logical. Default TRUE. Display messages?}
+\item{verbose}{logical. Default \code{TRUE}. Display messages?}
 }
 \value{
 INVISIBLE, a saved file
 }
 \description{
-\code{cg_save()} saves a chronogram without duplicating data on disk.
+Write a chronogram to disk without duplicating metadata.
 }
 \examples{
-\dontrun{
 data("built_smallstudy")
 cg_orig <- built_smallstudy$chronogram
 ff <- tempfile()
@@ -31,7 +30,7 @@ cg_new <- cg_load(ff)
 
 summary(cg_new == cg_orig)
 identical(cg_new, cg_orig)
-}
+
 }
 \seealso{
 \code{\link[=cg_load]{cg_load()}}

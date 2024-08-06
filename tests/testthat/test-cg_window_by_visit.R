@@ -28,7 +28,7 @@ small_study_inf <- cg_annotate_episodes_find(
 test_that("cg_window_by_visit() outputs class chronogram", {
   expect_true(
     cg_window_by_visit(small_study_inf,
-      visit_col = "episode_number",
+      visit_col = episode_number,
       preceding_days = 7,
       following_days = 7
     ) %>%
@@ -39,7 +39,7 @@ test_that("cg_window_by_visit() outputs class chronogram", {
 test_that("cg_window_by_visit() outputs attributes(cg)$windowed == TRUE", {
   expect_true({
     a <- cg_window_by_visit(small_study_inf,
-      visit_col = "episode_number",
+      visit_col = episode_number,
       preceding_days = 7,
       following_days = 7
     )
@@ -48,10 +48,10 @@ test_that("cg_window_by_visit() outputs attributes(cg)$windowed == TRUE", {
 })
 
 test_that("cg_window_by_visit()
-          outputs the same format with less rows", {
+          outputs the same format with fewer rows", {
   expect_equal(
     colnames(cg_window_by_visit(small_study_inf,
-      visit_col = "episode_number",
+      visit_col = episode_number,
       preceding_days = 7,
       following_days = 7
     )),
@@ -61,7 +61,7 @@ test_that("cg_window_by_visit()
     nrow(
       cg_window_by_visit(
         small_study_inf,
-        visit_col = "episode_number",
+        visit_col = episode_number,
         preceding_days = 7,
         following_days = 7
       )

@@ -14,7 +14,7 @@
 #' @param link_alpha alpha for `geom_line()`
 #' @param ... passed to `aes()`
 #'
-#' @description Function to create a `ggplot2` object, plotting a
+#' @description Create a `ggplot2` object, plotting a
 #'   user-defined y axis over time.
 #'
 #'   `ggplot2` objects retain the entirety of the provided dataset.
@@ -28,7 +28,10 @@
 #'
 #'
 #' @examples
-#' \dontrun{
+#' 
+#' library(ggplot2)
+#' library(patchwork)
+#' 
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
 #'
@@ -39,11 +42,10 @@
 #' p2 <- cg_plot(cg,
 #'   y_values = serum_Ab_S
 #' )
-#' library(patchwork)
+#' 
 #' p2 / p1
 #'
 #' (p2 + scale_y_log10()) / p1
-#' }
 #'
 #' @export
 

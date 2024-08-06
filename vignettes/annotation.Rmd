@@ -81,7 +81,7 @@ ii. `cg_annotate_episodes_fill()` allow filling of specific columns for each epi
 
 iii. count the number of episodes (cf `cg_annotate_vaccines_count()`)
 
-#### 3. For exposures, use `cg_exposure_count()` and `cg_antigenic_history()`
+#### 3. For exposures, use `cg_annotate_exposure_count()` and `cg_annotate_antigenic_history()`
 
 Exposures can be either from vaccine doses or from infection episodes. This function provides a cumulative counter for each individual's personal history.
 
@@ -285,9 +285,9 @@ cg4 %>%
 
 ## 3. Annotating exposures
 
-Annotation of exposures is the cumulative sum of infection + vaccination histories. These annotations are provided by `cg_exposure_count()` and `cg_antigenic_history()`.
+Annotation of exposures is the cumulative sum of infection + vaccination histories. These annotations are provided by `cg_annotate_exposure_count()` and `cg_annotate_antigenic_history()`.
 
-`cg_exposure_count()` takes the column names for episode number, dose number and seroconversion episode numbers, to calculate a per day, per individual running count of exposures.
+`cg_annotate_exposure_count()` takes the column names for episode number, dose number and seroconversion episode numbers, to calculate a per day, per individual running count of exposures.
 
 `cg_annotate_antigenic_history()` provides a character vector of length 1 to summarise each person's course over the study.
 

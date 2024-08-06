@@ -9,7 +9,9 @@
 #'  rlang::enquo(an_unquoted_string)
 #' @param ids_col provided as rlang::enquo(an_unquoted_string)
 #'
-#' @return x a tibble with attributes to identify `calendar_date_col` and `ids_col`.
+#' @return a tibble with attributes to identify `calendar_date_col` and `ids_col`.
+#'
+#' @noRd
 #'
 #' @seealso [chronogram::chronogram_skeleton()]
 #'

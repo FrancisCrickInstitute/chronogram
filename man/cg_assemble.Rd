@@ -21,7 +21,8 @@ cg_assemble(
 \item{end_date}{the end date, in a format recognised by
 \code{lubridate::dmy()}}
 
-\item{calendar_date_col}{user-defined column name for dates  (unquoted).}
+\item{calendar_date_col}{user-defined column name for dates
+(unquoted).}
 
 \item{metadata}{a tibble containing metadata}
 
@@ -37,18 +38,23 @@ See \code{cg_add_experiment()} for details. Ignored if not provided.}
 a chronogram (\verb{class cg_tbl})
 }
 \description{
-\code{cg_assemble()} assembles a chronogram from 4 pieces
-of input data: start date, end date, metadata, and an optional
-list of experiment data. A verbose messsaging option (on by
-default) is provided to help troubleshoot input.
+\code{cg_assemble()} assembles a chronogram from 4 pieces of
+input data:
+\itemize{
+\item start date
+\item end date
+\item metadata
+\item and an optional list of experiment data.
+}
+
+A verbose messsaging option (on by default) is provided to help
+troubleshoot input.
 
 Extra experimental can be added later with \code{cg_add_experiment()}.
 
-Verbose messaging provides troubleshooting advice.
-
-For finer grain troubleshooting, run \code{chronogram_skeleton()} and
+For fine grain troubleshooting, run \code{chronogram_skeleton()} and
 \code{chronogram()} sequentially (these are called in turn by
-\code{cg_assemble()}). In all other circumstnances, \code{cg_assemble()} is
+\code{cg_assemble()}). In all other circumstances, \code{cg_assemble()} is
 the encouraged method.
 }
 \examples{
@@ -103,5 +109,6 @@ cg <- cg_assemble(
 ##------------------------------------------------------------------
 }
 \seealso{
-\code{\link[=cg_add_experiment]{cg_add_experiment()}} \code{\link[=chronogram_skeleton]{chronogram_skeleton()}} \code{\link[=chronogram]{chronogram()}}
+\code{\link[=cg_add_experiment]{cg_add_experiment()}} \code{\link[=chronogram_skeleton]{chronogram_skeleton()}}
+\code{\link[=chronogram]{chronogram()}} \code{vignette("SQL_assembly", package = "chronogram")}
 }

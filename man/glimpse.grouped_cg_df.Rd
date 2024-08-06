@@ -18,9 +18,11 @@ print to console
 Glimpse S3 method for grouped chronogram objects (class grouped_cg_df)
 }
 \examples{
-\dontrun{
+library(dplyr)
+
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
+cg <- cg \%>\% group_by(elig_study_id)
 glimpse(cg)
-}
+
 }

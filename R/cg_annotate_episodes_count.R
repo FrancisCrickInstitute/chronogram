@@ -17,9 +17,33 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' cg <- cg_annotate_episodes_count(cg)
-#' }
+#' library(dplyr)
+#' 
+#' data("built_smallstudy")
+#' cg <- built_smallstudy$chronogram
+#' 
+#' ## add infections to chronogram
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
+#' )
+#' 
+#' ## annotate infections 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
+#' )
+#' 
+#' ## count infections
+#' cg <- cg_annotate_episodes_count(
+#' cg)
+#'
+#' ## pull number of infections each individual has during study ##
+#' cg %>% 
+#'   dplyr::group_by(elig_study_id) %>% 
+#'   dplyr::slice_head() %>% 
+#'   dplyr::select(elig_study_id, count_col)
 #'
 cg_annotate_episodes_count <- function(cg,
                                        episode_number = episode_number,

@@ -21,11 +21,10 @@ print to console
 Glimpse S3 method for metadata from chronogram objects (class cg_tbl)
 }
 \examples{
-\dontrun{
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
 glimpse_metadata(cg)
-}
+
 }
 \seealso{
 \code{\link[=glimpse]{glimpse()}}

@@ -1,10 +1,10 @@
 #' Save a chronogram
 #'
-#'`cg_save()` saves a chronogram without duplicating data on disk.
+#' Write a chronogram to disk without duplicating metadata.
 #'
-#' @param cg a chronogram object (class cg_tbl)
+#' @param cg a chronogram object (`class cg_tbl`)
 #' @param file quoted filename. Include an extension.
-#' @param verbose logical. Default TRUE. Display messages?
+#' @param verbose logical. Default `TRUE`. Display messages?
 #' @param ... passed to [base::save()]. For example, `compress`
 #'
 #' @return INVISIBLE, a saved file
@@ -13,7 +13,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' data("built_smallstudy")
 #' cg_orig <- built_smallstudy$chronogram
 #' ff <- tempfile()
@@ -22,7 +21,7 @@
 #'
 #' summary(cg_new == cg_orig)
 #' identical(cg_new, cg_orig)
-#' }
+#' 
 cg_save <- function(cg,
                     file = NULL, ...,
                     verbose = TRUE) {

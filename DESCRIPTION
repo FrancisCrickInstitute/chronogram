@@ -43,7 +43,12 @@ Suggests:
     rmarkdown,
     knitr,
     testthat (>= 3.0.0),
-    roxygen2
+    roxygen2,
+    broom,
+    ggrepel,
+    rstatix,
+    survival,
+    survminer
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 LazyData: true

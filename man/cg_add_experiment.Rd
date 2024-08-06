@@ -7,10 +7,10 @@
 cg_add_experiment(cg, experiment)
 }
 \arguments{
-\item{cg}{a chronogram object (class cg_tbl)}
+\item{cg}{a chronogram object (\verb{class cg_tbl})}
 
-\item{experiment}{a tibble containing experimental data. The dates
-and IDs columns in cg must be present in \code{experiment}.}
+\item{experiment}{a \code{tibble::tibble()} containing experimental data. The dates
+and IDs columns in \code{cg} must be present in \code{experiment}.}
 }
 \value{
 A chronogram

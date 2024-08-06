@@ -7,7 +7,7 @@ start.}
 \usage{
 cg_window_by_episode(
   cg,
-  episode_numbers_col = "episode_number",
+  episode_numbers_col = episode_number,
   episode_handling = c("first", "last", "all"),
   preceding_days,
   following_days
@@ -34,12 +34,31 @@ Pick a window of dates from a chronogram: with respect to episode
 start.
 }
 \examples{
-\dontrun{
 
-SevenDaysPrePostFirstEpisode <- cg_window_by_episode(
-  annotatedChronogram, "first", 7, 7
+data("built_smallstudy")
+cg <- built_smallstudy$chronogram
+
+## add infections to chronogram
+cg <- cg_add_experiment(
+  cg,
+  built_smallstudy$infections_to_add
 )
-}
+
+## annotate infections 
+cg <- cg_annotate_episodes_find(
+   cg,
+   infection_cols = c("LFT", "PCR", "symptoms"),
+   infection_present = c("pos", "Post", "^severe")
+)
+
+SevenDaysAfterFirstEpisode <- cg_window_by_episode(
+  cg,
+  episode_numbers_col = episode_number, 
+  preceding_days = 0, 
+  following_days = 7,
+  episode_handling = "first"
+)
+
 
 }
 \seealso{

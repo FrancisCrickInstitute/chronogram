@@ -1,60 +1,64 @@
-#' Assemble a chronogram
+#'Assemble a chronogram
 #'
-#' @description `cg_assemble()` assembles a chronogram from 4 pieces
-#'   of input data: start date, end date, metadata, and an optional
-#'   list of experiment data. A verbose messsaging option (on by
-#'   default) is provided to help troubleshoot input.
+#'@description `cg_assemble()` assembles a chronogram from 4 pieces of
+#'  input data:
+#'   - start date
+#'   - end date
+#'   - metadata
+#'   - and an optional list of experiment data.
 #'   
-#'   Extra experimental can be added later with `cg_add_experiment()`.
-#'   
-#'   Verbose messaging provides troubleshooting advice.
-#'   
-#'   For finer grain troubleshooting, run `chronogram_skeleton()` and
-#'   `chronogram()` sequentially (these are called in turn by
-#'   `cg_assemble()`). In all other circumstnances, `cg_assemble()` is
-#'   the encouraged method.
+#'  A verbose messsaging option (on by default) is provided to help
+#'  troubleshoot input.
 #'
-#' @param metadata a tibble containing metadata
-#' @param metadata_ids_col the (unquoted) column name for participant
-#'   IDs in metadata tibble. No default provided.
-#' @param calendar_date_col user-defined column name for dates  (unquoted).
-#' @param experiment_data_list a list of tibbles of experiment data.
-#'   See `cg_add_experiment()` for details. Ignored if not provided.
-#' @param verbose Default TRUE. Show progress messages?
+#'  Extra experimental can be added later with `cg_add_experiment()`.
 #'
-#' @inheritParams chronogram_skeleton
-#' @inheritParams chronogram
+#'  For fine grain troubleshooting, run `chronogram_skeleton()` and
+#'  `chronogram()` sequentially (these are called in turn by
+#'  `cg_assemble()`). In all other circumstances, `cg_assemble()` is
+#'  the encouraged method.
 #'
-#' @return a chronogram (`class cg_tbl`)
+#'@param metadata a tibble containing metadata
+#'@param metadata_ids_col the (unquoted) column name for participant
+#'  IDs in metadata tibble. No default provided.
+#'@param calendar_date_col user-defined column name for dates
+#'  (unquoted).
+#'@param experiment_data_list a list of tibbles of experiment data.
+#'  See `cg_add_experiment()` for details. Ignored if not provided.
+#'@param verbose Default TRUE. Show progress messages?
 #'
-#' @seealso 
-#'  [cg_add_experiment()] [chronogram_skeleton()] [chronogram()]
-#' @export
+#'@inheritParams chronogram_skeleton
+#'@inheritParams chronogram
+#'
+#'@return a chronogram (`class cg_tbl`)
+#'
+#'@seealso [cg_add_experiment()] [chronogram_skeleton()]
+#'[chronogram()] \code{vignette("SQL_assembly", package = "chronogram")}
+#'@export
 #'
 #' @examples
 #' ## Example 1: A small study ##-------------------------------------
 #' data(smallstudy)
-#' 
+#'
 #' ## Setup ##
 #' start <- "01012020"
 #' end <- "10102021"
 #' meta <- smallstudy$small_study_metadata ## age, sex, vaccine dates
 #' ab <- smallstudy$small_study_Ab ## antibody response data
-#' 
+#'
 #' ## Assembly ##
 #' cg_small <- cg_assemble(
-#' 
+#'
 #' ## start and end date ##
 #' start_date = start,
 #' end_date = end,
-#' 
+#'
 #' ## metadata ##
 #' metadata = meta,
 #' metadata_ids_col = elig_study_id,
-#' 
+#'
 #' ## experiment data ##
 #' experiment_data_list = list(ab),
-#' 
+#'
 #' ## set the date column name ##
 #' calendar_date_col = calendar_date
 #' )
@@ -89,6 +93,7 @@ cg_assemble <- function(
     metadata_ids_col,
     experiment_data_list = NULL,
     verbose = TRUE) {
+  
   ## quote NSE variables ##
   quoted_calendar_date_col <-
     rlang::as_label(rlang::enquo(calendar_date_col))
@@ -101,6 +106,14 @@ cg_assemble <- function(
     message("Checking input parameters...")
   }
 
+  if(missing(calendar_date_col)) {
+    stop("calendar_date_col must be provided.")
+  }
+  
+  if(missing(metadata_ids_col)) {
+    stop("metadata_ids_col must be provided.")
+  }
+  
   ## check start_date ##
   if (verbose) {
     message(paste("-- checking start date", start_date))

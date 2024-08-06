@@ -10,15 +10,26 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' SevenDaysPrePostDose3 <- cg_window_by_metadata(
-#'   annotatedChronogram, "date_dose_3", 7, 7
+#' data(pitch_chronogram)
+#' 
+#' SevenDaysPrePostDose2 <- cg_window_by_metadata(
+#'   pitch_chronogram, dose_2_date, 7, 7
 #' )
-#' SevenDaysPrePostDose3 <- cg_select_visit(
-#'   SevenDaysPrePostDose3, "earliest"
+#' 
+#' SevenDaysPrePostDose2
+#' 
+#' ## every visit has the assay `Cov_2S_MSD`
+#' ## therefore use this column to indicate a study visit 
+#' SevenDaysPrePostDose2_visits <- cg_select_visit(
+#'   SevenDaysPrePostDose2, Cov_2S_MSD, "earliest"
 #' )
-#' }
-#'
+#' 
+#' SevenDaysPrePostDose2_visits 
+#' 
+#' ## all days without visits are now dropped. Compare:
+#' nrow(SevenDaysPrePostDose2)
+#' nrow(SevenDaysPrePostDose2_visits)
+#' 
 cg_select_visit <- function(cg,
                             visit_col = NULL,
                             visit = c("earliest", "latest")) {

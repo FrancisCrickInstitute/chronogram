@@ -17,9 +17,9 @@ cg_annotate_episodes_find(
 \arguments{
 \item{cg}{a chronogram}
 
-\item{infection_cols}{Columns that might contain information
-regarding infection status, such as symptoms, LFT results, PCR
-results, or sequencing results.}
+\item{infection_cols}{A vector of column names that contain
+information regarding infection status, such as symptoms, LFT
+results, PCR results, or sequencing results.}
 
 \item{infection_present}{Strings used in each of \code{infection_cols}
 to indicate the presence of infection.}
@@ -46,21 +46,9 @@ Find infections per individual
 ## Example 1: A small study ##-------------------------------------
 data(built_smallstudy)
 cg_small <- built_smallstudy$chronogram
+infections_to_add <- built_smallstudy$infections_to_add
 
-## Simulate some infection data ##
-infections_to_add <- tibble::tribble(
-  ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
-  "01102020", "1", "pos", NA, NA,
-  "11102020", "1", "pos", NA, "severe",
-  "11042021", "2", "pos", NA, "mild",
-  "11082021", "2", "pos", "Pos", "mild",
-  "11112021", "2", "pos", "Pos", NA
-)
-## Make calendar_date a date ##
-infections_to_add$calendar_date <- lubridate::dmy(
-  infections_to_add$calendar_date
-)
-## add to chronogram
+## add infection data to to chronogram ##
 cg_small <- cg_add_experiment(cg_small, infections_to_add)
 
 ## now infection finding ##
@@ -68,6 +56,7 @@ cg_small_inf <- cg_annotate_episodes_find(cg_small,
   infection_cols = c("LFT", "PCR", "symptoms"),
   infection_present = c("pos", "Post", "^severe")
 )
+
 summary(cg_small_inf$episode_number)
 
 ## exact text matching ##------------------------------------------
@@ -75,6 +64,7 @@ test2 <- cg_annotate_episodes_find(cg_small_inf,
   infection_cols = c("LFT", "PCR", "symptoms"),
   infection_present = c("Pos", "Post", "^mild")
 )
+
 summary(test2$episode_number)
 
 ## empty strings will error (as they otherwise match everything) ##

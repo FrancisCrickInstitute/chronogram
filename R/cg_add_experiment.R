@@ -1,8 +1,8 @@
 #' Add experimental data to a chronogram
 #'
-#' @param cg a chronogram object (class cg_tbl)
-#' @param experiment a tibble containing experimental data. The dates
-#'   and IDs columns in cg must be present in `experiment`.
+#' @param cg a chronogram object (`class cg_tbl`)
+#' @param experiment a `tibble::tibble()` containing experimental data. The dates
+#'   and IDs columns in `cg` must be present in `experiment`.
 #'
 #' @return A chronogram
 #' @seealso [chronogram::cg_assemble()],

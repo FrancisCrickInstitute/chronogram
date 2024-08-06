@@ -7,10 +7,11 @@
 cg_add_treatment(cg, treatment)
 }
 \arguments{
-\item{cg}{a chronogram object (class cg_tbl)}
+\item{cg}{a chronogram object (\verb{class cg_tbl})}
 
-\item{treatment}{a tibble containing treatment data. The dates
-and IDs columns in cg must be present in \code{experiment}.}
+\item{treatment}{a \code{tibble::tibble()} containing treatment data.
+The dates and IDs columns in \code{cg} must be present in
+\code{experiment}.}
 }
 \value{
 A chronogram

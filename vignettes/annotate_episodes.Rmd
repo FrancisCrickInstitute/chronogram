@@ -100,7 +100,7 @@ small_study_inf %>% arrange(PCR)
 
 The episode definition will depend on the study's objectives, design and hypotheses. For example, a study with weekly nasopharyngeal PCRs may wish to use only PCR tests to define an episode, so as to include asymptomatic infections. In this vignette, we assume the study's definition is to call any positive LFT or PCR or severe symptoms (even if not LFT/PCR +ve) to be counted as an episode. This is illustrative: your study will need its own solution. Chronogram provides generalised code, to allow the code implementation of an episode definition.
 
-In the following code chunk, we're identifying episodes of infection baesd on specific strings within specified columns. In this dataset, we look for "pos" in column `LFT`, "Post" in column `PCR` and "^severe" in column `symptoms`. The presence of any one of those triggers an infection_episode being labelled. The function  `cg_annotate_episodes_find()` searches backwards and forwards to scoop up different calendar dates into single episodes, as it is common for symptoms to precede test positivity (you can tweak this with `episode_days`).
+In the following code chunk, we're identifying episodes of infection baesd on specific strings within specified columns. In this dataset, we look for "pos" in column `LFT`, "Post" in column `PCR` and "^severe" in column `symptoms`. The presence of any one of those triggers an infection_episode being labelled. `cg_annotate_episodes_find()` searches backwards and forwards to scoop up different calendar dates into single episodes, as it is common for symptoms to precede test positivity (you can tweak this with `episode_days`).
 
 ```{r}
 small_study_inf <- cg_annotate_episodes_find(small_study_inf,

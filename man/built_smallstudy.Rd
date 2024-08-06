@@ -18,7 +18,13 @@ A list of 2 components
 built_smallstudy
 }
 \description{
-A fictional covid-19 vaccine study of 3 individuals
+A fictional covid-19 vaccine study of 3 individuals. Provided a
+vector of participant IDs, a tibble of metadata, and a tibble of
+experimental data.
+}
+\details{
+The data are identical to \code{smallstudy}. \code{cg_assemble()} has been
+run to shorten examples.
 }
 \examples{
 data("built_smallstudy")

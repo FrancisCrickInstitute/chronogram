@@ -15,11 +15,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' SevenDaysPrePostDose3 <- cg_window_by_metadata(
-#'   annotatedChronogram, "date_dose_3", 7, 7
+#' data(pitch_chronogram)
+#' 
+#' pitch_chronogram
+#' 
+#' SevenDaysPrePostDose2 <- cg_window_by_metadata(
+#'   pitch_chronogram, dose_2_date, 7, 7
 #' )
-#' }
+#' 
+#' SevenDaysPrePostDose2
 #'
 cg_window_by_metadata <- function(cg,
                                   windowing_date_col,
@@ -31,6 +35,8 @@ cg_window_by_metadata <- function(cg,
 
 
   y <- cg %>%
+    dplyr::group_by(
+      .data[[{{ ids_column_name }}]]) %>%
     dplyr::filter(
       .data[[{{ calendar_date }}]] >
         {{ windowing_date_col }} - preceding_days
@@ -38,7 +44,19 @@ cg_window_by_metadata <- function(cg,
     dplyr::filter(
       .data[[{{ calendar_date }}]] <
         {{ windowing_date_col }} + (following_days + 1)
-    )
+    ) %>%
+    dplyr::ungroup() %>%
+    
+    ## if the anchor dates are very close (or windows very large),
+    ## the above can duplicate rows, when called by
+    ## cg_window_by_episode(episode_handling == "all")
+    ## ^ this performs a left_join ahead of sending to cg_window_by_metadata
+    dplyr::group_by(
+      .data[[{{ ids_column_name }}]],
+      .data[[{{ calendar_date }}]]
+      ) %>%
+    dplyr::slice_head() %>%
+    dplyr::ungroup()
 
   # ## set attributes ##
   # attributes(y)$col_calendar_date <- attributes(cg)$col_calendar_date

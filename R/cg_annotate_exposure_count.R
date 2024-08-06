@@ -23,47 +23,50 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
+#' library(dplyr)
+#' library(ggplot2)
+#' 
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
-#'
-#' ## Simulate some infection data ##
-#' infections_to_add <- tibble::tribble(
-#'   ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
-#'   "01102020", "1", "pos", NA, NA,
-#'   "11102020", "1", "pos", NA, "severe"
+#' 
+#' ## add infections to chronogram ##
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
 #' )
-#' ## Make calendar_date a date ##
-#' infections_to_add$calendar_date <- lubridate::dmy(
-#'   infections_to_add$calendar_date
-#' )
-#' ## add to chronogram
-#' cg <- cg_add_experiment(cg, infections_to_add)
-#'
-#' ## annotate vaccines ##
-#' cg <- cg_annotate_vaccines_count(cg,
-#'   dose = dose,
-#'   dose_counter = dose_number,
-#'   vaccine_date_stem = date_dose,
-#'   intermediate_days = 7
+#' 
+#' ## annotate infections ## 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
 #' )
 #'
-#' ## now infection finding ##
-#' cg <- cg_annotate_episodes_find(cg,
-#'   infection_cols = c("LFT", "PCR", "symptoms"),
-#'   infection_present = c("pos", "Post", "^severe")
-#' )
-#'
-#'
-#'
-#' cg <- cg_annotate_episodes_find_seroconversion(cg,
-#'   serum_N_titre =
-#'     "serum_Ab_N"
-#' )
-#'
-#' cg.final <- cg_annotate_exposures_count(cg)
-#' }
+#' ## annotate vaccines ## 
+#' cg <- cg %>% cg_annotate_vaccines_count(
+#'  ## the prefix to the dose columns: ##
+#'  dose = dose,
+#'  ## the output column name: ##
+#'  dose_counter = dose_number,
+#'  ## the prefix to the date columns: ##
+#'  vaccine_date_stem = date_dose,
+#'  ## use 14d to 'star' after a dose ##
+#'  intermediate_days = 14)
+#' 
+#' ## annotate exposures ##
+#'cg <- cg %>% cg_annotate_exposures_count(
+#'  episode_number = episode_number,
+#'  dose_number = dose_number,
+#'  ## we have not considered episodes of seroconversion
+#'  N_seroconversion_episode_number = NULL
+#'  )
+#'  
+#'  ## Visualise
+#'  cg %>% ggplot(
+#'  aes(x=calendar_date,
+#'  y= exposure_number, 
+#'  col = elig_study_id)) + geom_line()
+#'   
 cg_annotate_exposures_count <- function(
     cg,
     episode_number = episode_number,

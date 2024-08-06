@@ -18,7 +18,7 @@ reference:
   - cg_annotate_episodes_find
   - cg_annotate_episodes_find_seroconversion
   - cg_annotate_episodes_fill
-- subtitle: Episode counting
+- subtitle: Episode, vaccine & exposure counting
 - contents:
   - cg_annotate_episodes_count
   - cg_annotate_vaccines_count
@@ -63,3 +63,28 @@ reference:
   - contains("ungroup")
   - contains("print")
   - contains("glimpse")
+  
+  
+  
+  
+navbar:
+ components:
+   articles:
+    text: Articles
+    menu:
+    - text: Assembly
+    - text: Chronogram assembly
+      href: articles/assembly.html
+    - text: Assembly from SQL
+      href: articles/SQL_assembly.html
+    - text: -------
+    - text: Annotation
+    - text: Chronogram annotation
+      href: articles/annotation.html 
+    - text: Episode annotation
+      href: articles/annotate_episodes.html
+    - text: -------
+    - text: Analysis
+    - text: Chronogram statistics
+      href: articles/stats.html
+

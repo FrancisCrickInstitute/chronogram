@@ -5,14 +5,12 @@
 #' @param metadata_cols the column names from the metadata tibble
 #' @param ... passed to `new_tibble()`. Adds grouping support.
 #'
-#' @return x an extended tibble with class cg_tbl
+#' @return an extended tibble with class cg_tbl
 #'
 #' @seealso [chronogram::chronogram_skeleton()]
 #'
-#' @examples
-#' \dontrun{
-#' x <- new_chronogram(x)
-#' }
+#' @noRd
+#' 
 new_chronogram <- function(x,
                            metadata_cols,
                            ...) {

@@ -1,0 +1,359 @@
+---
+title: "Chronogram statistics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Chronogram statistics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+In this vignette, we explore how to prepare chronogram data for statistical testing. We take a provided assembled chronogram and perform filtering, windowing and selecting prior to an illustrative plot and a statistical test. This vignette does not cover when each statistical test is appropriate, nor the R functions (or arguments) for each particular statistical test.
+
+### Libraries
+
+```{r setup}
+library(dplyr)
+library(rstatix) # pipe-friendly stats functions
+library(broom) # tidy handling of lm() output
+library(ggrepel) # repelled labels in ggplot2
+library(survival) # time-to-event analysis
+library(survminer) # ggplot2 from time-to-event
+library(chronogram)
+```
+
+## Wilcoxon test
+
+-   *Hypothesis*
+
+    For individuals without prior exposure, a long interval (8-12w) between doses 1 and 2 of an mRNA vaccine will have higher antibody levels 3-5w after dose 2, than individuals following a short interval (3-4w).
+
+-   *response variable*
+
+    MSD SARS-CoV-2 Spike antibody (`CoV_2S_MSD`).
+
+-   *categorical predictor*
+
+    `LONG` or `SHORT` interval (`Vaccine_interval` in metadata).
+
+-   *data*
+
+    PITCH, introduced and assembled in the [SQL vignette](articles/SQL_assembly.html).
+
+```{r}
+data("pitch_chronogram")
+
+## filter, select, window ##
+windowed_data <- pitch_chronogram %>%
+  filter(Previous_infection == "N") %>%
+  cg_window_by_metadata(dose_2_date, 
+                        preceding_days = -21, 
+                        following_days = 35) %>%
+  cg_select_visit(visit_col = Cov_2S_BAU,
+                  visit = "latest")
+
+```
+
+```{r}
+## plot ##
+windowed_data %>%
+  ggplot(aes(x = Vaccine_interval, y = Cov_2S_MSD)) +
+  geom_point(shape = 20, alpha = 0.4,
+             position = position_jitter(0.3)) +
+  stat_summary(
+    geom = "point",
+    fun = "median",
+    shape = 5,
+    size = 2,
+    stroke = 1.5,
+    col = "dodgerblue") +
+  theme_bw()
+
+## stats ##
+windowed_data %>%
+  wilcox_test(Cov_2S_MSD ~ Vaccine_interval) ## rstatix::wilcox_test
+
+```
+
+------------------------------------------------------------------------
+
+## Linear regression
+
+-   *Hypothesis*
+
+    SARS-CoV-2 Spike antibody is dependent on vaccine interval, previous infection, and not on study centre.
+
+-   *response variable*
+
+    MSD SARS-CoV-2 Spike (`CoV_2S_MSD`).
+
+-   *predictors*
+
+    -   `LONG` or `SHORT` interval (`Vaccine_interval` in metadata).
+
+    -   study centre (`Centre_code` in metadata).
+
+    -   Previous infection (`Y`/`N` in `Previous_infection` in metadata).
+
+-   *data*
+
+    PITCH, introduced and assembled in the [SQL vignette](articles/SQL_assembly.html).
+
+```{r}
+data("pitch_chronogram")
+
+## filter, select, window ##
+windowed_data <- pitch_chronogram %>%
+  cg_window_by_metadata(dose_2_date, 
+                        preceding_days = -21, 
+                        following_days = 35) %>%
+  cg_select_visit(visit_col = Cov_2S_BAU,
+                  visit = "latest")
+
+```
+
+```{r}
+## plot ##
+windowed_data %>%
+  ggplot(aes(x = Centre_code, y = Cov_2S_MSD)) +
+  geom_point(shape = 20, alpha = 0.4,
+             position = position_jitter(0.3)) +
+  stat_summary(
+    geom = "point",
+    fun = "median",
+    shape = 5,
+    size = 2,
+    stroke = 1.5,
+    col = "dodgerblue") +
+  facet_grid(. ~Vaccine_interval + Previous_infection ) +
+  theme_bw()
+
+## stats ##
+lm_res <- windowed_data %>%
+  lm(Cov_2S_MSD ~ 
+       Vaccine_interval + 
+       Previous_infection + 
+       Centre_code, data = .)
+
+## results from lm ##
+summary(lm_res)
+
+## easier to read, and plot from broom::tidy ##
+tidy(lm_res)
+
+tidy(lm_res) %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x=estimate, y = -log10(p.value),
+         label = term)) +
+  geom_point() +
+  geom_text_repel() +
+  geom_hline(yintercept = -log10(0.05), 
+             linetype = 3)
+
+```
+
+------------------------------------------------------------------------
+
+### Linear regression with interaction terms
+
+Setup as for `Linear regression` example above.
+
+Since nearly all of the `SHORT` interval data were from a single centre, we add an interaction term between centre and interval.
+
+```{r}
+## stats - lm with interaction terms ##
+## note the *
+lm_res_interactions <- windowed_data %>%
+  lm(Cov_2S_MSD ~ 
+       Previous_infection +
+       Vaccine_interval * 
+       Centre_code, data = .)
+
+## results from lm ##
+summary(lm_res_interactions )
+
+## easier to read, and plot from broom::tidy ##
+tidy(lm_res_interactions )
+
+tidy(lm_res_interactions ) %>%
+  filter(term != "(Intercept)") %>%
+  ggplot(aes(x=estimate, y = -log10(p.value),
+         label = term)) +
+  geom_point() +
+  geom_text_repel() +
+  geom_hline(yintercept = -log10(0.05), 
+             linetype = 3)
+```
+
+The model `Cov_2S_MSD ~ Previous_infection + Vaccine_interval * Centre_code`, with an interaction term between interval and centre performs reasonably, with a neglible effect assigned to centre alone, and larger effects assigned to vaccine interval and previous infection.
+
+By ANOVA, `Cov_2S_MSD ~ Previous_infection + Vaccine_interval * Centre_code` performs better than `Cov_2S_MSD ~ Previous_infection + Vaccine_interval + Centre_code`:
+
+```{r}
+anova(lm_res, 
+      lm_res_interactions)
+```
+
+Either model describes \~10% of the total variance in Spike antibodies:
+
+```{r}
+
+bind_rows(
+  # this is broom::glance() : #
+  glance(lm_res),
+  glance(lm_res_interactions)
+)
+
+```
+
+------------------------------------------------------------------------
+
+## Time to event analysis
+
+-   *Hypothesis*
+
+    Within centre 1, dose 2 ("event") occurs earlier in individuals without prior infection.
+
+-   *Start*
+
+    date of dose 1
+
+-   *Event*
+
+    date of dose 2
+
+-   *Censoring*
+
+    none (all of PITCH have both doses)
+
+-   *Filtering*
+
+    to centre 0, as that centre has an approximately equal split of `long`:`short` interval.
+
+> **NOTE**
+>
+> Changes have been made to the de-identified public dataset (DOI: 10.17632/fyp26zjgmj.1).
+>
+> i.  the public data reports dates as MM/YYYY. To build a chronogram we have assigned randomly from 1-28 for DD in DD/MM/YYYY for dose 1, and used the available intervals in days to place the remaining data in date time. For illustration purposes, we need plausible DD/MM/YYYY dates - they are not real.
+>
+> ii. not all of the public dataset has been used in this example (some assays not included).
+
+For meaningful time to event analysis, **real** rather than **plausible** dates are needed. This vignette shows example code, but the results themselves are insecure.
+
+```{r}
+data("pitch_chronogram")
+
+## filter, de-duplicate ##
+t_to_event_data <- pitch_chronogram %>%
+  filter(Centre_code == 0) %>%
+  group_by(ID) %>%
+  slice_head() %>%
+  ungroup() %>%
+  ## all receive dose 2 ##
+  mutate(outcome = 1) %>%
+  mutate(dose_2_crude = 
+            as.numeric(
+           dose_2_date - (dose_1_date)))
+
+fit<- survfit(Surv(time = dose_2_crude,
+                   # time2 = dose_2_d,
+                   outcome) ~ Previous_infection, data = t_to_event_data)
+
+ggsurvplot(fit,
+                      conf.int = TRUE,
+                      data = t_to_event_data,
+                      fun = "event",
+                      risk.table = TRUE,
+                      pval = TRUE,
+                      pval.coord = c(0.1, 0.9),
+                      pval.method = TRUE,
+                      pval.method.coord = c(0.1, 1))
+
+
+
+```
+
+### Left-censored time to event analysis
+
+Here we use left censoring, such that a given individual is only considered at-risk for the event (dose 2) once they have had their first dose.
+
+In the real world, left censoring is useful if the risk of exposure might change over calendar time. In this example dataset, it highlights the use of *plausible* (DD randomly assigned to MM-YYYY), rather than *real* dates.
+
+```{r}
+data("pitch_chronogram")
+
+## filter, de-duplicate ##
+t2_to_event_data <- pitch_chronogram %>%
+  filter(Centre_code == 0) %>%
+  group_by(ID) %>%
+  slice_head() %>%
+  ungroup() %>%
+  ## all receive dose 2 ##
+  mutate(outcome = 1) %>%
+  ## use the earliest date of dose 1 to anchor other times ##
+  mutate(dose_1_d = 
+            as.numeric(
+           dose_1_date - min(dose_1_date))) %>%
+  mutate(dose_2_d = 
+            as.numeric(
+           dose_2_date - min(dose_1_date)))
+
+
+fit2 <- survfit(Surv(time = dose_1_d,
+                    time2 = dose_2_d,
+                   outcome) ~ Previous_infection, data = t2_to_event_data)
+
+
+
+ggsurvplot(
+  fit2,
+  conf.int = TRUE,
+  data = t2_to_event_data,
+  fun = "event",
+  risk.table = TRUE,
+  ## calcuate Cox PH P value ##
+  pval = 
+    round(
+    summary(
+    coxph(Surv(time = dose_1_d,
+               time2 = dose_2_d,
+               outcome) ~ Previous_infection, 
+          data = t2_to_event_data)
+    )$coefficients[,"Pr(>|z|)"],
+    digits = 3),
+  pval.coord = c(0.1, 0.9)
+  # pval.method.coord = c(0.1, 1)
+)
+
+
+```
+
+Note:
+
+1.  now the x axis runs to over 5 months as it covers the \~2m period between the earliest and latest first dose.
+
+2.  the numbers at risk can increase between time points as more individuals become eligible (here, by receiving dose 1).
+
+The difference between strata is now much less apparent. This is likely due to our *plausible* rather than *real* dates in the example dataset.
+
+------------------------------------------------------------------------
+
+## Summary
+
+This vignette shows code to map data from a chronogram to a variety of different statistical tests.
+
+------------------------------------------------------------------------
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```

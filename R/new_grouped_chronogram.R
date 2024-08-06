@@ -8,14 +8,8 @@
 #' @param class character vector of class
 #' @param ... parsed to `dplyr::group_by()`
 #'
-#' @return x an extended grouped tibble with class `grouped_cg_df`
+#' @return an extended grouped tibble with class `grouped_cg_df`
 #'
-#' @seealso [chronogram::new_chronogram()]
-#'
-#' @examples
-#' \dontrun{
-#' x <- new_chronogram(x)
-#' }
 #'
 #' @export
 new_grouped_chronogram <- function(x, groups, ..., class = character()) {

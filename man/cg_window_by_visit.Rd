@@ -9,9 +9,9 @@ cg_window_by_visit(cg, visit_col = NULL, preceding_days, following_days)
 \arguments{
 \item{cg}{a chronogram}
 
-\item{visit_col}{a character vector to use to label the column with
-either dates of visits, or results. This is usually an
-experimental data column. Default is "NULL".}
+\item{visit_col}{a column with either dates of visits, or results.
+This is usually an experimental data column. Default is NULL.
+Provide unquoted.}
 
 \item{preceding_days}{used as filter( date > (date_col -
 preceding_days) )}
@@ -27,13 +27,14 @@ This is a special case of \code{cg_window_by_episode()}. It treats the
 visit column as an episode, with the argument \code{episode_handling = "all"}.
 }
 \examples{
-\dontrun{
 
-SevenDaysPrePostFirstEpisode <- cg_window_by_visit(
-  annotatedChronogram,
-  visit_col = "S", 7, 7
+data("built_smallstudy")
+cg <- built_smallstudy$chronogram
+
+SevenDaysAfterEachStudyVisit <- cg_window_by_visit(
+  cg,
+  visit_col = serum_Ab_S, 7, 7
 )
-}
 
 }
 \seealso{

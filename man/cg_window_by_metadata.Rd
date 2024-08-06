@@ -23,11 +23,15 @@ A windowed chronogram
 Pick a window before and after a metadata date column
 }
 \examples{
-\dontrun{
-SevenDaysPrePostDose3 <- cg_window_by_metadata(
-  annotatedChronogram, "date_dose_3", 7, 7
+data(pitch_chronogram)
+
+pitch_chronogram
+
+SevenDaysPrePostDose2 <- cg_window_by_metadata(
+  pitch_chronogram, dose_2_date, 7, 7
 )
-}
+
+SevenDaysPrePostDose2
 
 }
 \seealso{

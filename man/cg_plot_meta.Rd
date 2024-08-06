@@ -41,7 +41,7 @@ this brief.}
 \item{fill}{column used to determine fill}
 }
 \description{
-Function to create a \code{ggplot2} object, plotting a
+Create a \code{ggplot2} object, plotting a
 user-defined metadata over time in a swimmer's plot.
 
 \code{ggplot2} objects retain the entirety of the provided dataset.
@@ -54,7 +54,10 @@ default (\code{drop_vars=TRUE}). In writing a study specific
 calling \code{ggplot()}.
 }
 \examples{
-\dontrun{
+
+library(ggplot2)
+library(patchwork)
+
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
 
@@ -65,10 +68,9 @@ p1 <- cg_plot_meta(cg,
 p2 <- cg_plot(cg,
   y_values = serum_Ab_S
 )
-library(patchwork)
+
 p2 / p1
 
 (p2 + scale_y_log10()) / p1
-}
 
 }

@@ -16,18 +16,9 @@ new_grouped_chronogram(x, groups, ..., class = character())
 \item{class}{character vector of class}
 }
 \value{
-x an extended grouped tibble with class \code{grouped_cg_df}
+an extended grouped tibble with class \code{grouped_cg_df}
 }
 \description{
 A constructor for a grouped chronogram. This is called automatically
 by the S3 method: \code{group_by.cg_tbl()}.
-}
-\examples{
-\dontrun{
-x <- new_chronogram(x)
-}
-
-}
-\seealso{
-\code{\link[=new_chronogram]{new_chronogram()}}
 }
