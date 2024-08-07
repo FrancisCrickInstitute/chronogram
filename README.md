@@ -42,8 +42,8 @@ R](https://usethis.r-lib.org/articles/git-credentials.html#practical-instruction
   Perhaps your study has rolling recruitment, ongoing data generation or
   incremental analysis. Outsource that effort to `chronogram`.
 
-- To **reproducibly aggregate** data within and **across several studies
-  and users 👩‍💻👨‍💻**. Stop troubleshooting joins by hand.
+- To **reproducibly aggregate** data within and **across several
+  studies** & **users 👩‍💻👨‍💻**. Stop troubleshooting joins by hand.
 
 - To provide a **versatile** data shape **poised** for **new or
   follow-up analyses** without needing re-aggregation 🛫.
