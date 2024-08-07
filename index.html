@@ -36,10 +36,20 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/annotate_episodes.html">Annotating infection episodes</a></li>
-    <li><a class="dropdown-item" href="articles/annotation.html">Chronogram annotation</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Assembly</h6></li>
     <li><a class="dropdown-item" href="articles/assembly.html">Chronogram assembly</a></li>
-    <li><a class="dropdown-item" href="articles/SQL_assembly.html">Chronogram assembly from SQL</a></li>
+    <li><a class="dropdown-item" href="articles/SQL_assembly.html">Assembly from SQL</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="articles/annotate_vaccines.html">Annotate vaccines</a></li>
+    <li><a class="dropdown-item" href="articles/annotate_episodes.html">Annotate infection episodes</a></li>
+    <li><a class="dropdown-item" href="articles/annotate_exposure.html">Annotate exposures</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analysis</h6></li>
+    <li><a class="dropdown-item" href="articles/stats.html">Chronogram statistics</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Chronogram class</h6></li>
+    <li><a class="dropdown-item" href="articles/chronogram_class.html">Introducing the chronogram class</a></li>
   </ul>
 </li>
       </ul>
@@ -59,101 +69,84 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The goal of chronogram is to “cast” and annotate metadata, laboratory and clinical data into a tidy-like data structure. This bridges between a LIMS / database style data warehouse and data that is ready for interrogation to test biological hypotheses.</p>
-<p>Chronogram was designed during the SARS-CoV-2 pandemic (2019-). However, it is pathogen, vaccine and symptoms agnostic. It can be adapted for any pathogen, studies that have several pathogens/vaccines combinations.</p>
-<p>Chronogram uses tidyverse approaches for several reasons:</p>
-<ul>
-<li><p>the final aim is often <code>ggplot2</code></p></li>
-<li><p>many <code>tidyverse</code> verbs are immediately useful on a chronogram object.</p></li>
-<li><p>the wider <code>R/tidyverse/quarto/reproducible science</code> ecosystem tools offer valuable ways to extend.</p></li>
-<li><p>within our teams, scientist and clinicians with some coding experience frequently target <code>R/tidyverse</code></p></li>
-</ul>
+<!-- badges: end -->
+<p>The goal of <code>chronogram</code> is to “cast” and annotate metadata, laboratory and clinical data into a tidy-like data structure. This bridges between a LIMS / database style data warehouse and data that is ready for interrogation to test biological hypotheses.</p>
+<p><code>chronogram</code> was designed during the SARS-CoV-2 pandemic (2019-). However, it is pathogen, vaccine and symptoms agnostic.</p>
+<hr>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of chronogram from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>Install the current version from <a href="https://github.com/" class="external-link">GitHub</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## 1. Setup R and git ####</span></span>
-<span><span class="co"># install.packages("usethis")</span></span>
-<span><span class="co"># install.packages("credentials")</span></span>
-<span></span>
-<span><span class="co"># Replace:</span></span>
-<span><span class="co">## - XXXX with your github username</span></span>
-<span><span class="co">## - YYYY@ZZZZ with the email address you use for github</span></span>
-<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">use_git_config</span><span class="op">(</span>user.name <span class="op">=</span> <span class="st">"XXXX"</span>, user.email <span class="op">=</span> <span class="st">"YYYY@ZZZZ"</span><span class="op">)</span></span>
-<span> </span>
-<span><span class="co"># Go to github page to generate token</span></span>
-<span><span class="fu">usethis</span><span class="fu">::</span><span class="fu">create_github_token</span><span class="op">(</span><span class="op">)</span></span>
-<span> </span>
-<span><span class="co"># paste your PAT into pop-up that follows...</span></span>
-<span><span class="fu">credentials</span><span class="fu">::</span><span class="fu">set_github_pat</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## ^ above only needs running once for R and git to interact</span></span>
-<span></span>
-<span><span class="co">## 2. Install package itself ####</span></span>
-<span></span>
-<span><span class="co"># install.packages("devtools")</span></span>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"FrancisCrickInstitute/chronogram"</span><span class="op">)</span></span></code></pre></div>
+<p>If you have not installed packages from github before, you will to <a href="https://usethis.r-lib.org/articles/git-credentials.html#practical-instructions" class="external-link">setup your GitHub account to interact with R</a>.</p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="the-problem">The problem<a class="anchor" aria-label="anchor" href="#the-problem"></a>
+<h2 id="why-should-i-use-chronogram">Why should I use <code>chronogram</code>?<a class="anchor" aria-label="anchor" href="#why-should-i-use-chronogram"></a>
 </h2>
-<p>Immunology studies of vaccine responses are traditionally designed as follows:</p>
 <ul>
-<li>matched cohort vaccinated on the same day</li>
-<li>return visits on the same subsequent day</li>
-<li>assays performed on samples from matched visit days</li>
+<li><p>To aggregate study data <strong>regularly 🕓</strong>, and <strong>repetitively 🔁</strong>. Perhaps your study has rolling recruitment, ongoing data generation or incremental analysis. Outsource that effort to <code>chronogram</code>.</p></li>
+<li><p>To <strong>reproducibly aggregate</strong> data within and <strong>across several studies</strong> &amp; <strong>users 👩‍💻👨‍💻</strong>. Stop troubleshooting joins by hand.</p></li>
+<li><p>To provide a <strong>versatile</strong> data shape <strong>poised</strong> for <strong>new or follow-up analyses</strong> without needing re-aggregation 🛫.</p></li>
 </ul>
-<p>This study design is shown below (left). There is a single vaccine dose (d0) and 3 visits: baseline and 2 follow-up visits at d7 and d14. The resulting data can be compiled into a simple data structure (below, right): individuals are rows, there are a few columns of metadata (age, sex, etc) and then the two assays are reported as columns: assay 1 {visit 1, visit 2, visit 3}; assay 2 {visit 1, visit 2, visit 3}.</p>
-<p><img src="reference/figures/README-conundrum-1.png" width="100%"></p>
-<p>In observational cohort studies, particularly in pandemic settings, this is inadequate for immunology studies conducted pragmatically, where vaccine dates, available samples, and dates of additional doses can (and will!) change. An example real-world study is shown here:</p>
-<p><img src="reference/figures/README-real_world-1.png" width="100%"></p>
-<p>Many studies will have massive datasets, stored as an SQL database or equivalent LIMS solutions. These are great ways to store and maintain source data, but do not allow the user - particularly a biologist - to “place” the results in their full immunological context: that participant’s prior exposures to vaccines and infections. This is the problem the chronogram package solves.</p>
+<p><strong><em>When shouldn’t I use <code>chronogram</code>?</em></strong></p>
+<p>Your study is <strong>completed</strong>. You have assembled a clean, de-duplicated and fully annotated data object. You have <strong>finished all data analysis</strong>. Congratulations! 🥳 Don’t reinvent the wheel here.</p>
+<hr>
 </div>
 <div class="section level2">
-<h2 id="the-solution">The solution<a class="anchor" aria-label="anchor" href="#the-solution"></a>
+<h2 id="how-do-i-use-chronogram">How do I use <code>chronogram</code>?<a class="anchor" aria-label="anchor" href="#how-do-i-use-chronogram"></a>
 </h2>
-<p>A chronogram is a hidden date often within an inscription, for example on a headstone, and often with Roman numerals doubling as Roman characters. We adopted the name for this package, as it helps to find the hidden immunological meaning with dates.</p>
-<p>Below is a sketch of a real-world study after a single vaccine dose (top). Now, we have arranged the resulting data in a chronogram format (bottom), where data is structured in a ‘long format’ with each row presented a specific date for an individual. Metadata (grey) is repeated on each row. The experimental data are only stored against the relevant date of sampling.</p>
-<p><img src="reference/figures/README-resolution_1-1.png" width="100%"></p>
-<p>Chronogram’s date-centric design allows users to integrate and interrogate data, which would otherwise be hidden (or at least hard to find) in traditional formats. For example, if you were examining responses to vaccines 9-12d after the dose, the traditional model would indiscriminately say “visit 3 is closest, use that set”. In contrast, chronogram allows a relevant slice of the data (green box) to be taken rapidly, with the date of dose stored in the metadata columns (grey).</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">slice.of.data</span> <span class="op">&lt;-</span> <span class="va">chrono</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">calendar_date</span> <span class="op">&gt;</span> <span class="va">date_dose_1</span> <span class="op">+</span> <span class="fl">9</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">calendar_date</span> <span class="op">&lt;</span> <span class="va">date_dose_1</span> <span class="op">+</span> <span class="fl">12</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-application-1.png" width="100%"></p>
+<p>The <code>chronogram</code> workflow can be divided into assembly, annotation and finally, filtering, windowing and selecting data for a specific analysis.</p>
+<div class="section level3">
+<h3 id="chronogram-assembly">chronogram assembly<a class="anchor" aria-label="anchor" href="#chronogram-assembly"></a>
+</h3>
+<ul>
+<li><p><code><a href="reference/cg_assemble.html">cg_assemble()</a></code> combines cleaned metadata, experimental data, and a range of calendar dates into a chronogram.</p></li>
+<li><p><code><a href="reference/cg_add_experiment.html">cg_add_experiment()</a></code> allows the adding of further experiments</p></li>
+</ul>
+<p>Further details:</p>
+<ul>
+<li><p><a href="articles/assembly.html">assembly</a> vignette for a step-by-step guide, or the <a href="articles/chronogram.html">quickstart</a>.</p></li>
+<li><p><a href="articles/SQL_assembly.html">SQL vignette</a> explains <code>chronogram</code> assembly from an SQL database.</p></li>
+<li><p>An introduction to the <a href="articles/chronogram_class.html">chronogram class</a></p></li>
+</ul>
 </div>
-<div class="section level2">
-<h2 id="the-real-world-solution">The real world solution<a class="anchor" aria-label="anchor" href="#the-real-world-solution"></a>
-</h2>
-<p>Because it is date-aware, chronogram also allows the user to assemble any date-varying data: - dates of positive PCR results (or dates of negative PCRs from occupational screening); - S gene target failure (or presence); - viral sequencing results; symptoms; - additional doses</p>
-<p>To illustrate, let’s add some infections to our example study. An observational study will never have same-day infections across the cohort, so in the real world infection data always requires this kind of approach.</p>
-<p>Now participant 001 has a positive PCR at day 50, with S gene target failure, and participant 002 has a positive PCR at day 40 with S gene presence.</p>
-<p><img src="reference/figures/README-real_world_infections-1.png" width="100%"></p>
-<p>And here is the same data cast into chronogram structure</p>
-<p><img src="reference/figures/README-real_world_resolution_1-1.png" width="100%"></p>
-<p>Our biological question in this example is how waning from first vaccination proceeds over 2 months. For 001 and 002, their last visit is unhelpful, as they have had a boost from additional encounter with antigen (an infection). Here we can slice something like this:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## get a list of unhelpful participants ##</span></span>
-<span><span class="va">unhelpful.participants</span> <span class="op">&lt;-</span> <span class="va">chrono</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">ID</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">stringr</span><span class="fu">::</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">PCR</span>, <span class="st">"pos"</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## make the selection ##</span></span>
-<span><span class="va">slice.of.data</span> <span class="op">&lt;-</span> <span class="va">chrono</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="co">## filter ##</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="va">ID</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">unhelpful.participants</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="co">## window ##</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">calendar_date</span> <span class="op">&gt;</span> <span class="va">date_dose_1</span> <span class="op">+</span> <span class="fl">60</span><span class="op">)</span></span></code></pre></div>
-<p>This keeps 003’s data (green box), and ignores 001 and 002’s data (red boxes).</p>
-<p><img src="reference/figures/README-application_real_world-1.png" width="100%"></p>
-<p><code>Chronogram</code> contains a suite of functions to annotate chronograms, which we recommend running immediately after assembly. These annotations include the number of doses, and number of infections, so it is even more straightforward to select, for example:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">annotated.chrono</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">number_of_infections</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p>The annotation function <code><a href="reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find()</a></code> searches for a user-specified number of days earlier (and later), to gather symptoms, tests, sequencing that might occur on different days but are really a single episode of infection. <code><a href="reference/cg_annotate_episodes_count.html">cg_annotate_episodes_count()</a></code> converts this into a count.</p>
-<p>Check out the vignettes for more info.</p>
-<p>Many of the examples use a SARS-CoV-2-like scenario of testing, vaccines etc, however you could use chronogram to manage any kind of vaccine response (+exposure) data for any pathogen(s).</p>
+<div class="section level3">
+<h3 id="chronogram-annotation">chronogram annotation<a class="anchor" aria-label="anchor" href="#chronogram-annotation"></a>
+</h3>
+<div class="section level4">
+<h4 id="annotate-vaccines">Annotate vaccines<a class="anchor" aria-label="anchor" href="#annotate-vaccines"></a>
+</h4>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<p>Label each day for each participant with the number of doses they have received, including support for a lag period between the reciept of a dose and its immunological priming effect. <a href="articles/annotate_vaccines.html">Annotate vaccines here</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="annotate-infection-episodes">Annotate infection episodes<a class="anchor" aria-label="anchor" href="#annotate-infection-episodes"></a>
+</h4>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<p>Symptoms, point-of-care tests, and laboratory tests of infection rarely occur on exactly the same study day. <code>chronogram</code> finds, fills and annotates these tests and symptoms into episodes of infection. <a href="articles/annotate_episodes.html">Annotate episodes here</a>.</p>
+</div>
+<div class="section level4">
+<h4 id="annnotate-exposures">Annnotate exposures<a class="anchor" aria-label="anchor" href="#annnotate-exposures"></a>
+</h4>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
+<p>After annotating vaccines and infection episodes, these can be combined to <a href="articles/annotate_exposures.html">annotate exposures</a> - encounters with antigen from either infection or vaccination.</p>
+<hr>
+</div>
+</div>
+<div class="section level3">
+<h3 id="chronogram-filtering-window-and-select">chronogram filtering, window and select<a class="anchor" aria-label="anchor" href="#chronogram-filtering-window-and-select"></a>
+</h3>
+<ul>
+<li><p><code><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">dplyr::filter()</a></code> to filter a chronogram based on metadata (eg vaccine formulation)</p></li>
+<li><p><code><a href="reference/cg_window_by_metadata.html">cg_window_by_metadata()</a></code> to window around an event such as 14 days after each participant’s vaccine</p></li>
+<li><p><code><a href="reference/cg_window_by_episode.html">cg_window_by_episode()</a></code> picks a window around infection episodes</p></li>
+</ul>
+<p>See these functions at work in our <a href="articles/stats.html">brief primer</a> demonstrating how to a pass <code>chronogram</code> to a variety of statistical tests.</p>
+<hr>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="license">

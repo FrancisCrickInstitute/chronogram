@@ -19,10 +19,20 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotating infection episodes</a></li>
-    <li><a class="dropdown-item" href="../articles/annotation.html">Chronogram annotation</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><h6 class="dropdown-header" data-toc-skip>Assembly</h6></li>
     <li><a class="dropdown-item" href="../articles/assembly.html">Chronogram assembly</a></li>
-    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Chronogram assembly from SQL</a></li>
+    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Assembly from SQL</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="../articles/annotate_vaccines.html">Annotate vaccines</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotate infection episodes</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_exposure.html">Annotate exposures</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/stats.html">Chronogram statistics</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Chronogram class</h6></li>
+    <li><a class="dropdown-item" href="../articles/chronogram_class.html">Introducing the chronogram class</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -46,7 +56,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cg_annotate_episodes_find</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">cg</span>,</span>
 <span>  <span class="va">infection_cols</span>,</span>
 <span>  <span class="va">infection_present</span>,</span>
 <span>  episode_days <span class="op">=</span> <span class="fl">14</span>,</span>
@@ -60,14 +70,14 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
+<dl><dt id="arg-cg">cg<a class="anchor" aria-label="anchor" href="#arg-cg"></a></dt>
 <dd><p>a chronogram</p></dd>
 
 
 <dt id="arg-infection-cols">infection_cols<a class="anchor" aria-label="anchor" href="#arg-infection-cols"></a></dt>
-<dd><p>Columns that might contain information
-regarding infection status, such as symptoms, LFT results, PCR
-results, or sequencing results.</p></dd>
+<dd><p>A vector of column names that contain
+information regarding infection status, such as symptoms, LFT
+results, PCR results, or sequencing results.</p></dd>
 
 
 <dt id="arg-infection-present">infection_present<a class="anchor" aria-label="anchor" href="#arg-infection-present"></a></dt>
@@ -76,9 +86,10 @@ to indicate the presence of infection.</p></dd>
 
 
 <dt id="arg-episode-days">episode_days<a class="anchor" aria-label="anchor" href="#arg-episode-days"></a></dt>
-<dd><p>The number of days within which to consider
-events a single episode. For example, is symptom onset 10d after
-a positive PCR test a single episode? Default is 14d.</p></dd>
+<dd><p>The number of days to scan forwards and
+backwards in time to consider events a single episode. For
+example, is symptom onset <code>10d</code> after a positive PCR test a
+single episode? The default is <code>14d</code>.</p></dd>
 
 
 <dt id="arg-episode-numbers-col">episode_numbers_col<a class="anchor" aria-label="anchor" href="#arg-episode-numbers-col"></a></dt>
@@ -86,14 +97,10 @@ a positive PCR test a single episode? Default is 14d.</p></dd>
 numbers. Default is <code>episode_number</code> (unquoted).</p></dd>
 
 
-<dt id="arg-episode-start-col">episode_start_col<a class="anchor" aria-label="anchor" href="#arg-episode-start-col"></a></dt>
-<dd><p>The column names to store the episode
-start and end dates (defaults: episode_start and episode_end, both unquoted).</p></dd>
-
-
-<dt id="arg-episode-end-col">episode_end_col<a class="anchor" aria-label="anchor" href="#arg-episode-end-col"></a></dt>
-<dd><p>The column names to store the episode start
-and end dates (defaults: episode_start and episode_end, both unquoted).</p></dd>
+<dt id="arg-episode-start-col-episode-end-col">episode_start_col, episode_end_col<a class="anchor" aria-label="anchor" href="#arg-episode-start-col-episode-end-col"></a></dt>
+<dd><p>The column names to store
+the episode start and end dates (defaults: <code>episode_start</code> and
+<code>episode_end</code>, both unquoted).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -107,53 +114,107 @@ and end dates (defaults: episode_start and episode_end, both unquoted).</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Example 1: A small study ##-------------------------------------</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">built_smallstudy</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="va">built_smallstudy</span><span class="op">$</span><span class="va">chronogram</span></span></span>
+<span class="r-in"><span><span class="va">cg_small</span> <span class="op">&lt;-</span> <span class="va">built_smallstudy</span><span class="op">$</span><span class="va">chronogram</span></span></span>
+<span class="r-in"><span><span class="va">infections_to_add</span> <span class="op">&lt;-</span> <span class="va">built_smallstudy</span><span class="op">$</span><span class="va">infections_to_add</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Simulate some infection data ##</span></span></span>
-<span class="r-in"><span><span class="va">infections_to_add</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="op">~</span><span class="va">calendar_date</span>, <span class="op">~</span><span class="va">elig_study_id</span>, <span class="op">~</span><span class="va">LFT</span>, <span class="op">~</span><span class="va">PCR</span>, <span class="op">~</span><span class="va">symptoms</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"01102020"</span>, <span class="st">"1"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"11102020"</span>, <span class="st">"1"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="st">"severe"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"11042021"</span>, <span class="st">"2"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="st">"mild"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"11082021"</span>, <span class="st">"2"</span>, <span class="st">"pos"</span>, <span class="st">"Pos"</span>, <span class="st">"mild"</span>,</span></span>
-<span class="r-in"><span>  <span class="st">"11112021"</span>, <span class="st">"2"</span>, <span class="st">"pos"</span>, <span class="st">"Pos"</span>, <span class="cn">NA</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## Make calendar_date a date ##</span></span></span>
-<span class="r-in"><span><span class="va">infections_to_add</span><span class="op">$</span><span class="va">calendar_date</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">dmy</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">infections_to_add</span><span class="op">$</span><span class="va">calendar_date</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## add to chronogram</span></span></span>
-<span class="r-in"><span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span><span class="va">small_study</span>, <span class="va">infections_to_add</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## add infection data to to chronogram ##</span></span></span>
+<span class="r-in"><span><span class="va">cg_small</span> <span class="op">&lt;-</span> <span class="fu"><a href="cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span><span class="va">cg_small</span>, <span class="va">infections_to_add</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## now infection finding ##</span></span></span>
-<span class="r-in"><span><span class="va">small_study_inf</span> <span class="op">&lt;-</span> <span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">small_study</span>,</span></span>
+<span class="r-in"><span><span class="va">cg_small_inf</span> <span class="op">&lt;-</span> <span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">cg_small</span>,</span></span>
 <span class="r-in"><span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">"^severe"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">small_study_inf</span><span class="op">$</span><span class="va">episode_number</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parsed: infection_cols and infection_present</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching in the [[column]], for the "text": </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["LFT"]], "pos") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["PCR"]], "Post") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["symptoms"]], "^severe") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ...detecting will be exact.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           Capitals, spelling etc must be precise</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(calendar_date, elig_study_id)`</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## exact text matching ##</span></span></span>
-<span class="r-in"><span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">small_study</span>,</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cg_small_inf</span><span class="op">$</span><span class="va">episode_number</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1.000   1.000   1.000   1.077   1.000   2.000    1934 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## exact text matching ##------------------------------------------</span></span></span>
+<span class="r-in"><span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">cg_small_inf</span>,</span></span>
 <span class="r-in"><span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pos"</span>, <span class="st">"Post"</span>, <span class="st">"^mild"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parsed: infection_cols and infection_present</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching in the [[column]], for the "text": </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["LFT"]], "Pos") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["PCR"]], "Post") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["symptoms"]], "^mild") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ...detecting will be exact.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           Capitals, spelling etc must be precise</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(calendar_date, elig_study_id, episode_number,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> episode_start, episode_end)`</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">test2</span><span class="op">$</span><span class="va">episode_number</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1.000   1.000   1.000   1.077   1.000   2.000    1934 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## empty strings will error (as they otherwise match everything) ##</span></span></span>
-<span class="r-in"><span><span class="va">test3a</span> <span class="op">&lt;-</span> <span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">small_study</span>,</span></span>
+<span class="r-in"><span><span class="va">test3a</span> <span class="op">&lt;-</span> </span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">cg_small_inf</span>,</span></span>
 <span class="r-in"><span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## a 'random' string will not error ##</span></span></span>
-<span class="r-in"><span><span class="va">test3b</span> <span class="op">&lt;-</span> <span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">small_study</span>,</span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parsed: infection_cols and infection_present</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching in the [[column]], for the "text": </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["LFT"]], "pos") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["PCR"]], "Post") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["symptoms"]], "") ~ "yes"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error in cg_annotate_episodes_find(cg_small_inf, infection_cols = c("LFT",  : </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   infection_present seems to have one more empty condition(s)</span>
+<span class="r-in"><span><span class="co">## a 'random' string will not error ##-----------------------------</span></span></span>
+<span class="r-in"><span><span class="va">test3b</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="fu">cg_annotate_episodes_find</span><span class="op">(</span><span class="va">cg_small_inf</span>,</span></span>
 <span class="r-in"><span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">"a"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">test2</span><span class="op">$</span><span class="va">episode_number</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Parsed: infection_cols and infection_present</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Searching in the [[column]], for the "text": </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["LFT"]], "pos") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["PCR"]], "Post") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> stringr::str_detect(.data[["symptoms"]], "a") ~ "yes"</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ...detecting will be exact.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>           Capitals, spelling etc must be precise</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Joining with `by = join_by(calendar_date, elig_study_id, episode_number,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> episode_start, episode_end)`</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -34,10 +34,20 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotating infection episodes</a></li>
-    <li><a class="dropdown-item" href="../articles/annotation.html">Chronogram annotation</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Assembly</h6></li>
     <li><a class="dropdown-item" href="../articles/assembly.html">Chronogram assembly</a></li>
-    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Chronogram assembly from SQL</a></li>
+    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Assembly from SQL</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="../articles/annotate_vaccines.html">Annotate vaccines</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotate infection episodes</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_exposure.html">Annotate exposures</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/stats.html">Chronogram statistics</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Chronogram class</h6></li>
+    <li><a class="dropdown-item" href="../articles/chronogram_class.html">Introducing the chronogram class</a></li>
   </ul>
 </li>
       </ul>
@@ -67,6 +77,18 @@
 
     
     
+<div class="section level2">
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h2>
+<p>A chronogram offers a dynamic solution to real world datasets, not
+limited to a particular pathogen, vaccine schedule, or experimental
+assay. The core functionality of chronogram is its ability to expand out
+dates from your dataset, constructing a comprehensive chronological
+list. Such a structure can prove invaluable, especially in scenarios
+where pinpointing precise timepoints is essential. Here, we provide an
+illustration of how to incorporate your data into a chronogram. Once
+adapted for your study, the same code can be used and extended as
+subsequent data or assays become available.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -84,18 +106,6 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     date, intersect, setdiff, union</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://franciscrickinstitute.github.io/chronogram/">chronogram</a></span><span class="op">)</span></span></code></pre></div>
-<div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h2>
-<p>A chronogram offers a dynamic solution to real world datasets, not
-limited to a particular pathogen, vaccine schedule, or experimental
-assay. The core functionality of chronogram is its ability to expand out
-dates from your dataset, constructing a comprehensive chronological
-list. Such a structure can prove invaluable, especially in scenarios
-where pinpointing precise timepoints is essential. Here, we provide an
-illustration of how to incorporate your data into a chronogram. Once
-adapted for your study, the same code can be used and extended as
-subsequent data or assays become available.</p>
 </div>
 <div class="section level2">
 <h2 id="tldr">TLDR<a class="anchor" aria-label="anchor" href="#tldr"></a>
@@ -138,14 +148,14 @@ subsequent data or assays become available.</p>
 <div class="section level2">
 <h2 id="requirements">Requirements<a class="anchor" aria-label="anchor" href="#requirements"></a>
 </h2>
-<p>There are five required inputs:</p>
+<p>There are four inputs:</p>
 <ol style="list-style-type: decimal">
-<li><p>a list of participant or study IDs</p></li>
 <li><p>a start date</p></li>
 <li><p>an end date</p></li>
-<li><p>some metadata, stored against the identifier in #1.</p></li>
-<li><p>Experimental data, stored against the identifier in #1 and a date
-of sample.</p></li>
+<li><p>some metadata, including a column that contains participant or
+study IDs</p></li>
+<li><p><code>OPTIONAL</code> Experimental data, stored against the
+identifier in #1 and a date of sample.</p></li>
 </ol>
 <blockquote>
 <p><strong>NOTE</strong></p>
@@ -155,8 +165,6 @@ earliest and latest <em>data</em> available. For example, if your study
 collected information on prior symptoms at enrolment, and you want to
 include those in your analysis, use a suitably early start
 date.</p></li>
-<li><p>the list of study IDs could be provided by a column in metadata
-(or experimental data). For clarity, we show it separately.</p></li>
 <li><p>there are no limits to the number of experimental data
 sources.</p></li>
 </ol>
@@ -165,8 +173,9 @@ sources.</p></li>
 <div class="section level2">
 <h2 id="in-brief">In brief<a class="anchor" aria-label="anchor" href="#in-brief"></a>
 </h2>
-<p><code><a href="../reference/cg_assemble.html">cg_assemble()</a></code> wraps the following functions. The use of
-these functions is the focus of the rest of the vignette.</p>
+<p><code><a href="../reference/cg_assemble.html">cg_assemble()</a></code> wraps the following functions, and in most
+situations <code><a href="../reference/cg_assemble.html">cg_assemble()</a></code> is the advised route. In this
+vignette, we unpack step-wise.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Fictional example data ##</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">smallstudy</span><span class="op">)</span></span>
@@ -230,8 +239,8 @@ these functions is the focus of the rest of the vignette.</p>
 <div class="section level3">
 <h3 id="generate-a-chronogram_skeleton-object">Generate a chronogram_skeleton object<a class="anchor" aria-label="anchor" href="#generate-a-chronogram_skeleton-object"></a>
 </h3>
-<p>The <code><a href="../reference/chronogram_skeleton.html">chronogram_skeleton()</a></code> helper function creates an
-object which: - contains two columns: calendar_date (name is set with
+<p><code><a href="../reference/chronogram_skeleton.html">chronogram_skeleton()</a></code> returns an object which: -
+contains two columns: calendar_date (name is set with
 <code>col_calendar_date</code>), elig_study_id (name is set with
 <code>col_ids</code>). - contains a row for each participant for each
 day.</p>
@@ -259,8 +268,7 @@ day.</p>
 <span>  <span class="co">## change this to your date column name ##</span></span>
 <span>  col_calendar_date <span class="op">=</span> <span class="va">calendar_date</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p>It comes with a print format, to allow manual checking that you have
-generated the expected results.</p>
+<p>Now print, to check that you have generated the expected results.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">small_study</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,947 × 2</span></span></span>
@@ -466,9 +474,7 @@ subset your final chronogram down to an object that looks like
 <code>colData</code> or <code>annData</code> for Bioconductor’s 10x
 analysis, Seurat, or scanpy:
 <code>small_study %&gt;% filter(PBMC_scRNAseq == "run")</code>.</p>
-<p>If your data are already in an SQL (or similar) database, consider
-using dbplyr to generate a metadata tibble and experimental data
-tibbles.</p>
+<p>If your data are already in an SQL (or similar) database, see the <a href="/articles/SQL_assembly.html">assembly from SQL vignette</a>.</p>
 </div>
 </div>
 <div class="section level2">
@@ -511,11 +517,11 @@ assay.</p>
 <span><span class="co">#&gt;  [5] xfun_0.46         purrr_1.0.2       generics_0.1.3    textshaping_0.4.0</span></span>
 <span><span class="co">#&gt;  [9] jsonlite_1.8.8    glue_1.7.0        htmltools_0.5.8.1 ragg_1.3.2       </span></span>
 <span><span class="co">#&gt; [13] sass_0.4.9        fansi_1.0.6       rmarkdown_2.27    tibble_3.2.1     </span></span>
-<span><span class="co">#&gt; [17] evaluate_0.24.0   jquerylib_0.1.4   fastmap_1.2.0     yaml_2.3.9       </span></span>
+<span><span class="co">#&gt; [17] evaluate_0.24.0   jquerylib_0.1.4   fastmap_1.2.0     yaml_2.3.10      </span></span>
 <span><span class="co">#&gt; [21] lifecycle_1.0.4   compiler_4.4.1    fs_1.6.4          timechange_0.3.0 </span></span>
 <span><span class="co">#&gt; [25] pkgconfig_2.0.3   tidyr_1.3.1       systemfonts_1.1.0 digest_0.6.36    </span></span>
 <span><span class="co">#&gt; [29] R6_2.5.1          tidyselect_1.2.1  utf8_1.2.4        pillar_1.9.0     </span></span>
-<span><span class="co">#&gt; [33] magrittr_2.0.3    bslib_0.7.0       withr_3.0.0       tools_4.4.1      </span></span>
+<span><span class="co">#&gt; [33] magrittr_2.0.3    bslib_0.8.0       withr_3.0.1       tools_4.4.1      </span></span>
 <span><span class="co">#&gt; [37] pkgdown_2.1.0     cachem_1.1.0      desc_1.4.3</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>The Whole Game • chronogram</title>
+<title>Quickstart • chronogram</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="The Whole Game">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Quickstart">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -34,10 +34,20 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotating infection episodes</a></li>
-    <li><a class="dropdown-item" href="../articles/annotation.html">Chronogram annotation</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Assembly</h6></li>
     <li><a class="dropdown-item" href="../articles/assembly.html">Chronogram assembly</a></li>
-    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Chronogram assembly from SQL</a></li>
+    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Assembly from SQL</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="../articles/annotate_vaccines.html">Annotate vaccines</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotate infection episodes</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_exposure.html">Annotate exposures</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/stats.html">Chronogram statistics</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Chronogram class</h6></li>
+    <li><a class="dropdown-item" href="../articles/chronogram_class.html">Introducing the chronogram class</a></li>
   </ul>
 </li>
       </ul>
@@ -58,7 +68,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>The Whole Game</h1>
+      <h1>Quickstart</h1>
             
       
 
@@ -68,7 +78,7 @@
     
     
 <p>This vignette is for the impatient and showcases the features of the
-chronogram package.</p>
+<code>chronogram</code> package.</p>
 <div class="section level2">
 <h2 id="load-libraries">Load libraries<a class="anchor" aria-label="anchor" href="#load-libraries"></a>
 </h2>
@@ -87,40 +97,105 @@ chronogram package.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://franciscrickinstitute.github.io/chronogram/">chronogram</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="construct-chronogram">Construct chronogram<a class="anchor" aria-label="anchor" href="#construct-chronogram"></a>
+<h2 id="construct-a-chronogram">Construct a chronogram<a class="anchor" aria-label="anchor" href="#construct-a-chronogram"></a>
 </h2>
+<p>Use <code><a href="../reference/cg_assemble.html">cg_assemble()</a></code> to create a chronogram from cleaned
+input data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Fictional example data ##</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">smallstudy</span><span class="op">)</span></span>
 <span></span>
 <span></span>
-<span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_ids</span></span>
-<span><span class="va">start</span> <span class="op">&lt;-</span> <span class="st">"01012020"</span></span>
-<span><span class="va">end</span> <span class="op">&lt;-</span> <span class="st">"10102021"</span></span>
-<span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_metadata</span></span>
-<span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_Ab</span></span>
-<span></span>
-<span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chronogram_skeleton.html">chronogram_skeleton</a></span><span class="op">(</span></span>
-<span>  ids <span class="op">=</span> <span class="va">ids</span>,</span>
-<span>  start_date <span class="op">=</span> <span class="va">start</span>,</span>
-<span>  end_date <span class="op">=</span> <span class="va">end</span>,</span>
-<span>  <span class="co">## change this to your ID column name ##</span></span>
-<span>  col_ids <span class="op">=</span> <span class="va">elig_study_id</span>,</span>
-<span>  <span class="co">## change this to your date column name ##</span></span>
-<span>  col_calendar_date <span class="op">=</span> <span class="va">calendar_date</span></span>
+<span><span class="va">cg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_assemble.html">cg_assemble</a></span><span class="op">(</span></span>
+<span>  start_date <span class="op">=</span> <span class="st">"01012020"</span>,</span>
+<span>  end_date <span class="op">=</span> <span class="st">"10102021"</span>,</span>
+<span>  <span class="co">## the provided metadata ##</span></span>
+<span>  metadata <span class="op">=</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_metadata</span>,</span>
+<span>  <span class="co">## the column name in the metadata that contains participant IDs ##</span></span>
+<span>  metadata_ids_col <span class="op">=</span> <span class="va">elig_study_id</span>,</span>
+<span>  <span class="co">## column name for dates ##</span></span>
+<span>  calendar_date_col <span class="op">=</span> <span class="va">calendar_date</span>,</span>
+<span>  <span class="co">## the provided experiment data (we have 1 assay, so a list of 1) ##</span></span>
+<span>  experiment_data_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_Ab</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Checking input parameters...</span></span>
+<span><span class="co">#&gt; -- checking start date 01012020</span></span>
+<span><span class="co">#&gt; -- checking end date 10102021</span></span>
+<span><span class="co">#&gt; -- checking end date later than start date</span></span>
+<span><span class="co">#&gt; -- checking metadata</span></span>
+<span><span class="co">#&gt; -- checking experiment data list</span></span>
+<span><span class="co">#&gt; --- checking experiment data list slot 1</span></span>
+<span><span class="co">#&gt; Input checks completed</span></span>
+<span><span class="co">#&gt; Chronogram assembling...</span></span>
+<span><span class="co">#&gt; -- chrongram_skeleton built</span></span>
+<span><span class="co">#&gt; -- chrongram built with metadata</span></span>
+<span><span class="co">#&gt; -- adding experiment data</span></span>
+<span><span class="co">#&gt; --- adding experiment data slot 1 cols... elig_study_id calendar_date serum_Ab_S ...</span></span></code></pre></div>
+<p><code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code>, <code><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse()</a></code> and
+<code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> help explore the resulting chronogram.
+(<code><a href="https://rdrr.io/r/utils/View.html" class="external-link">View()</a></code> works too, but not shown in vignette).</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">cg</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 10</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
+<span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
+<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span>
 <span></span>
-<span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chronogram.html">chronogram</a></span><span class="op">(</span><span class="va">small_study</span>, <span class="va">meta</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">cg</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Glimpse: chronogram </span></span>
+<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
+<span><span class="co">#&gt;  IDs column:    elig_study_id </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Metadata</span></span>
+<span><span class="co">#&gt; Rows: 1,947</span></span>
+<span><span class="co">#&gt; Columns: 6</span></span>
+<span><span class="co">#&gt; $ age         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40…</span></span>
+<span><span class="co">#&gt; $ sex         <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F…</span></span>
+<span><span class="co">#&gt; $ dose_1      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> AZD1222, AZD1222, AZD1222, AZD1222, AZD1222, AZD1222, AZD1…</span></span>
+<span><span class="co">#&gt; $ date_dose_1 <span style="color: #949494; font-style: italic;">&lt;date&gt;</span> 2021-01-05, 2021-01-05, 2021-01-05, 2021-01-05, 2021-01-0…</span></span>
+<span><span class="co">#&gt; $ dose_2      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> AZD1222, AZD1222, AZD1222, AZD1222, AZD1222, AZD1222, AZD1…</span></span>
+<span><span class="co">#&gt; $ date_dose_2 <span style="color: #949494; font-style: italic;">&lt;date&gt;</span> 2021-02-05, 2021-02-05, 2021-02-05, 2021-02-05, 2021-02-0…</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Experiment data &amp; annotations</span></span>
+<span><span class="co">#&gt; Rows: 1,947</span></span>
+<span><span class="co">#&gt; Columns: 2</span></span>
+<span><span class="co">#&gt; $ serum_Ab_S <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</span></span>
+<span><span class="co">#&gt; $ serum_Ab_N <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</span></span>
 <span></span>
-<span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span><span class="va">small_study</span>, <span class="va">ab</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">cg</span><span class="op">)</span></span>
+<span><span class="co">#&gt; A chronogram:</span></span>
+<span><span class="co">#&gt;  Dates column:  calendar_date </span></span>
+<span><span class="co">#&gt;  IDs column:    elig_study_id </span></span>
+<span><span class="co">#&gt;  Starts on:     2020-01-01 </span></span>
+<span><span class="co">#&gt;  Ends on:       2021-10-10 </span></span>
+<span><span class="co">#&gt;  Contains:      3  unique participant IDs</span></span>
+<span><span class="co">#&gt;  Windowed:      FALSE </span></span>
+<span><span class="co">#&gt;  Spanning:      649 - 649 days [min-max per participant]</span></span>
+<span><span class="co">#&gt;  Metadata:      age, sex, dose_1, date_dose_1, dose_2, date_dose_2 </span></span>
+<span><span class="co">#&gt;  Size:          129.55 kB </span></span>
+<span><span class="co">#&gt;  Pkg_version:   1.0.0 [used to build this cg]</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plot-trajectories">Plot trajectories<a class="anchor" aria-label="anchor" href="#plot-trajectories"></a>
 </h2>
-<p>Plot antibody responses over time for each individual, with a swimmer
-plot to summarise each individuals course.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">traj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_plot.html">cg_plot</a></span><span class="op">(</span><span class="va">small_study</span>,</span>
+<p>Plot antibody responses over time for each individual using
+<code><a href="../reference/cg_plot.html">cg_plot()</a></code>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">traj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_plot.html">cg_plot</a></span><span class="op">(</span><span class="va">cg</span>,</span>
 <span>  y_values <span class="op">=</span> <span class="va">serum_Ab_S</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Function provided to illustrate chronogram -&gt;</span></span>
@@ -128,7 +203,12 @@ plot to summarise each individuals course.</p>
 <span><span class="co">#&gt;           Users are likely to want to write their own,</span></span>
 <span><span class="co">#&gt;           study-specific applications</span></span>
 <span></span>
-<span><span class="va">swimmer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_plot_meta.html">cg_plot_meta</a></span><span class="op">(</span><span class="va">small_study</span>,</span>
+<span><span class="va">traj</span></span></code></pre></div>
+<p><img src="chronogram_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+<p>Plot a swimmers plot to visualise an individual’s sequence of events
+within the study, using <code><a href="../reference/cg_plot_meta.html">cg_plot_meta()</a></code>.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">swimmer</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_plot_meta.html">cg_plot_meta</a></span><span class="op">(</span><span class="va">cg</span>,</span>
 <span>  visit <span class="op">=</span> <span class="va">serum_Ab_S</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Function provided to illustrate chronogram -&gt;</span></span>
@@ -139,16 +219,14 @@ plot to summarise each individuals course.</p>
 <span><span class="co">#&gt;           Users are likely to want to write their own,</span></span>
 <span><span class="co">#&gt;           study-specific applications</span></span>
 <span></span>
-<span><span class="va">traj</span></span></code></pre></div>
-<p><img src="chronogram_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">swimmer</span></span></code></pre></div>
-<p><img src="chronogram_files/figure-html/unnamed-chunk-3-2.png" width="576"></p>
+<span><span class="va">swimmer</span></span></code></pre></div>
+<p><img src="chronogram_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
 <div class="section level3">
 <h3 id="customise-plots">Customise plots<a class="anchor" aria-label="anchor" href="#customise-plots"></a>
 </h3>
-<p>Using ggplot2 or patchwork adjustments.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<p>Using <code>ggplot2</code> or <code>patchwork</code>
+customisations.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lay</span> <span class="op">&lt;-</span> <span class="st">"</span></span>
 <span><span class="st">a</span></span>
 <span><span class="st">a</span></span>
@@ -167,22 +245,31 @@ plot to summarise each individuals course.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"date"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in scale_y_log10(): <span style="color: #00BB00;">log-10</span> transformation introduced infinite values.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">log-10</span> transformation introduced infinite values.</span></span></code></pre></div>
-<p><img src="chronogram_files/figure-html/unnamed-chunk-4-1.png" width="576"></p>
+<p><img src="chronogram_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="subset-data">Subset data<a class="anchor" aria-label="anchor" href="#subset-data"></a>
+<h2 id="annotate-a-chronogram">Annotate a chronogram<a class="anchor" aria-label="anchor" href="#annotate-a-chronogram"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>There are a suite of functions to find, label and count infection
+episodes. These aggregate across different experiment data columns, such
+as symptoms, PCRs, viral sequencing. See the <a href="docs/articles/annotation.html">annotation vignette</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="window-a-chronogram">Window a chronogram<a class="anchor" aria-label="anchor" href="#window-a-chronogram"></a>
+</h2>
+<p>Here, we pick dates in relation to dose 2, using
+<code><a href="../reference/cg_window_by_metadata.html">cg_window_by_metadata()</a></code>.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## upto 50d after dose 2 ##</span></span>
-<span><span class="va">cg_after_dose_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_window_by_metadata.html">cg_window_by_metadata</a></span><span class="op">(</span><span class="va">small_study</span>,</span>
+<span><span class="va">cg_after_dose_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_window_by_metadata.html">cg_window_by_metadata</a></span><span class="op">(</span><span class="va">cg</span>,</span>
 <span>  windowing_date_col <span class="op">=</span> <span class="va">date_dose_2</span>,</span>
 <span>  preceding_days <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  following_days <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## upto 21d before dose 2 ##</span></span>
-<span><span class="va">cg_before_dose_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_window_by_metadata.html">cg_window_by_metadata</a></span><span class="op">(</span><span class="va">small_study</span>,</span>
+<span><span class="va">cg_before_dose_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_window_by_metadata.html">cg_window_by_metadata</a></span><span class="op">(</span><span class="va">cg</span>,</span>
 <span>  windowing_date_col <span class="op">=</span> <span class="va">date_dose_2</span>,</span>
 <span>  preceding_days <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>  following_days <span class="op">=</span> <span class="fl">0</span></span>
@@ -205,9 +292,9 @@ plot to summarise each individuals course.</p>
 <span>    <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="re-plot-the-subsetted-data">Re-plot the subsetted data<a class="anchor" aria-label="anchor" href="#re-plot-the-subsetted-data"></a>
+<h3 id="re-plot-the-windowed-data">Re-plot the windowed data<a class="anchor" aria-label="anchor" href="#re-plot-the-windowed-data"></a>
 </h3>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">traj_2</span> <span class="op">&lt;-</span> <span class="va">cg_dose_2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/cg_plot.html">cg_plot</a></span><span class="op">(</span><span class="va">.</span>,</span>
 <span>    y_values <span class="op">=</span> <span class="va">serum_Ab_S</span></span>
@@ -265,7 +352,7 @@ plot to summarise each individuals course.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span>base_size <span class="op">=</span> <span class="fl">8</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.tag <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">16</span>, face <span class="op">=</span> <span class="st">"bold"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="chronogram_files/figure-html/unnamed-chunk-6-1.png" width="576"></p>
+<p><img src="chronogram_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
 <p>Note that for participant 3, the sample ~50d before dose 2 is now
 excluded.</p>
 </div>
@@ -282,7 +369,7 @@ chronogram functions.</p>
 <div class="section level2">
 <h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.1 (2024-06-14)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -310,16 +397,17 @@ chronogram functions.</p>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;  [1] gtable_0.3.5      jsonlite_1.8.8    highr_0.11        compiler_4.4.1   </span></span>
 <span><span class="co">#&gt;  [5] tidyselect_1.2.1  tidyr_1.3.1       jquerylib_0.1.4   systemfonts_1.1.0</span></span>
-<span><span class="co">#&gt;  [9] scales_1.3.0      textshaping_0.4.0 yaml_2.3.9        fastmap_1.2.0    </span></span>
-<span><span class="co">#&gt; [13] R6_2.5.1          labeling_0.4.3    generics_0.1.3    knitr_1.48       </span></span>
-<span><span class="co">#&gt; [17] tibble_3.2.1      desc_1.4.3        munsell_0.5.1     lubridate_1.9.3  </span></span>
-<span><span class="co">#&gt; [21] bslib_0.7.0       pillar_1.9.0      rlang_1.1.4       utf8_1.2.4       </span></span>
-<span><span class="co">#&gt; [25] cachem_1.1.0      xfun_0.46         fs_1.6.4          sass_0.4.9       </span></span>
-<span><span class="co">#&gt; [29] timechange_0.3.0  cli_3.6.3         pkgdown_2.1.0     withr_3.0.0      </span></span>
-<span><span class="co">#&gt; [33] magrittr_2.0.3    digest_0.6.36     grid_4.4.1        lifecycle_1.0.4  </span></span>
-<span><span class="co">#&gt; [37] vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0        farver_2.1.2     </span></span>
-<span><span class="co">#&gt; [41] ragg_1.3.2        fansi_1.0.6       colorspace_2.1-0  purrr_1.0.2      </span></span>
-<span><span class="co">#&gt; [45] rmarkdown_2.27    tools_4.4.1       pkgconfig_2.0.3   htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [9] scales_1.3.0      textshaping_0.4.0 yaml_2.3.10       fastmap_1.2.0    </span></span>
+<span><span class="co">#&gt; [13] lobstr_1.1.2      R6_2.5.1          labeling_0.4.3    generics_0.1.3   </span></span>
+<span><span class="co">#&gt; [17] knitr_1.48        tibble_3.2.1      desc_1.4.3        munsell_0.5.1    </span></span>
+<span><span class="co">#&gt; [21] lubridate_1.9.3   bslib_0.8.0       pillar_1.9.0      rlang_1.1.4      </span></span>
+<span><span class="co">#&gt; [25] utf8_1.2.4        cachem_1.1.0      xfun_0.46         fs_1.6.4         </span></span>
+<span><span class="co">#&gt; [29] sass_0.4.9        timechange_0.3.0  cli_3.6.3         pkgdown_2.1.0    </span></span>
+<span><span class="co">#&gt; [33] withr_3.0.1       magrittr_2.0.3    digest_0.6.36     grid_4.4.1       </span></span>
+<span><span class="co">#&gt; [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       </span></span>
+<span><span class="co">#&gt; [41] farver_2.1.2      ragg_1.3.2        fansi_1.0.6       colorspace_2.1-1 </span></span>
+<span><span class="co">#&gt; [45] purrr_1.0.2       rmarkdown_2.27    tools_4.4.1       pkgconfig_2.0.3  </span></span>
+<span><span class="co">#&gt; [49] htmltools_0.5.8.1</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -19,10 +19,20 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotating infection episodes</a></li>
-    <li><a class="dropdown-item" href="../articles/annotation.html">Chronogram annotation</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><h6 class="dropdown-header" data-toc-skip>Assembly</h6></li>
     <li><a class="dropdown-item" href="../articles/assembly.html">Chronogram assembly</a></li>
-    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Chronogram assembly from SQL</a></li>
+    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Assembly from SQL</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="../articles/annotate_vaccines.html">Annotate vaccines</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotate infection episodes</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_exposure.html">Annotate exposures</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/stats.html">Chronogram statistics</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Chronogram class</h6></li>
+    <li><a class="dropdown-item" href="../articles/chronogram_class.html">Introducing the chronogram class</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -38,9 +48,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="assembly">Assembly<a class="anchor" aria-label="anchor" href="#assembly"></a></h2>
+      <h2 id="assemble-a-chronogram-add-data">Assemble a chronogram &amp; add data<a class="anchor" aria-label="anchor" href="#assemble-a-chronogram-add-data"></a></h2>
 
-      <div class="section-desc"><p>Assemble a chronogram, or add new data.</p></div>
+
 
 
     </div><div class="section level2">
@@ -53,23 +63,29 @@
           <code><a href="cg_assemble.html">cg_assemble()</a></code>
 
         </dt>
-        <dd>Wrapper to assemble chronogram</dd>
+        <dd>Assemble a chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="cg_add_experiment.html">cg_add_experiment()</a></code>
 
         </dt>
-        <dd>A helper function to add experimental data to a chronogram</dd>
+        <dd>Add experimental data to a chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="cg_add_treatment.html">cg_add_treatment()</a></code>
 
         </dt>
-        <dd>A helper function to add treatment data to a chronogram</dd>
+        <dd>Add treatment data to a chronogram</dd>
       </dl></div><div class="section level2">
-      <h2 id="annotate">Annotate<a class="anchor" aria-label="anchor" href="#annotate"></a></h2>
+      <h2 id="annotate-a-chronogram">Annotate a chronogram<a class="anchor" aria-label="anchor" href="#annotate-a-chronogram"></a></h2>
 
-      <div class="section-desc"><p>Annotate a chronogram</p></div>
+
+
+
+    </div><div class="section level2">
+
+      <h3 id="episode-annotation">Episode annotation<a class="anchor" aria-label="anchor" href="#episode-annotation"></a></h3>
+      <div class="section-desc"><p>Find episodes from results (tests, symptoms) on different calendar days</p></div>
 
 
     </div><div class="section level2">
@@ -78,24 +94,6 @@
 
 
       <dl><dt>
-
-          <code><a href="cg_annotate_antigenic_history.html">cg_annotate_antigenic_history()</a></code>
-
-        </dt>
-        <dd>Calculate and assign flags based on infection history</dd>
-      </dl><dl><dt>
-
-          <code><a href="cg_annotate_episodes_count.html">cg_annotate_episodes_count()</a></code>
-
-        </dt>
-        <dd>Calculate and assign flags based on infection history</dd>
-      </dl><dl><dt>
-
-          <code><a href="cg_annotate_episodes_fill.html">cg_annotate_episodes_fill()</a></code>
-
-        </dt>
-        <dd>Find infections per individual</dd>
-      </dl><dl><dt>
 
           <code><a href="cg_annotate_episodes_find.html">cg_annotate_episodes_find()</a></code>
 
@@ -109,20 +107,49 @@
         <dd>Find seroconversion episodes per individual</dd>
       </dl><dl><dt>
 
-          <code><a href="cg_annotate_exposures_count.html">cg_annotate_exposures_count()</a></code>
+          <code><a href="cg_annotate_episodes_fill.html">cg_annotate_episodes_fill()</a></code>
 
         </dt>
-        <dd>Cumulative counting seroconversion episodes per individual</dd>
+        <dd>Fill experimental, treatment or symptom information within an infection episode</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="episode-vaccine-exposure-counting">Episode, vaccine &amp; exposure counting<a class="anchor" aria-label="anchor" href="#episode-vaccine-exposure-counting"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="cg_annotate_episodes_count.html">cg_annotate_episodes_count()</a></code>
+
+        </dt>
+        <dd>Calculate and assign flags based on infection history</dd>
       </dl><dl><dt>
 
           <code><a href="cg_annotate_vaccines_count.html">cg_annotate_vaccines_count()</a></code>
 
         </dt>
         <dd>Calculate and assign flags based on vaccine history</dd>
-      </dl></div><div class="section level2">
-      <h2 id="filter-window-select">Filter, window &amp; select<a class="anchor" aria-label="anchor" href="#filter-window-select"></a></h2>
+      </dl><dl><dt>
 
-      <div class="section-desc"><p>Sub-cohort a chronogram</p></div>
+          <code><a href="cg_annotate_exposures_count.html">cg_annotate_exposures_count()</a></code>
+
+        </dt>
+        <dd>Cumulative counting seroconversion episodes per individual</dd>
+      </dl><dl><dt>
+
+          <code><a href="cg_annotate_antigenic_history.html">cg_annotate_antigenic_history()</a></code>
+
+        </dt>
+        <dd>Calculate and assign flags based on infection history</dd>
+      </dl></div><div class="section level2">
+      <h2 id="filter-window-select-a-chronogram">Filter, window &amp; select a chronogram<a class="anchor" aria-label="anchor" href="#filter-window-select-a-chronogram"></a></h2>
+
+
 
 
     </div><div class="section level2">
@@ -135,19 +162,25 @@
           <code><a href="cg_window_by_episode.html">cg_window_by_episode()</a></code>
 
         </dt>
-        <dd>Take a window of dates from a chronogram: with respect to episode start.</dd>
+        <dd>Pick a window of dates from a chronogram: with respect to episode start.</dd>
       </dl><dl><dt>
 
           <code><a href="cg_window_by_metadata.html">cg_window_by_metadata()</a></code>
 
         </dt>
-        <dd>Take a window of dates from a chronogram</dd>
+        <dd>Pick a window before and after a metadata date column</dd>
       </dl><dl><dt>
 
           <code><a href="cg_window_by_visit.html">cg_window_by_visit()</a></code>
 
         </dt>
-        <dd>Take a window of dates from a chronogram: with respect to visits.</dd>
+        <dd>Pick a window of dates from a chronogram: with respect to visits.</dd>
+      </dl><dl><dt>
+
+          <code><a href="cg_select.html">cg_select()</a></code>
+
+        </dt>
+        <dd>Adapted dplyr::select() to include calendar dates and ID columns</dd>
       </dl><dl><dt>
 
           <code><a href="cg_select_visit.html">cg_select_visit()</a></code>
@@ -170,13 +203,13 @@
           <code><a href="cg_save.html">cg_save()</a></code>
 
         </dt>
-        <dd>A helper function to save a chronogram</dd>
+        <dd>Save a chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="cg_load.html">cg_load()</a></code>
 
         </dt>
-        <dd>A helper function to load a chronogram</dd>
+        <dd>Load a chronogram</dd>
       </dl></div><div class="section level2">
       <h2 id="example-datasets">Example datasets<a class="anchor" aria-label="anchor" href="#example-datasets"></a></h2>
 
@@ -245,25 +278,13 @@
           <code><a href="chronogram.html">chronogram()</a></code>
 
         </dt>
-        <dd>A helper function to build a chronogram, from a chronogram_skeleton and metadata</dd>
+        <dd>Build a chronogram, from a chronogram_skeleton and metadata</dd>
       </dl><dl><dt>
 
           <code><a href="chronogram_skeleton.html">chronogram_skeleton()</a></code>
 
         </dt>
-        <dd>A helper function to build the chronogram skeleton, a two column index, for chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="new_chronogram.html">new_chronogram()</a></code>
-
-        </dt>
-        <dd>new chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="new_chronogram_skeleton.html">new_chronogram_skeleton()</a></code>
-
-        </dt>
-        <dd>new_chronogram_skeleton</dd>
+        <dd>Build a chronogram skeleton, a two column index of IDs and calendar dates, a scaffold for a chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="new_grouped_chronogram.html">new_grouped_chronogram()</a></code>
@@ -293,7 +314,7 @@
           <code><a href="validate_chronogram.html">validate_chronogram()</a></code>
 
         </dt>
-        <dd>validate chronogram</dd>
+        <dd>Validate chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="validate_chronogram_skeleton.html">validate_chronogram_skeleton()</a></code>
@@ -313,46 +334,16 @@
 
       <dl><dt>
 
-          <code><a href="dplyr_reconstruct.cg_tbl.html">dplyr_reconstruct(<i>&lt;cg_tbl&gt;</i>)</a></code>
+          <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_row_slice(<i>&lt;cg_tbl&gt;</i>)</a></code> <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_col_modify(<i>&lt;cg_tbl&gt;</i>)</a></code> <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_reconstruct(<i>&lt;cg_tbl&gt;</i>)</a></code> <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_row_slice(<i>&lt;grouped_cg_df&gt;</i>)</a></code> <code><a href="dplyr_row_slice.cg_tbl.html">group_data_trim()</a></code> <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_col_modify(<i>&lt;grouped_cg_df&gt;</i>)</a></code> <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_reconstruct(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
 
         </dt>
-        <dd>Dplyr reconstruct for chronogram</dd>
+        <dd>Extending dplyr to chronogram</dd>
       </dl><dl><dt>
 
-          <code><a href="dplyr_reconstruct.grouped_cg_df.html">dplyr_reconstruct(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
+          <code><a href="group_by.cg_tbl.html">group_by(<i>&lt;cg_tbl&gt;</i>)</a></code> <code><a href="group_by.cg_tbl.html">ungroup(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
 
         </dt>
-        <dd>Dplyr reconstruct for grouped chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="dplyr_row_slice.cg_tbl.html">dplyr_row_slice(<i>&lt;cg_tbl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Dplyr row slice for chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="dplyr_row_slice.grouped_cg_df.html">dplyr_row_slice(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Dplyr row slice for grouped chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="group_by.cg_tbl.html">group_by(<i>&lt;cg_tbl&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Group-by chronogram</dd>
-      </dl><dl><dt>
-
-          <code><a href="group_data_trim.html">group_data_trim()</a></code>
-
-        </dt>
-        <dd>dplyr:::group_data_trim</dd>
-      </dl><dl><dt>
-
-          <code><a href="ungroup.grouped_cg_df.html">ungroup(<i>&lt;grouped_cg_df&gt;</i>)</a></code>
-
-        </dt>
-        <dd>ungroup-by chronogram</dd>
+        <dd>group-by &amp; ungroup-by chronogram</dd>
       </dl><dl><dt>
 
           <code><a href="glimpse.cg_tbl.html">glimpse(<i>&lt;cg_tbl&gt;</i>)</a></code>

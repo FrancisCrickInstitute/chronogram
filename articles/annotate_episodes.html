@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Annotating infection episodes • chronogram</title>
+<title>Annotate episodes • chronogram</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Annotating infection episodes">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Annotate episodes">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -34,10 +34,20 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotating infection episodes</a></li>
-    <li><a class="dropdown-item" href="../articles/annotation.html">Chronogram annotation</a></li>
+<li><h6 class="dropdown-header" data-toc-skip>Assembly</h6></li>
     <li><a class="dropdown-item" href="../articles/assembly.html">Chronogram assembly</a></li>
-    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Chronogram assembly from SQL</a></li>
+    <li><a class="dropdown-item" href="../articles/SQL_assembly.html">Assembly from SQL</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Annotation</h6></li>
+    <li><a class="dropdown-item" href="../articles/annotate_vaccines.html">Annotate vaccines</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_episodes.html">Annotate infection episodes</a></li>
+    <li><a class="dropdown-item" href="../articles/annotate_exposure.html">Annotate exposures</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Analysis</h6></li>
+    <li><a class="dropdown-item" href="../articles/stats.html">Chronogram statistics</a></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Chronogram class</h6></li>
+    <li><a class="dropdown-item" href="../articles/chronogram_class.html">Introducing the chronogram class</a></li>
   </ul>
 </li>
       </ul>
@@ -58,7 +68,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Annotating infection episodes</h1>
+      <h1>Annotate episodes</h1>
             
       
 
@@ -67,8 +77,20 @@
 
     
     
+<div class="section level3">
+<h3 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+</h3>
+<p>The chronogram package provides a family of functions to annotate a
+chronogram. These all start <code>cg_annotate_</code>. This vignette
+explains how to use these annotation functions. Before using this
+vignette, consult the <code><a href="../articles/assembly.html">vignette("assembly")</a></code>.</p>
+</div>
+<div class="section level3">
+<h3 id="setup">Setup<a class="anchor" aria-label="anchor" href="#setup"></a>
+</h3>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://franciscrickinstitute.github.io/chronogram/">chronogram</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
@@ -77,337 +99,136 @@
 <span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span> <span class="co"># for str_detect()</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://franciscrickinstitute.github.io/chronogram/">chronogram</a></span><span class="op">)</span></span></code></pre></div>
-<p>This vignette describes how chronogram deals with episodes of
-infection.</p>
-<p>Steps:</p>
-<ul>
-<li>assemble a chronogram (see <code><a href="../articles/assembly.html">vignette("assembly")</a></code> for
-explainer)</li>
-<li>add infection data, as an <code>experiment data</code> tibble</li>
-<li>find and annotate these episodes</li>
-</ul>
-<p>The vignette finishes by considering how to handle assigning variants
-to infection episodes.</p>
-<div class="section level2">
-<h2 id="build-a-chronogram">Build a chronogram<a class="anchor" aria-label="anchor" href="#build-a-chronogram"></a>
-</h2>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></code></pre></div>
+<p>We will use the example pre-built chronogram, introduced in the
+<code><a href="../articles/assembly.html">vignette("assembly")</a></code>, and add on some example infection
+data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Fictional example data ##</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">smallstudy</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">built_smallstudy</span><span class="op">)</span></span>
+<span><span class="va">cg</span> <span class="op">&lt;-</span> <span class="va">built_smallstudy</span><span class="op">$</span><span class="va">chronogram</span></span>
+<span><span class="va">infections_to_add</span> <span class="op">&lt;-</span> <span class="va">built_smallstudy</span><span class="op">$</span><span class="va">infections_to_add</span></span>
 <span></span>
-<span><span class="co">## 5 requirements ##</span></span>
-<span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_ids</span></span>
-<span></span>
-<span><span class="va">start</span> <span class="op">&lt;-</span> <span class="st">"01012020"</span></span>
-<span><span class="va">end</span> <span class="op">&lt;-</span> <span class="st">"10102021"</span></span>
-<span></span>
-<span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_metadata</span></span>
-<span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="va">smallstudy</span><span class="op">$</span><span class="va">small_study_Ab</span> <span class="co"># here, we just have antibody data</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## Make a chronogram ##</span></span>
-<span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chronogram_skeleton.html">chronogram_skeleton</a></span><span class="op">(</span></span>
-<span>  ids <span class="op">=</span> <span class="va">ids</span>,</span>
-<span>  start_date <span class="op">=</span> <span class="va">start</span>,</span>
-<span>  end_date <span class="op">=</span> <span class="va">end</span>,</span>
-<span>  <span class="co">## change this to your ID column name ##</span></span>
-<span>  col_ids <span class="op">=</span> <span class="va">elig_study_id</span>,</span>
-<span>  <span class="co">## change this to your date column name ##</span></span>
-<span>  col_calendar_date <span class="op">=</span> <span class="va">calendar_date</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/chronogram.html">chronogram</a></span><span class="op">(</span><span class="va">small_study</span>, <span class="va">meta</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">small_study</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span></span>
-<span>  <span class="va">small_study</span>,</span>
-<span>  <span class="va">ab</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">small_study</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 10</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
-<span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span>
-<span></span>
-<span><span class="co">## Use cg_add_experiment() for extra assays ##</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="some-example-infection-data">Some example infection data<a class="anchor" aria-label="anchor" href="#some-example-infection-data"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Simulate some infection data ##</span></span>
-<span><span class="va">infections_to_add</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
-<span>  <span class="op">~</span><span class="va">calendar_date</span>, <span class="op">~</span><span class="va">elig_study_id</span>, <span class="op">~</span><span class="va">LFT</span>, <span class="op">~</span><span class="va">PCR</span>, <span class="op">~</span><span class="va">symptoms</span>,</span>
-<span>  <span class="st">"01102020"</span>, <span class="st">"1"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>,</span>
-<span>  <span class="st">"11102020"</span>, <span class="st">"1"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="st">"severe"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">## Make calendar_date a date ##</span></span>
-<span><span class="va">infections_to_add</span><span class="op">$</span><span class="va">calendar_date</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">dmy</a></span><span class="op">(</span></span>
-<span>  <span class="va">infections_to_add</span><span class="op">$</span><span class="va">calendar_date</span></span>
-<span><span class="op">)</span></span>
 <span><span class="co">## add to chronogram</span></span>
-<span><span class="va">small_study_inf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span></span>
-<span>  <span class="va">small_study</span>,</span>
+<span><span class="va">cg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span></span>
+<span>  <span class="va">cg</span>,</span>
 <span>  <span class="va">infections_to_add</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">small_study_inf</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 13</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
-<span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;, LFT &lt;chr&gt;, PCR &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span>
-<span></span>
-<span><span class="va">small_study_inf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">PCR</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 13</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
-<span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 5 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;, LFT &lt;chr&gt;, PCR &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span></code></pre></div>
-<p><code>small_study</code> is now a chrongram with infection episodes,
-and serological data.</p>
-</div>
-<div class="section level2">
-<h2 id="infection-episode-parsing">Infection episode parsing<a class="anchor" aria-label="anchor" href="#infection-episode-parsing"></a>
-</h2>
-<p>The episode definition will depend on the study’s objectives, design
-and hypotheses. For example, a study with weekly nasopharyngeal PCRs may
-wish to use only PCR tests to define an episode, so as to include
-asymptomatic infections. In this vignette, we assume the study’s
-definition is to call any positive LFT or PCR or severe symptoms (even
-if not LFT/PCR +ve) to be counted as an episode. This is illustrative:
-your study will need its own solution. Chronogram provides generalised
-code, to allow the code implementation of an episode definition.</p>
-<p>In the following code chunk, we’re identifying episodes of infection
-baesd on specific strings within specified columns. In this dataset, we
-look for “pos” in column <code>LFT</code>, “Post” in column
-<code>PCR</code> and “^severe” in column <code>symptoms</code>. The
-presence of any one of those triggers an infection_episode being
-labelled. The function <code><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find()</a></code> searches
-backwards and forwards to scoop up different calendar dates into single
-episodes, as it is common for symptoms to precede test positivity (you
-can tweak this with <code>episode_days</code>).</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">small_study_inf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span><span class="va">small_study_inf</span>,</span>
-<span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span>
-<span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">"^severe"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Parsed: infection_cols and infection_present</span></span>
-<span><span class="co">#&gt;           </span></span>
-<span><span class="co">#&gt; Searching in the [[column]], for the "text":</span></span>
-<span><span class="co">#&gt; stringr::str_detect(.data[["LFT"]], "pos") ~ "yes"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; stringr::str_detect(.data[["PCR"]], "Post") ~ "yes"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; stringr::str_detect(.data[["symptoms"]], "^severe") ~ "yes"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; ...detecting will be exact.</span></span>
-<span><span class="co">#&gt;           Capitals, spelling etc must be precise</span></span>
-<span><span class="co">#&gt; calendar_date elig_study_id episode_number</span></span>
-<span><span class="co">#&gt; Joining with `by = join_by(calendar_date, elig_study_id)`</span></span>
-<span></span>
-<span><span class="co">## summary statistics ##</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">small_study_inf</span><span class="op">$</span><span class="va">episode_number</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's </span></span>
-<span><span class="co">#&gt;       1       1       1       1       1       1    1936</span></span>
-<span></span>
-<span></span>
-<span><span class="co">## numbers of infection episodes per individual ##</span></span>
-<span><span class="va">small_study_inf</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">elig_study_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">episode_number</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: There were 2 warnings in `summarise()`.</span></span>
-<span><span class="co">#&gt; The first warning was:</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> In argument: `n = max(episode_number, na.rm = TRUE)`.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> In group 2: `elig_study_id = 2`.</span></span>
-<span><span class="co">#&gt; Caused by warning in `max()`:</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> no non-missing arguments to max; returning -Inf</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 2</span></span></span>
-<span><span class="co">#&gt;   elig_study_id     n</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1                 1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2              -<span style="color: #BB0000;">Inf</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3              -<span style="color: #BB0000;">Inf</span></span></span>
-<span></span>
-<span><span class="va">small_study_inf</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble:     1,947 × 17</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A chronogram: </span><span style="color: #0000BB;">try summary()</span></span></span>
-<span><span class="co">#&gt;    calendar_date elig_study_id   age sex   dose_1 date_dose_1 dose_2 date_dose_2</span></span>
-<span><span class="co">#&gt;  <span style="color: #BCBCBC;">*</span> <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 2020-01-01    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 2020-01-02    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2020-01-03    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2020-01-04    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 2020-01-05    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 2020-01-06    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 2020-01-07    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 2020-01-08    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 2020-01-09    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 2020-01-10    1                40 F     AZD12… 2021-01-05  AZD12… 2021-02-05 </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,937 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9 more variables: serum_Ab_S &lt;dbl&gt;, serum_Ab_N &lt;dbl&gt;, LFT &lt;chr&gt;, PCR &lt;lgl&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   symptoms &lt;chr&gt;, episode_present_flag &lt;chr&gt;, episode_number &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   episode_start &lt;date&gt;, episode_end &lt;date&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">Dates:</span> calendar_date      <span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">IDs:</span> elig_study_id</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># </span><span style="color: #BBBB00;">★</span> <span style="color: #BBBB00;">metadata:</span> age, sex, dose_1, date_dose_1, dose_2, date_dose_2</span></span></code></pre></div>
-<p>You have the flexibility to configure <code>infection_cols</code> and
-<code>infection_present</code> to match any string on any column. The
-matching is performed as string matching. Care is required with matching
-exact text. Base R’s <code><a href="https://stringr.tidyverse.org/reference/modifiers.html" class="external-link">regex()</a></code> help has lots of examples of
-matching expressions including using wildcards. Below are a few examples
-of string matching problems.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Not run in vignette ... ##</span></span>
-<span><span class="co">## these are examples of text matching failures ##</span></span>
-<span></span>
-<span><span class="co">## exact text matching ##</span></span>
-<span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span><span class="va">small_study_inf</span>,</span>
-<span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span>
-<span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Pos"</span>, <span class="st">"Post"</span>, <span class="st">"^mild"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">test2</span><span class="op">$</span><span class="va">episode_number</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## empty strings will error (as they otherwise match everything) ##</span></span>
-<span><span class="va">test3a</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span><span class="va">small_study_inf</span>,</span>
-<span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span>
-<span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">""</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## a 'random' string will not error ##</span></span>
-<span><span class="va">test3b</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span><span class="va">small_study_inf</span>,</span>
-<span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span>
-<span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">"a"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="variant-calling">Variant calling<a class="anchor" aria-label="anchor" href="#variant-calling"></a>
-</h2>
-<p>For SARS-CoV-2 studies, it is often desirable to report an infecting
-variant. The fundamental approach is: “A viral sequencing result trumps
-an inference based on S gene target failure (SGTF) which trumps an
-inference based on date of symptoms (or LFT) only.” However, there are
-four ways this becomes more complex in the wild:</p>
-<ol style="list-style-type: decimal">
-<li><em>Available data</em></li>
-</ol>
-<p>Not all studies will have symptom diaries, or SGTF data (perhaps only
-PCR positive/negative, or only used LFTs) and not all studies will
-sequence at least one swab from each infection episode. Chronogram
-should not mandate the presence of these data.</p>
-<ol start="2" style="list-style-type: decimal">
-<li><em>Sequencing tools, and their results, develop over time</em></li>
-</ol>
-<p>As new variants evolve, emerge and are sequenced in enough numbers to
-be assigned their own lineage designations, PANGO and scorpio
-definitions need to be revised. As scorpio uses “constellations” of
-sentinel (“lineage defining”) SNPs, the scorpio defintion can take a
-little longer to be released, PANGO is the bleeding-edge. Therefore
-XBB.1.5, for example, might be called <code>XBB.1.5</code> by PANGO and
-<code>Omicron-BA.2 like</code> by scorpio. Most studies would want the
-final assigned variant to be <code>XBB.1.5</code>. Conversely, many
-investigators would want to group all of <code>Delta</code> rather than
-have <code>AY.42</code> and <code>B.1.617.2</code>. This solvable in
-chronogram, but we have not hard-coded an approach (as there isn’t a
-one-size-fits-all solution).</p>
-<ol start="3" style="list-style-type: decimal">
-<li><em>The external inference data changes over time</em></li>
-</ol>
-<p>For example, assigning Alpha vs Delta based on date alone in the UK
-is pretty straightforward <em>today</em>, as there is a large amount of
-sequences available. At the time it was more challenging. In 2023,
-assigning variants based on date in the UK is very challenging - with
-over &gt;10 Omicron sub-variants co-circulating. Chronogram does not
-assume it can do this for the end user.</p>
-<ol start="4" style="list-style-type: decimal">
-<li><em>The returned data will map by calendar date</em></li>
-</ol>
-<p>In Chronogram, each data entry, such as a variant identification
-(<code>PANGO==XBB.1.5</code>), is timestamped by the calendar date when
-the swab was taken. An investigator will want <code>XBB.1.5</code> to be
-the variant call associated with the entire episode (consider:
-XBB.1.5+ve sequence result on d0, symptoms on d-5 and LFT+ve on d-4,
-this is an <code>XBB.1.5 episode spanning d-5 to d0</code>). Though the
-data might be scattered across different rows in Chronogram, a
-researcher would interpret this as a single XBB.1.5 episode that spanned
-from d-5 to d0.</p>
-<p>Chronogram offers a flexible way to address point 4 i.e. tracking
-data by its calendar date. For point 1, this requires a unique coing.
-solution tailed to each study’s dataset. For 2+3, study specific
-solutions are required, and for contemporaneous studies (eg does latest
-vaccine protect against current variant?), then a rolling review of the
-strategy is required.</p>
 <div class="section level3">
-<h3 id="variant-dataset">Variant dataset<a class="anchor" aria-label="anchor" href="#variant-dataset"></a>
+<h3 id="episode-annotation">Episode annotation<a class="anchor" aria-label="anchor" href="#episode-annotation"></a>
 </h3>
-<p>Returning to our small example study, we now have SGTF data too.
-Dates of these episodes have been updated to be plausibly Ancestral
-infection with S gene presence, and Alpha infection with SGTF.</p>
-<p>First, build chronogram as previously.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Simulate some variant data ##</span></span>
-<span><span class="va">variants_to_add</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html" class="external-link">tribble</a></span><span class="op">(</span></span>
-<span>  <span class="op">~</span><span class="va">calendar_date</span>, <span class="op">~</span><span class="va">elig_study_id</span>, <span class="op">~</span><span class="va">LFT</span>, <span class="op">~</span><span class="va">PCR</span>, <span class="op">~</span><span class="va">SGTF</span>, <span class="op">~</span><span class="va">symptoms</span>,</span>
-<span>  <span class="st">"01062020"</span>, <span class="st">"1"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="st">"S present"</span>, <span class="cn">NA</span>,</span>
-<span>  <span class="st">"01022021"</span>, <span class="st">"1"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="st">"severe"</span>,</span>
-<span>  <span class="st">"11022021"</span>, <span class="st">"1"</span>, <span class="st">"pos"</span>, <span class="cn">NA</span>, <span class="st">"S fail"</span>, <span class="st">"severe"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Make calendar_date a date ##</span></span>
-<span><span class="va">variants_to_add</span><span class="op">$</span><span class="va">calendar_date</span> <span class="op">&lt;-</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">dmy</a></span><span class="op">(</span></span>
-<span>  <span class="va">variants_to_add</span><span class="op">$</span><span class="va">calendar_date</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">## add to chronogram ##</span></span>
-<span><span class="va">small_study.variants</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_add_experiment.html">cg_add_experiment</a></span><span class="op">(</span><span class="va">small_study</span>, <span class="va">variants_to_add</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">small_study.variants</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span><span class="va">small_study.variants</span>,</span>
+<p>Annotation is required to allow the selection sub-cohorts of
+individuals (and corresponding dates) that are relevant to test your
+biological hypothesis.</p>
+<p>For episodes, use the <code>cg_annotate_episodes_</code> family</p>
+<p>These perform sequential steps:</p>
+<ol style="list-style-type: lower-roman">
+<li>
+<code><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find()</a></code> is used to identify
+episodes of infection. This <em>reads</em> across several different
+experiment data types, that are specified in the function call: eg.
+symptoms, PCRs, LFTs for SARS-CoV-2. Additionally,
+<code><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find()</a></code> looks backwards and forwards in
+time to find episodes, as commonly the molecular testing and symptoms do
+not commence on the same day.</li>
+</ol>
+<p>In some studies, seroconversion is the method of finding episodes (eg
+seroconversion on anti-N IgG in SARS-CoV-2). Seroconversion episodes can
+be found with <code><a href="../reference/cg_annotate_episodes_find_seroconversion.html">cg_annotate_episodes_find_seroconversion()</a></code>.
+As these provide different (often much, much larger) uncertainty around
+the episode start, chronogram handles this in a separate function.</p>
+<ol start="2" style="list-style-type: lower-roman">
+<li><p><code><a href="../reference/cg_annotate_episodes_fill.html">cg_annotate_episodes_fill()</a></code> allow filling of
+specific columns for each episode (details below).</p></li>
+<li><p>count the number of episodes (cf
+<code><a href="../reference/cg_annotate_vaccines_count.html">cg_annotate_vaccines_count()</a></code>)</p></li>
+</ol>
+<div class="section level4">
+<h4 id="worked-example">Worked example<a class="anchor" aria-label="anchor" href="#worked-example"></a>
+</h4>
+<p>The first step is to find episodes using
+<code><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find()</a></code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cg_episodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span></span>
+<span>  <span class="va">cg</span>,</span>
 <span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span>
 <span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">"^severe"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Parsed: infection_cols and infection_present</span></span>
+<span><span class="co">#&gt;           </span></span>
+<span><span class="co">#&gt; Searching in the [[column]], for the "text":</span></span>
+<span><span class="co">#&gt; Loading required namespace: stringr</span></span>
+<span><span class="co">#&gt; stringr::str_detect(.data[["LFT"]], "pos") ~ "yes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; stringr::str_detect(.data[["PCR"]], "Post") ~ "yes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; stringr::str_detect(.data[["symptoms"]], "^severe") ~ "yes"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ...detecting will be exact.</span></span>
+<span><span class="co">#&gt;           Capitals, spelling etc must be precise</span></span>
+<span><span class="co">#&gt; Joining with `by = join_by(calendar_date, elig_study_id)`</span></span>
+<span></span>
+<span><span class="va">cg_episodes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">calendar_date</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">elig_study_id</span>,</span>
+<span>      label <span class="op">=</span> <span class="va">episode_number</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co">## now add text to show when episodes occur ##</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">elig_study_id</span>, <span class="va">episode_number</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"red"</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 3 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_text()`).</span></span></code></pre></div>
+<p><img src="annotate_episodes_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<p>Note that participant 1 has a single infection episode in November
+2020, with testing and symptom data on different days:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">infections_to_add</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">elig_study_id</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">calendar_date</th>
+<th align="left">elig_study_id</th>
+<th align="left">LFT</th>
+<th align="left">PCR</th>
+<th align="left">symptoms</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">2020-10-01</td>
+<td align="left">1</td>
+<td align="left">pos</td>
+<td align="left">not tested</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-11</td>
+<td align="left">1</td>
+<td align="left">pos</td>
+<td align="left">NA</td>
+<td align="left">severe</td>
+</tr>
+</tbody>
+</table>
+<p>We could use a shorter time frame to look forwards and backwards
+in:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cg_short_episode_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_find.html">cg_annotate_episodes_find</a></span><span class="op">(</span></span>
+<span>  <span class="va">cg</span>,</span>
+<span>  infection_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LFT"</span>, <span class="st">"PCR"</span>, <span class="st">"symptoms"</span><span class="op">)</span>,</span>
+<span>  infection_present <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pos"</span>, <span class="st">"Post"</span>, <span class="st">"^severe"</span><span class="op">)</span>,</span>
+<span>  <span class="co">## change episode days interval to 7 days ##</span></span>
+<span>  episode_days <span class="op">=</span> <span class="fl">7</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; Parsed: infection_cols and infection_present</span></span>
 <span><span class="co">#&gt;           </span></span>
@@ -421,416 +242,117 @@ infection with S gene presence, and Alpha infection with SGTF.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ...detecting will be exact.</span></span>
 <span><span class="co">#&gt;           Capitals, spelling etc must be precise</span></span>
-<span><span class="co">#&gt; calendar_date elig_study_id episode_number</span></span>
-<span><span class="co">#&gt; Joining with `by = join_by(calendar_date, elig_study_id)`</span></span></code></pre></div>
-<p>Next, we define a new column <code>episode_filled_SGTF</code> which
-is the first non-NA value for SGTF within each episode (solving issue 4
-above).</p>
+<span><span class="co">#&gt; Joining with `by = join_by(calendar_date, elig_study_id)`</span></span>
+<span></span>
+<span><span class="va">cg_short_episode_length</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span></span>
+<span>      x <span class="op">=</span> <span class="va">calendar_date</span>,</span>
+<span>      y <span class="op">=</span> <span class="va">elig_study_id</span>,</span>
+<span>      label <span class="op">=</span> <span class="va">episode_number</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co">## now add text to show when episodes occur ##</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_text</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">.</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">elig_study_id</span>, <span class="va">episode_number</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_head</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>    col <span class="op">=</span> <span class="st">"red"</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_grey.html" class="external-link">scale_fill_grey</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">0.2</span>, start <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 3 rows containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_text()`).</span></span></code></pre></div>
+<p><img src="annotate_episodes_files/figure-html/unnamed-chunk-5-1.png" width="576"></p>
+<p>The episode_days option sets the “gap” to look for, rather than the
+total permitted length of an episode. For example, LFT+ve on d-6,
+symptoms on d0, and PCR+ on d7 would be collected into a single
+episode.</p>
+</div>
 </div>
 <div class="section level3">
-<h3 id="fill-episode-data">Fill episode data<a class="anchor" aria-label="anchor" href="#fill-episode-data"></a>
+<h3 id="episode-variant">Episode variant<a class="anchor" aria-label="anchor" href="#episode-variant"></a>
 </h3>
-<p>Within each episode, “spread” an experimental result to every row. In
-<code>tidyverse</code>, this is performed with
-<code><a href="https://tidyr.tidyverse.org/reference/fill.html" class="external-link">tidyr::fill()</a></code>, and so we have adopted a similar name for
-the chronogram function. <code>Tidyr::fill()</code> has an argument
-<code>.direction</code> which allows filling upwards or downwards (or
-one then the other). This is useful where there are several results: eg.
-S gene may be present at the first swab in an episode, and once
-infection cleared and PCR negative, a second swab could show SGTF (it
-would also be negative for the other PCR products). Using the earliest,
-S gene present result is useful. However, in other instances, for
-example the burden of viral polymorphisms, that may peak at the last
-measurement in that episode. <code>.direction</code> is passed onwards
-to the wrapped <code><a href="https://tidyr.tidyverse.org/reference/fill.html" class="external-link">tidyr::fill()</a></code>.</p>
+<p>Next, we assign variants. There is no one-size-fits all approach that
+holds across pathogens, across studies, and across geographic regions.
+In this example we have PCR data available, and could parse as: if there
+is PCR positivity assign Delta, if there is no PCR testing assign
+Ancestral/Alpha.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cg_episodes</span> <span class="op">&lt;-</span> <span class="va">cg_episodes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>    episode_variant <span class="op">=</span></span>
+<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
+<span>        <span class="co"># "is an episode" &amp; "PCR positive" -&gt; Delta #</span></span>
+<span>        <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">episode_number</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">PCR</span> <span class="op">==</span> <span class="st">"Pos"</span> <span class="op">~</span> <span class="st">"Delta"</span>,</span>
+<span>        <span class="co"># "is an episode" &amp; "PCR unavailable" -&gt; Anc/Delta #</span></span>
+<span>        <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">episode_number</span><span class="op">)</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">PCR</span> <span class="op">==</span> <span class="st">"not tested"</span> <span class="op">~</span> <span class="st">"Anc/Alpha"</span></span>
+<span>      <span class="op">)</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
+<p>This gives a variant call on a single row of <code>cg</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">small_study.variants</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cg_annotate_episodes_fill.html">cg_annotate_episodes_fill</a></span><span class="op">(</span><span class="va">small_study.variants</span>,</span>
-<span>  col_to_fill <span class="op">=</span> <span class="va">SGTF</span>,</span>
-<span>  col_to_return <span class="op">=</span> <span class="va">episode_filled_SGTF</span>,</span>
-<span>  .direction <span class="op">=</span> <span class="st">"downup"</span>,</span>
-<span>  episode_numbers_col <span class="op">=</span> <span class="va">episode_number</span></span>
-<span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">cg_episodes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">episode_variant</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">episode_variant</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Anc/Alpha" "Anc/Alpha" "Delta"</span></span></code></pre></div>
+<p>We can use <code><a href="../reference/cg_annotate_episodes_fill.html">cg_annotate_episodes_fill()</a></code> to add this
+annotation to every row of the infection episode.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cg_episodes</span> <span class="op">&lt;-</span> <span class="va">cg_episodes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../reference/cg_annotate_episodes_fill.html">cg_annotate_episodes_fill</a></span><span class="op">(</span></span>
+<span>    col_to_fill <span class="op">=</span> <span class="va">episode_variant</span>,</span>
+<span>    col_to_return <span class="op">=</span> <span class="va">episode_variant_filled</span>,</span>
+<span>    .direction <span class="op">=</span> <span class="st">"updown"</span>,</span>
+<span>    episode_numbers_col <span class="op">=</span> <span class="va">episode_number</span></span>
+<span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Joining with `by = join_by(elig_study_id, episode_number)`</span></span>
 <span></span>
-<span><span class="va">small_study.variants</span><span class="op">$</span><span class="va">episode_filled_SGTF</span></span>
-<span><span class="co">#&gt;    [1] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;    [7] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [13] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [19] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [25] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [31] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [37] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [43] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [49] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [55] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [61] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [67] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [73] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [79] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [85] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [91] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;   [97] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [103] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [109] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [115] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [121] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [127] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [133] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [139] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [145] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [151] NA          NA          "S present" NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [157] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [163] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [169] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [175] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [181] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [187] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [193] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [199] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [205] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [211] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [217] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [223] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [229] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [235] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [241] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [247] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [253] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [259] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [265] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [271] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [277] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [283] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [289] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [295] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [301] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [307] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [313] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [319] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [325] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [331] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [337] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [343] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [349] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [355] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [361] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [367] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [373] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [379] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [385] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [391] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [397] NA          "S fail"    "S fail"    "S fail"    "S fail"    "S fail"   </span></span>
-<span><span class="co">#&gt;  [403] "S fail"    "S fail"    "S fail"    "S fail"    "S fail"    "S fail"   </span></span>
-<span><span class="co">#&gt;  [409] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [415] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [421] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [427] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [433] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [439] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [445] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [451] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [457] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [463] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [469] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [475] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [481] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [487] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [493] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [499] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [505] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [511] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [517] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [523] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [529] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [535] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [541] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [547] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [553] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [559] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [565] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [571] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [577] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [583] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [589] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [595] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [601] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [607] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [613] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [619] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [625] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [631] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [637] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [643] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [649] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [655] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [661] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [667] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [673] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [679] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [685] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [691] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [697] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [703] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [709] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [715] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [721] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [727] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [733] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [739] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [745] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [751] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [757] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [763] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [769] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [775] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [781] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [787] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [793] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [799] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [805] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [811] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [817] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [823] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [829] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [835] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [841] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [847] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [853] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [859] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [865] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [871] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [877] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [883] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [889] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [895] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [901] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [907] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [913] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [919] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [925] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [931] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [937] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [943] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [949] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [955] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [961] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [967] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [973] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [979] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [985] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [991] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt;  [997] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1003] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1009] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1015] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1021] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1027] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1033] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1039] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1045] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1051] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1057] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1063] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1069] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1075] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1081] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1087] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1093] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1099] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1105] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1111] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1117] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1123] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1129] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1135] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1141] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1147] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1153] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1159] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1165] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1171] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1177] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1183] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1189] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1195] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1201] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1207] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1213] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1219] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1225] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1231] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1237] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1243] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1249] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1255] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1261] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1267] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1273] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1279] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1285] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1291] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1297] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1303] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1309] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1315] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1321] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1327] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1333] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1339] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1345] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1351] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1357] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1363] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1369] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1375] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1381] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1387] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1393] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1399] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1405] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1411] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1417] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1423] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1429] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1435] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1441] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1447] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1453] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1459] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1465] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1471] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1477] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1483] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1489] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1495] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1501] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1507] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1513] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1519] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1525] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1531] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1537] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1543] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1549] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1555] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1561] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1567] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1573] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1579] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1585] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1591] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1597] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1603] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1609] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1615] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1621] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1627] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1633] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1639] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1645] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1651] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1657] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1663] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1669] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1675] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1681] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1687] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1693] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1699] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1705] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1711] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1717] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1723] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1729] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1735] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1741] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1747] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1753] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1759] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1765] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1771] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1777] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1783] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1789] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1795] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1801] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1807] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1813] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1819] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1825] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1831] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1837] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1843] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1849] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1855] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1861] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1867] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1873] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1879] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1885] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1891] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1897] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1903] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1909] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1915] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1921] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1927] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1933] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1939] NA          NA          NA          NA          NA          NA         </span></span>
-<span><span class="co">#&gt; [1945] NA          NA          NA</span></span></code></pre></div>
-<p>Each variant identifying assay needs to be <code>filled</code> as
-above.</p>
-</div>
-<div class="section level3">
-<h3 id="assign-episode-data">Assign episode data<a class="anchor" aria-label="anchor" href="#assign-episode-data"></a>
-</h3>
-<p>Now we can use a <code><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when()</a></code> within each group of id +
-episode_number.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">small_study.variants</span> <span class="op">&lt;-</span> <span class="va">small_study.variants</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>episode_variant <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">episode_filled_SGTF</span>, <span class="st">"S present"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"Ancestral"</span>,</span>
-<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">episode_filled_SGTF</span>, <span class="st">"S fail"</span><span class="op">)</span> <span class="op">~</span> <span class="st">"Alpha"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span></span>
-<span><span class="co">## How many days are each episode? ##</span></span>
-<span><span class="co">## Alpha = 11 days long; Ancestral = 1 day long ##</span></span>
-<span><span class="va">small_study.variants</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">elig_study_id</span>, <span class="va">episode_number</span>, <span class="va">episode_variant</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">tally</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># Groups:   elig_study_id, episode_number [5]</span></span></span>
-<span><span class="co">#&gt;   elig_study_id episode_number episode_variant     n</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 1                          1 Ancestral           1</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 1                          2 Alpha              11</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 1                         <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>                637</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2                         <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>                649</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 3                         <span style="color: #BB0000;">NA</span> <span style="color: #BB0000;">NA</span>                649</span></span></code></pre></div>
-<p>This case_when() is straightforward.</p>
-<p>How would you use PANGO before SGTF?</p>
-<blockquote>
-<p><strong>HINT</strong>
-<code>case_when(!is.na(episode_filled_PANGO) ~ episode_filled_PANGO, ...)</code></p>
-</blockquote>
-<p>How would you adjust with emergence of Delta, in a study without
-viral sequencing? (S present).</p>
-<blockquote>
-<p><strong>HINT</strong>
-<code>case_when(str_detect(episode_filled_SGTF, "S present") &amp; calendar_date &gt; lubridate::dmy("01092021") ~ "Delta", ...)</code></p>
-</blockquote>
-</div>
+<span><span class="va">cg_episodes</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">episode_variant_filled</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">episode_variant_filled</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "Anc/Alpha" "Anc/Alpha" "Anc/Alpha" "Anc/Alpha" "Anc/Alpha" "Anc/Alpha"</span></span>
+<span><span class="co">#&gt;  [7] "Anc/Alpha" "Anc/Alpha" "Anc/Alpha" "Anc/Alpha" "Anc/Alpha" "Anc/Alpha"</span></span>
+<span><span class="co">#&gt; [13] "Delta"</span></span></code></pre></div>
+<p>Variant calling rarely relies on a single assay. We advocate a
+pragmatic a tiered approach. If viral sequencing results are available
+we use those; if PCR only (± S gene target failure), we use those; and
+in the absence of molecular testing we compare episode start dates to
+prevailing variant trends.</p>
+<p>In principle:</p>
+<ul>
+<li><p>each assay result is reported in its own column in 1 (or more)
+experimental data tibbles</p></li>
+<li><p>build with <code><a href="../reference/cg_assemble.html">cg_assemble()</a></code></p></li>
+<li><p>find episodes as above</p></li>
+<li><p>fill each of <code>episode_variant_by_seq</code>,
+<code>episode_variant_by_PCR</code> and
+<code>episode_variant_by_date</code>, and then fill for the whole
+episode, using <code><a href="../reference/cg_annotate_episodes_fill.html">cg_annotate_episodes_fill()</a></code>.</p></li>
+<li><p>write a <code><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when()</a></code> to combine over
+<code>episode_variant_by_seq_filled</code>,
+<code>episode_variant_by_PCR_filled</code> and
+<code>episode_variant_by_date_filled</code>. Which result trumps which
+other results is study-dependent.</p></li>
+</ul>
+<p>… to return a column <code>episode_variant_summarised</code> as the
+combined, overall assignment (column naming strategy entirely up to the
+user).</p>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p>We have added infection data to chronogram, and summarised variant
-calls, with flexible and scalable logic.</p>
-</div>
-<div class="section level2">
-<h2 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
-</h2>
+<p>This vignette has provided examples of the cg_annotate family in
+action. If you are conducting a multi-pathogen study (RSV, flu, covid),
+then run a set of cg_annotate family functions for each pathogen - and
+you may wish to prefix the output columns eg <code>RSV_</code>,
+<code>flu_</code> &amp; <code>covid_</code>. As these have differing
+considerations for eg variants, chronogram leaves the cg_annotate family
+without an overall wrapper to let users easily omit unneeded
+annotations.</p>
+<div class="section level3">
+<h3 id="sessioninfo">SessionInfo<a class="anchor" aria-label="anchor" href="#sessioninfo"></a>
+</h3>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.4.1 (2024-06-14)</span></span>
@@ -854,20 +376,23 @@ calls, with flexible and scalable logic.</p>
 <span><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] chronogram_1.0.0 stringr_1.5.1    dplyr_1.1.4     </span></span>
+<span><span class="co">#&gt; [1] patchwork_1.2.0  ggplot2_3.5.1    dplyr_1.1.4      chronogram_1.0.0</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] jsonlite_1.8.8    compiler_4.4.1    tidyselect_1.2.1  tidyr_1.3.1      </span></span>
-<span><span class="co">#&gt;  [5] jquerylib_0.1.4   systemfonts_1.1.0 textshaping_0.4.0 yaml_2.3.9       </span></span>
-<span><span class="co">#&gt;  [9] fastmap_1.2.0     R6_2.5.1          generics_0.1.3    knitr_1.48       </span></span>
-<span><span class="co">#&gt; [13] tibble_3.2.1      desc_1.4.3        lubridate_1.9.3   bslib_0.7.0      </span></span>
-<span><span class="co">#&gt; [17] pillar_1.9.0      rlang_1.1.4       utf8_1.2.4        cachem_1.1.0     </span></span>
-<span><span class="co">#&gt; [21] stringi_1.8.4     xfun_0.46         fs_1.6.4          sass_0.4.9       </span></span>
-<span><span class="co">#&gt; [25] timechange_0.3.0  cli_3.6.3         withr_3.0.0       pkgdown_2.1.0    </span></span>
-<span><span class="co">#&gt; [29] magrittr_2.0.3    digest_0.6.36     lifecycle_1.0.4   vctrs_0.6.5      </span></span>
-<span><span class="co">#&gt; [33] evaluate_0.24.0   glue_1.7.0        ragg_1.3.2        fansi_1.0.6      </span></span>
-<span><span class="co">#&gt; [37] rmarkdown_2.27    purrr_1.0.2       tools_4.4.1       pkgconfig_2.0.3  </span></span>
-<span><span class="co">#&gt; [41] htmltools_0.5.8.1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] gtable_0.3.5      jsonlite_1.8.8    highr_0.11        compiler_4.4.1   </span></span>
+<span><span class="co">#&gt;  [5] tidyselect_1.2.1  stringr_1.5.1     tidyr_1.3.1       jquerylib_0.1.4  </span></span>
+<span><span class="co">#&gt;  [9] systemfonts_1.1.0 scales_1.3.0      textshaping_0.4.0 yaml_2.3.10      </span></span>
+<span><span class="co">#&gt; [13] fastmap_1.2.0     R6_2.5.1          generics_0.1.3    knitr_1.48       </span></span>
+<span><span class="co">#&gt; [17] tibble_3.2.1      desc_1.4.3        munsell_0.5.1     lubridate_1.9.3  </span></span>
+<span><span class="co">#&gt; [21] bslib_0.8.0       pillar_1.9.0      rlang_1.1.4       utf8_1.2.4       </span></span>
+<span><span class="co">#&gt; [25] stringi_1.8.4     cachem_1.1.0      xfun_0.46         fs_1.6.4         </span></span>
+<span><span class="co">#&gt; [29] sass_0.4.9        timechange_0.3.0  cli_3.6.3         pkgdown_2.1.0    </span></span>
+<span><span class="co">#&gt; [33] withr_3.0.1       magrittr_2.0.3    digest_0.6.36     grid_4.4.1       </span></span>
+<span><span class="co">#&gt; [37] lifecycle_1.0.4   vctrs_0.6.5       evaluate_0.24.0   glue_1.7.0       </span></span>
+<span><span class="co">#&gt; [41] farver_2.1.2      ragg_1.3.2        fansi_1.0.6       colorspace_2.1-1 </span></span>
+<span><span class="co">#&gt; [45] purrr_1.0.2       rmarkdown_2.27    tools_4.4.1       pkgconfig_2.0.3  </span></span>
+<span><span class="co">#&gt; [49] htmltools_0.5.8.1</span></span></code></pre></div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
