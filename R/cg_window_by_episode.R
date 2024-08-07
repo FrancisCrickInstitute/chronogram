@@ -1,4 +1,4 @@
-#' Take a window of dates from a chronogram: with respect to episode
+#' Pick a window of dates from a chronogram: with respect to episode
 #' start.
 #'
 #' @param cg a chronogram
@@ -6,27 +6,46 @@
 #'   numbers. Default is `episode_number`.
 #' @param episode_handling which episode to reference. Must be one of
 #'   "first", "last", or "all".
-#' @param preceding_days used as filter( date > (date_col -
-#'   preceding_days) )
-#' @param following_days used as filter( date < (date_col +
-#'   following_days) )
+#' @param preceding_days used as `filter( date > (date_col -
+#'   preceding_days) )`
+#' @param following_days used as `filter( date < (date_col +
+#'   following_days) )`
 #'
-#' @return A subsetted chronogram
+#' @return A windowed chronogram
 #' @seealso [chronogram::cg_window_by_visit()],
 #'   [chronogram::cg_window_by_metadata()]
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #'
-#' SevenDaysPrePostFirstEpisode <- cg_window_by_episode(
-#'   annotatedChronogram, "first", 7, 7
+#' data("built_smallstudy")
+#' cg <- built_smallstudy$chronogram
+#' 
+#' ## add infections to chronogram
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
 #' )
-#' }
+#' 
+#' ## annotate infections 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
+#' )
+#' 
+#' SevenDaysAfterFirstEpisode <- cg_window_by_episode(
+#'   cg,
+#'   episode_numbers_col = episode_number, 
+#'   preceding_days = 0, 
+#'   following_days = 7,
+#'   episode_handling = "first"
+#' )
+#' 
 #'
 cg_window_by_episode <- function(
     cg,
-    episode_numbers_col = "episode_number",
+    episode_numbers_col = episode_number,
     episode_handling = c("first", "last", "all"),
     preceding_days, following_days) {
   stopifnot(
@@ -39,6 +58,11 @@ cg_window_by_episode <- function(
   calendar_date <- attributes(cg)$col_calendar_date
   ids_column_name <- attributes(cg)$col_ids
 
+  quoted_episode_numbers_col <- 
+    rlang::as_label(
+      rlang::enquo(episode_numbers_col))
+  
+  
   stopifnot(
     "Please provide preceding days as a numerical value" =
       is.numeric(preceding_days)
@@ -54,10 +78,10 @@ cg_window_by_episode <- function(
   if (episode_handling == "first") {
     refs <- cg %>%
       dplyr::group_by(.data[[{{ ids_column_name }}]]) %>%
-      dplyr::filter(!is.na(.data[[{{ episode_numbers_col }}]])) %>%
+      dplyr::filter(!is.na(.data[[{{ quoted_episode_numbers_col }}]])) %>%
       dplyr::arrange(
         {{ calendar_date }},
-        {{ episode_numbers_col }},
+        {{ quoted_episode_numbers_col }},
         .by_group = TRUE
       ) %>%
       dplyr::slice_head() %>%
@@ -69,10 +93,10 @@ cg_window_by_episode <- function(
   if (episode_handling == "last") {
     refs <- cg %>%
       dplyr::group_by(.data[[{{ ids_column_name }}]]) %>%
-      dplyr::filter(!is.na(.data[[{{ episode_numbers_col }}]])) %>%
+      dplyr::filter(!is.na(.data[[{{ quoted_episode_numbers_col }}]])) %>%
       dplyr::arrange(
         {{ calendar_date }},
-        {{ episode_numbers_col }},
+        {{ quoted_episode_numbers_col }},
         .by_group = TRUE
       ) %>%
       dplyr::slice_tail() %>%
@@ -85,9 +109,9 @@ cg_window_by_episode <- function(
     refs <- cg %>%
       dplyr::group_by(
         .data[[{{ ids_column_name }}]],
-        .data[[{{ episode_numbers_col }}]]
+        .data[[{{ quoted_episode_numbers_col }}]]
       ) %>%
-      dplyr::filter(!is.na(.data[[{{ episode_numbers_col }}]])) %>%
+      dplyr::filter(!is.na(.data[[{{ quoted_episode_numbers_col }}]])) %>%
       dplyr::arrange({{ calendar_date }},
         .by_group = TRUE
       ) %>%
@@ -107,7 +131,8 @@ cg_window_by_episode <- function(
     following_days = following_days
   )
 
-  y <- y %>% dplyr::select(!date_ref)
+  y <- y %>% 
+    dplyr::select(!date_ref)
 
   ## set windowed attribute to TRUE ##
   attributes(y)$windowed <- TRUE

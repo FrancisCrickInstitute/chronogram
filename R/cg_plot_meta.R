@@ -11,7 +11,7 @@
 #' @param fill column used to determine fill
 #' @inheritParams cg_plot
 #'
-#' @description Function to create a `ggplot2` object, plotting a
+#' @description Create a `ggplot2` object, plotting a
 #'   user-defined metadata over time in a swimmer's plot.
 #'
 #'   `ggplot2` objects retain the entirety of the provided dataset.

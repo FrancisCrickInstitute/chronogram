@@ -1,0 +1,256 @@
+---
+title: "Introducing the chronogram class"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introducing the chronogram class}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## The chronogram class
+
+The chronogram class extends [tibble](https://tibble.tidyverse.org/articles/extending.html "tidyverse guide to extend tibble") and [dplyr](https://dplyr.tidyverse.org/reference/dplyr_extending.html "tidyverse guide to extend dplyr"). The chronogram class:
+
+-   asserts that each combination of date and participant ID can only be a single row.
+
+-   uses attributes slots to store the names of columns containing the index dates, participant IDs, and metadata columns. The chronogram package provides these column names to other chronogram functions.
+
+-   uses the \`pillar\` package to customise the printing of a chronogram
+
+-   has a related grouped chronogram class, which allows group_by() and subsequent tidyverse verbs to work as you would expect.
+
+```{r setup}
+library(chronogram)
+library(dplyr)
+library(lubridate)
+library(tidyr)
+library(knitr)
+```
+
+## Differences between chronogram and tibble classes
+
+We will use a simple example dataset to illustrate these differences.
+
+```{r}
+
+## a 3m window for this particular chronogram ##
+start_date <- "01012020"
+end_date <- "01042020"
+
+```
+
+```{r}
+## load example metadata ##
+data("smallstudy")
+metadata <- smallstudy$small_study_metadata
+
+knitr::kable(metadata)
+```
+
+We next create a chronogram (class chronogram), and a chronogram-like object (class tibble).
+
+Using the chronogram assembly:
+
+```{r}
+cg <- chronogram::cg_assemble(
+  start_date = start_date,
+  end_date = end_date,
+  metadata = metadata,
+  metadata_ids_col = elig_study_id,
+  calendar_date_col = calendar_date
+)
+
+cg
+```
+
+Using tibble-based assembly:
+
+```{r}
+
+cg_tibble <- 
+  tidyr::crossing(
+    calendar_date = seq.Date(
+      lubridate::dmy(start_date),
+      lubridate::dmy(end_date),
+      by = 1),
+    elig_study_id = metadata$elig_study_id) %>%
+  left_join(metadata)
+
+cg_tibble
+```
+
+Whilst these classes are different, the containing data is identical, once arranged equivalently:
+
+```{r}
+
+all(
+  cg_tibble %>% 
+  group_by(elig_study_id) %>%
+  arrange(calendar_date, .by_group = TRUE) ==
+  
+    cg %>% as_tibble()
+)
+
+```
+
+Although the setup code feels very similar to either approach, the chronogram class checks the input data.
+
+```{r}
+## create example metadata, with a duplicated row ##
+metadata_duplicated_row <- 
+  dplyr::bind_rows(
+    metadata, 
+            metadata %>% slice_tail() )
+
+knitr::kable(metadata_duplicated_row)
+```
+
+Using the chronogram assembly:
+
+```{r}
+cg_fail <- try(
+  chronogram::cg_assemble(
+  start_date = start_date,
+  end_date = end_date,
+  ## use the new metadata ##
+  metadata = metadata_duplicated_row,
+  metadata_ids_col = elig_study_id,
+  calendar_date_col = calendar_date
+)
+)
+
+cg_fail
+```
+
+Using tibble-based assembly:
+
+```{r}
+
+cg_tibble <- 
+  tidyr::crossing(
+    calendar_date = seq.Date(
+      lubridate::dmy(start_date),
+      lubridate::dmy(end_date),
+      by = 1),
+    elig_study_id = metadata_duplicated_row$elig_study_id) %>%
+  left_join(metadata_duplicated_row)
+
+cg_tibble
+
+```
+
+## Validating a chronogram
+
+`chronogram::validate_chronogram()` can be used to check a chronogram is correct.
+
+The tibble version expectedly fails:
+
+```{r}
+
+try(
+  validate_chronogram(cg_tibble) ## fails
+)
+
+validate_chronogram(cg) ## returns TRUE
+
+```
+
+We can intentionally break the row "rule" where each combination of `date x participant ID` can appear once, or not at all.
+
+**Example 1**
+
+```{r}
+## break "rule" one way ##------------------------------------------------------------
+not_a_cg <- bind_rows(cg, 
+                      cg)
+
+try(
+  validate_chronogram(not_a_cg)
+)
+
+```
+
+**Example 2**
+
+```{r}
+
+## break "rule" a different way ##----------------------------------------------------
+## this extra data will create 2 rows for ID==1 on 1st Jan 2020 ##
+data_to_join <- tibble::tribble(
+  ~calendar_date, ~elig_study_id, ~new_info,
+  "01012020",     1,              "a",
+  "01012020",     1,              "b"
+)
+
+data_to_join <- data_to_join %>%
+  mutate(calendar_date = lubridate::dmy(calendar_date)) %>%
+  mutate(elig_study_id = factor(elig_study_id))
+
+## using the provided method, cg_add_experiment()
+## errors, with an appropriate message
+try(
+  cg_add_experiment(cg, data_to_join)
+)
+
+## we can use a dplyr::join ##
+still_not_a_cg <- right_join(data_to_join, cg)
+still_not_a_cg_left <- left_join(cg, data_to_join)
+## when joining by two columns, the 1:many warning is not emitted
+## an extra row is gained:
+nrow(still_not_a_cg)
+nrow(still_not_a_cg_left)
+nrow(cg)
+
+try(
+  validate_chronogram(still_not_a_cg)
+)
+class(still_not_a_cg)
+
+try(
+  validate_chronogram(still_not_a_cg_left)
+)
+class(still_not_a_cg_left) # left_join inherits class from first argument
+
+```
+
+Chronogram assembly and annotation functions use `validate_chronogram()` to maintain the row "rule" where each combination of `date x participant ID` can be present once, or absent.
+
+## Chronogram attributes
+
+To spare the user repetitively specifying the names used for the columns storing participant IDs or calendar dates, these are stored as attribute slots. These slots are examined by chronogram functions to use the relevant columns for per-date and per-individual operations. The user can explore these attributes:
+
+```{r}
+
+attribs <- attributes(cg)
+
+## attribs is a named list:
+class(attribs)
+names(attribs)
+
+## print those attributes with names starting "col"
+attribs [ grepl(names(attribs), pattern = "^col")]
+
+```
+
+Or, more simply:
+
+```{r}
+
+summary(cg)
+
+print(cg)
+
+glimpse(cg) ## no experiment data added to this chronogram
+
+```
+
+## Summary
+
+Chronogram is a subclass of tibble, and allows additional checks on its validity. We found that assemblying data such that rows were present for each `{ID x date}` combination by sequential joins is prone to duplicating rows. During `chronogram` development, we opted to assert the condition that each is `{ID x date}` combination could be present once, or absent. As we wanted to avoid altering handling of "conventional" tibble, we extended as a sub-class.

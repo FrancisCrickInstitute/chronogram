@@ -1,86 +1,81 @@
 #' Find infections per individual
 #'
-#' @param x a chronogram
-#' @param infection_cols Columns that might contain information
-#'   regarding infection status, such as symptoms, LFT results, PCR
-#'   results, or sequencing results.
+#' @param cg a chronogram
+#' @param infection_cols A vector of column names that contain
+#'   information regarding infection status, such as symptoms, LFT
+#'   results, PCR results, or sequencing results.
 #' @param infection_present Strings used in each of `infection_cols`
 #'   to indicate the presence of infection.
-#' @param episode_days The number of days within which to consider
-#'   events a single episode. For example, is symptom onset 10d after
-#'   a positive PCR test a single episode? Default is 14d.
+#' @param episode_days The number of days to scan forwards and
+#'   backwards in time to consider events a single episode. For
+#'   example, is symptom onset `10d` after a positive PCR test a
+#'   single episode? The default is `14d`.
 #' @param episode_numbers_col The column name to use for episode
 #'   numbers. Default is `episode_number` (unquoted).
-#' @param episode_start_col The column names to store the episode
-#'   start and end dates (defaults: episode_start and episode_end, both unquoted).
-#' @param episode_end_col The column names to store the episode start
-#'   and end dates (defaults: episode_start and episode_end, both unquoted).
+#' @param episode_start_col,episode_end_col The column names to store
+#'   the episode start and end dates (defaults: `episode_start` and
+#'   `episode_end`, both unquoted).
 #'
 #' @return x a chronogram, with episode numbers annotated
 #' @seealso [chronogram::cg_annotate_episodes_find_seroconversion()]
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' ## Example 1: A small study ##-------------------------------------
 #' data(built_smallstudy)
-#' small_study <- built_smallstudy$chronogram
+#' cg_small <- built_smallstudy$chronogram
+#' infections_to_add <- built_smallstudy$infections_to_add
 #'
-#' ## Simulate some infection data ##
-#' infections_to_add <- tibble::tribble(
-#'   ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
-#'   "01102020", "1", "pos", NA, NA,
-#'   "11102020", "1", "pos", NA, "severe",
-#'   "11042021", "2", "pos", NA, "mild",
-#'   "11082021", "2", "pos", "Pos", "mild",
-#'   "11112021", "2", "pos", "Pos", NA
-#' )
-#' ## Make calendar_date a date ##
-#' infections_to_add$calendar_date <- lubridate::dmy(
-#'   infections_to_add$calendar_date
-#' )
-#' ## add to chronogram
-#' small_study <- cg_add_experiment(small_study, infections_to_add)
+#' ## add infection data to to chronogram ##
+#' cg_small <- cg_add_experiment(cg_small, infections_to_add)
 #'
 #' ## now infection finding ##
-#' small_study_inf <- cg_annotate_episodes_find(small_study,
+#' cg_small_inf <- cg_annotate_episodes_find(cg_small,
 #'   infection_cols = c("LFT", "PCR", "symptoms"),
 #'   infection_present = c("pos", "Post", "^severe")
 #' )
-#' summary(small_study_inf$episode_number)
+#' 
+#' summary(cg_small_inf$episode_number)
 #'
-#' ## exact text matching ##
-#' test2 <- cg_annotate_episodes_find(small_study,
+#' ## exact text matching ##------------------------------------------
+#' test2 <- cg_annotate_episodes_find(cg_small_inf,
 #'   infection_cols = c("LFT", "PCR", "symptoms"),
 #'   infection_present = c("Pos", "Post", "^mild")
 #' )
+#' 
 #' summary(test2$episode_number)
 #'
 #' ## empty strings will error (as they otherwise match everything) ##
-#' test3a <- cg_annotate_episodes_find(small_study,
+#' test3a <- 
+#' try(
+#' cg_annotate_episodes_find(cg_small_inf,
 #'   infection_cols = c("LFT", "PCR", "symptoms"),
 #'   infection_present = c("pos", "Post", "")
 #' )
-#' ## a 'random' string will not error ##
-#' test3b <- cg_annotate_episodes_find(small_study,
+#' )
+#' ## a 'random' string will not error ##-----------------------------
+#' test3b <- try(
+#' cg_annotate_episodes_find(cg_small_inf,
 #'   infection_cols = c("LFT", "PCR", "symptoms"),
 #'   infection_present = c("pos", "Post", "a")
 #' )
-#'
-#' summary(test2$episode_number)
-#' }
+#' )
+##--------------------------------------------------------------------
 cg_annotate_episodes_find <- function(
-    x,
+    cg,
     infection_cols,
     infection_present,
     episode_days = 14,
     episode_numbers_col = episode_number,
     episode_start_col = episode_start,
     episode_end_col = episode_end) {
-  attributes_x <- attributes(x)
+  attributes_x <- attributes(cg)
 
   ids_column_name <- attributes_x$col_ids
   calendar_date <- attributes_x$col_calendar_date
 
+  x <- cg # cleaner UI with `cg` across functions #
+  
   ## message to screen ##
   message('Parsed: infection_cols and infection_present
           \nSearching in the [[column]], for the "text": \n\n')
@@ -132,7 +127,7 @@ cg_annotate_episodes_find <- function(
     ids_column_name, quoted_episode_numbers_col
   )
 
-  cat(columns_to_select)
+  # cat(columns_to_select)
 
   episode.counts <- episode.counts %>%
     dplyr::select(dplyr::all_of(

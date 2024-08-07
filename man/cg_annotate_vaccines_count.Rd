@@ -5,7 +5,7 @@
 \title{Calculate and assign flags based on vaccine history}
 \usage{
 cg_annotate_vaccines_count(
-  x,
+  cg,
   vaccine_date_stem = NULL,
   dose = dose,
   dose_counter = NULL,
@@ -13,7 +13,7 @@ cg_annotate_vaccines_count(
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{vaccine_date_stem}{the start of the vaccine date columns.
 Default is NULL. Try "date_dose"; asssumes "date_dose_{1,2,3...}"}
@@ -36,7 +36,6 @@ An annotated chronogram (class cg_tbl).
 Calculate and assign flags based on vaccine history
 }
 \examples{
-\dontrun{
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
 
@@ -47,6 +46,5 @@ cg <- cg_annotate_vaccines_count(cg,
   vaccine_date_stem = date_dose,
   intermediate_days = 7
 )
-}
 
 }

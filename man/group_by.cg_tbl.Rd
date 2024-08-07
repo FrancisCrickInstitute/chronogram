@@ -2,17 +2,29 @@
 % Please edit documentation in R/new_grouped_chronogram.R
 \name{group_by.cg_tbl}
 \alias{group_by.cg_tbl}
-\title{Group-by chronogram}
+\alias{ungroup.grouped_cg_df}
+\title{group-by & ungroup-by chronogram}
 \usage{
 \method{group_by}{cg_tbl}(.data, ..., .add = FALSE, .drop = dplyr::group_by_drop_default(.data))
+
+\method{ungroup}{grouped_cg_df}(x, ...)
 }
 \arguments{
 \item{.data}{input chronogram, cg_tbl}
 
 \item{..., .add, .drop}{arguments expected by group_by S3}
+
+\item{x}{input chronogram, grouped_cg_df}
 }
 \description{
-An S3 implementation of \code{dplyr::group_by()} that accepts a
-chronogram and returns an object of \code{grouped_cg_df} class. This
+S3 implementation of \code{dplyr::group_by()} that accepts a chronogram
+and returns an object of \code{grouped_cg_df} class & the reverse
+\code{dplyr::ungroup_by()}.
+
+An S3 implementation of \code{dplyr::ungroup()} that accepts a
+\code{grouped_cg_df} and returns a chronogram. This
 retains the attributes from the orginal chronogram.
+}
+\seealso{
+\code{\link[=group_by]{group_by()}}
 }

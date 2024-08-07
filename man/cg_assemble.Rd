@@ -2,7 +2,7 @@
 % Please edit documentation in R/cg_assemble.R
 \name{cg_assemble}
 \alias{cg_assemble}
-\title{Wrapper to assemble chronogram}
+\title{Assemble a chronogram}
 \usage{
 cg_assemble(
   start_date,
@@ -21,14 +21,13 @@ cg_assemble(
 \item{end_date}{the end date, in a format recognised by
 \code{lubridate::dmy()}}
 
-\item{calendar_date_col}{to label the date column  (unquoted).}
+\item{calendar_date_col}{user-defined column name for dates
+(unquoted).}
 
-\item{metadata}{a tibble containing metadata and ID column name (and
-IDs) that are present in cg_skeleton}
+\item{metadata}{a tibble containing metadata}
 
-\item{metadata_ids_col}{the (unquoted) column name for IDs in
-metadata tibble. Studies may use StudyID, StudyId, PID, etc. No
-default provided.}
+\item{metadata_ids_col}{the (unquoted) column name for participant
+IDs in metadata tibble. No default provided.}
 
 \item{experiment_data_list}{a list of tibbles of experiment data.
 See \code{cg_add_experiment()} for details. Ignored if not provided.}
@@ -36,60 +35,59 @@ See \code{cg_add_experiment()} for details. Ignored if not provided.}
 \item{verbose}{Default TRUE. Show progress messages?}
 }
 \value{
-a chronogram (class cg_tbl)
+a chronogram (\verb{class cg_tbl})
 }
 \description{
-\code{cg_assemble()} wraps \code{chronogram_skeleton()},
-\code{chronogram()} and \code{cg_add_experiment()}. A verbose messsaging
-option (on by default) is provided to help troubleshoot input. For
-further troubleshooting, running \code{chronogram_skeleton()},
-\code{chronogram()} and \code{cg_add_experiment()} sequentially is
-suggested.
+\code{cg_assemble()} assembles a chronogram from 4 pieces of
+input data:
+\itemize{
+\item start date
+\item end date
+\item metadata
+\item and an optional list of experiment data.
+}
+
+A verbose messsaging option (on by default) is provided to help
+troubleshoot input.
+
+Extra experimental can be added later with \code{cg_add_experiment()}.
+
+For fine grain troubleshooting, run \code{chronogram_skeleton()} and
+\code{chronogram()} sequentially (these are called in turn by
+\code{cg_assemble()}). In all other circumstances, \code{cg_assemble()} is
+the encouraged method.
 }
 \examples{
-\dontrun{
-data("smallstudy")
+## Example 1: A small study ##-------------------------------------
+data(smallstudy)
 
+## Setup ##
+start <- "01012020"
+end <- "10102021"
+meta <- smallstudy$small_study_metadata ## age, sex, vaccine dates
+ab <- smallstudy$small_study_Ab ## antibody response data
 
-cg <- cg_assemble(
-  start_date = "01012020",
-  end_date = "10012020",
-  metadata = smallstudy$small_study_metadata,
-  metadata_ids_col = elig_study_id,
-  calendar_date_col = calendar_date
+## Assembly ##
+cg_small <- cg_assemble(
+
+## start and end date ##
+start_date = start,
+end_date = end,
+
+## metadata ##
+metadata = meta,
+metadata_ids_col = elig_study_id,
+
+## experiment data ##
+experiment_data_list = list(ab),
+
+## set the date column name ##
+calendar_date_col = calendar_date
 )
 
-## Now with experiment data ##
-small_study_Ab <-
-  tibble::tribble(
-    ~elig_study_id, ~calendar_date, ~serum_Ab_S, ~serum_Ab_N,
-    1, "05/01/2021", 500, 100,
-    1, "15/01/2021", 4000, 100,
-    1, "03/02/2021", 3750, 100,
-    1, "15/02/2021", 10000, 100,
-    2, "05/01/2021", 0, 0,
-    2, "15/01/2021", 4000 / 2, 0,
-    2, "03/02/2021", 3750 / 2, 0,
-    2, "15/02/2021", 10000 / 2, 0,
-    3, "05/01/2021", 0, 0,
-    3, "25/01/2021", 4000 / 2, 0,
-    3, "03/02/2021", 3750 / 2, 0,
-    3, "20/03/2021", 10000 / 2, 0
-  )
+## Example 2: now with 2 types of experimental data ##-------------
 
-small_study_Ab <- small_study_Ab \%>\%
-  mutate(across(contains("date"), ~ lubridate::dmy(.x)))
-
-cg <- cg_assemble(
-  start_date = "01012020",
-  end_date = "10012020",
-  metadata = smallstudy$small_study_metadata,
-  metadata_ids_col = elig_study_id,
-  calendar_date_col = calendar_date,
-  experiment_data_list = list(small_study_Ab)
-)
-
-## Or two items of experiment data ##
+## Setup as example 1, and second experimental dataset here: ##
 infections_to_add <- tibble::tribble(
   ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
   "01102020", "1", "pos", NA, NA,
@@ -106,12 +104,11 @@ cg <- cg_assemble(
   metadata = smallstudy$small_study_metadata,
   metadata_ids_col = elig_study_id,
   calendar_date_col = calendar_date,
-  experiment_data_list = list(small_study_Ab, infections_to_add)
+  experiment_data_list = list(ab, infections_to_add)
 )
-}
-
+##------------------------------------------------------------------
 }
 \seealso{
-\code{\link[=chronogram_skeleton]{chronogram_skeleton()}} \code{\link[=chronogram]{chronogram()}}
-\code{\link[=cg_add_experiment]{cg_add_experiment()}}
+\code{\link[=cg_add_experiment]{cg_add_experiment()}} \code{\link[=chronogram_skeleton]{chronogram_skeleton()}}
+\code{\link[=chronogram]{chronogram()}} \code{vignette("SQL_assembly", package = "chronogram")}
 }

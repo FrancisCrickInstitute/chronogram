@@ -6,7 +6,7 @@
 #'  biologically an infection - the difference between the two is
 #'  concomittant symptoms, or diagnostic testing).
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param episode_number the column containing infection episode
 #'  numbers. `cg_annotate_episodes_find()` Default is episode_number.
 #' @param N_seroconversion_episode_number the column name for resulting
@@ -18,64 +18,67 @@
 #' @param exposure_number the column name to return the cumulative
 #'  counter. Default is "exposure_number".
 #'
-#' @return x a chronogram, with episode numbers annotated
+#' @return a chronogram, with episode numbers annotated
 #' @seealso [chronogram::cg_annotate_episodes_find()]
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
+#' library(dplyr)
+#' library(ggplot2)
+#' 
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
-#'
-#' ## Simulate some infection data ##
-#' infections_to_add <- tibble::tribble(
-#'   ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
-#'   "01102020", "1", "pos", NA, NA,
-#'   "11102020", "1", "pos", NA, "severe"
+#' 
+#' ## add infections to chronogram ##
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
 #' )
-#' ## Make calendar_date a date ##
-#' infections_to_add$calendar_date <- lubridate::dmy(
-#'   infections_to_add$calendar_date
-#' )
-#' ## add to chronogram
-#' cg <- cg_add_experiment(cg, infections_to_add)
-#'
-#' ## annotate vaccines ##
-#' cg <- cg_annotate_vaccines_count(cg,
-#'   dose = dose,
-#'   dose_counter = dose_number,
-#'   vaccine_date_stem = date_dose,
-#'   intermediate_days = 7
+#' 
+#' ## annotate infections ## 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
 #' )
 #'
-#' ## now infection finding ##
-#' cg <- cg_annotate_episodes_find(cg,
-#'   infection_cols = c("LFT", "PCR", "symptoms"),
-#'   infection_present = c("pos", "Post", "^severe")
-#' )
-#'
-#'
-#'
-#' cg <- cg_annotate_episodes_find_seroconversion(cg,
-#'   serum_N_titre =
-#'     "serum_Ab_N"
-#' )
-#'
-#' cg.final <- cg_annotate_exposures_count(cg)
-#' }
+#' ## annotate vaccines ## 
+#' cg <- cg %>% cg_annotate_vaccines_count(
+#'  ## the prefix to the dose columns: ##
+#'  dose = dose,
+#'  ## the output column name: ##
+#'  dose_counter = dose_number,
+#'  ## the prefix to the date columns: ##
+#'  vaccine_date_stem = date_dose,
+#'  ## use 14d to 'star' after a dose ##
+#'  intermediate_days = 14)
+#' 
+#' ## annotate exposures ##
+#'cg <- cg %>% cg_annotate_exposures_count(
+#'  episode_number = episode_number,
+#'  dose_number = dose_number,
+#'  ## we have not considered episodes of seroconversion
+#'  N_seroconversion_episode_number = NULL
+#'  )
+#'  
+#'  ## Visualise
+#'  cg %>% ggplot(
+#'  aes(x=calendar_date,
+#'  y= exposure_number, 
+#'  col = elig_study_id)) + geom_line()
+#'   
 cg_annotate_exposures_count <- function(
-    x,
+    cg,
     episode_number = episode_number,
     N_seroconversion_episode_number = N_seroconversion_episode_number,
     dose_number = dose_number,
     exposure_number = exposure_number) {
-  calendar_date <- attributes(x)$col_calendar_date
-  ids_column_name <- attributes(x)$col_ids
+  calendar_date <- attributes(cg)$col_calendar_date
+  ids_column_name <- attributes(cg)$col_ids
 
   ## remove the "star" from doses
   vaccine_number <- NULL ## stop visible binding note
-  xx <- x %>%
+  xx <- cg %>%
     dplyr::mutate(vaccine_number = as.numeric(gsub("star", "", {{ dose_number }})))
 
 
@@ -104,11 +107,11 @@ cg_annotate_exposures_count <- function(
       {{ exposure_number }}
     ))
 
-  x <- x %>%
+  cg <- cg %>%
     dplyr::left_join(y, by = c(
       {{ ids_column_name }},
       {{ calendar_date }}
     ))
 
-  return(x)
+  return(cg)
 }

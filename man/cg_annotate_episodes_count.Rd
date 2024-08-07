@@ -5,13 +5,13 @@
 \title{Calculate and assign flags based on infection history}
 \usage{
 cg_annotate_episodes_count(
-  x,
+  cg,
   episode_number = episode_number,
   count_col = count_col
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{episode_number}{a character vector to use to label the ID
 column. Default is "episode_number".}
@@ -22,16 +22,40 @@ column. Default is "episode_number".}
 A subsetted chronogram
 }
 \description{
-This counts the total number of infections for each individual at
-the end of the study (or at that data freeze), and makes it
-available as a fresh column. this function should be run after
+Count the total number of infections for each individual at the end
+of the study (or at that data freeze), and make it available as a
+fresh column. \code{cg_annotate_episodes_count()} should be run after
 \code{cg_annotate_episodes_find()}. For the cumulative number of
 infections use \code{cg_annotate_episodes_find()} only.
 }
 \examples{
-\dontrun{
-cg <- cg_annotate_episodes_count(cg)
-}
+library(dplyr)
+
+data("built_smallstudy")
+cg <- built_smallstudy$chronogram
+
+## add infections to chronogram
+cg <- cg_add_experiment(
+  cg,
+  built_smallstudy$infections_to_add
+)
+
+## annotate infections 
+cg <- cg_annotate_episodes_find(
+   cg,
+   infection_cols = c("LFT", "PCR", "symptoms"),
+   infection_present = c("pos", "Post", "^severe")
+)
+
+## count infections
+cg <- cg_annotate_episodes_count(
+cg)
+
+## pull number of infections each individual has during study ##
+cg \%>\% 
+  dplyr::group_by(elig_study_id) \%>\% 
+  dplyr::slice_head() \%>\% 
+  dplyr::select(elig_study_id, count_col)
 
 }
 \seealso{

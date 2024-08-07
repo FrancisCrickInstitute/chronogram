@@ -5,7 +5,7 @@
 \title{Find seroconversion episodes per individual}
 \usage{
 cg_annotate_episodes_find_seroconversion(
-  x,
+  cg,
   serum_N_titre = NULL,
   serum_N_cutoff = 1,
   N_seroconversion_episode = "N_seroconversion_episode",
@@ -15,7 +15,7 @@ cg_annotate_episodes_find_seroconversion(
 )
 }
 \arguments{
-\item{x}{a chronogram}
+\item{cg}{a chronogram}
 
 \item{serum_N_titre}{the column containing seroconversion
 information.}
@@ -40,12 +40,12 @@ episode start date. Default is "start"}
 episode end date. Default is "_end"}
 }
 \value{
-x a chronogram, with episode numbers annotated
+a chronogram, with episode numbers annotated
 }
 \description{
 \code{cg_annotate_episodes_find_seroconversion()} finds
 episodes based on their seroconversion. Here, we use N (SARS-CoV-2
-nucleocapsid). The majority of covid vaccines in use contain Spike
+nucleocapsid). Most covid vaccines contain Spike
 only, so seroconversion to N means exposure to SARS-CoV-2. For
 symptoms, lateral flow tests and SARS-CoV-2 PCR positivity, the
 experimental data matches exposure to within a few days (or hours).
@@ -56,16 +56,24 @@ therefore provides separate annotation functions
 combine the two results.
 }
 \examples{
-\dontrun{
+##Example 1: Small study##-----------------------------------------
+library(dplyr) # for dplyr::filter()
 
 data("built_smallstudy")
 
 cg <- built_smallstudy$chronogram
-cg_annotate_episodes_find_seroconversion(cg,
+cg <- cg_annotate_episodes_find_seroconversion(cg,
   serum_N_titre =
     "serum_Ab_N"
 )
-}
+
+## ID==1 seroconverts to N ##
+## Their first N seroconversion has dates associated ##
+## Their later N positive tests are flagged without dates ##
+cg \%>\% 
+filter(N_seroconversion_episode_number == 1) \%>\% 
+cg_select(contains("episode"))
+##-------------------------------------------------------------------
 }
 \seealso{
 \code{\link[=cg_annotate_episodes_find]{cg_annotate_episodes_find()}}

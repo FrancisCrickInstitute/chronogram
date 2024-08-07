@@ -1,6 +1,6 @@
 #' Calculate and assign flags based on vaccine history
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param vaccine_date_stem the start of the vaccine date columns.
 #'   Default is NULL. Try "date_dose"; asssumes "date_dose_{1,2,3...}"
 #' @param dose a character vector to use to label the dose column.
@@ -16,7 +16,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
 #'
@@ -27,15 +26,14 @@
 #'   vaccine_date_stem = date_dose,
 #'   intermediate_days = 7
 #' )
-#' }
 #'
 cg_annotate_vaccines_count <- function(
-    x,
+    cg,
     vaccine_date_stem = NULL,
     dose = dose,
     dose_counter = NULL,
     intermediate_days = 14) {
-  attributes_x <- attributes(x)
+  attributes_x <- attributes(cg)
 
   ids_column_name <- attributes_x$col_ids
   calendar_date <- attributes_x$col_calendar_date
@@ -52,7 +50,7 @@ cg_annotate_vaccines_count <- function(
       rlang::enquo(dose)
     )
 
-  targets <- colnames(x)[stringr::str_detect(colnames(x),
+  targets <- colnames(cg)[stringr::str_detect(colnames(cg),
     pattern = quoted_vaccine_date_stem
   )]
 
@@ -65,7 +63,7 @@ cg_annotate_vaccines_count <- function(
   )
 
   ## fix dose dates for each person ##
-  xxx <- x %>%
+  xxx <- cg %>%
     tibble::as_tibble() %>%
     group_by(.data[[{{ ids_column_name }}]]) %>%
     dplyr::slice_head() %>%
@@ -84,7 +82,7 @@ cg_annotate_vaccines_count <- function(
         paste0(quoted_vaccine_date_stem, "_")
     )
 
-  x <- x %>%
+  cg <- cg %>%
     dplyr::left_join(xxx,
       by = c(
         {{ calendar_date }},
@@ -95,7 +93,7 @@ cg_annotate_vaccines_count <- function(
       .after = targets[length(targets)]
     )
 
-  x <- x %>%
+  cg <- cg %>%
     dplyr::mutate({{ quoted_dose }} :=
       as.numeric(.data[[{{ quoted_dose }}]]))
 
@@ -113,36 +111,36 @@ cg_annotate_vaccines_count <- function(
   #   }
   # }
 
-  if (!paste(quoted_vaccine_date_stem, "5", sep = "_") %in% colnames(x)) {
-    x <- x %>%
+  if (!paste(quoted_vaccine_date_stem, "5", sep = "_") %in% colnames(cg)) {
+    cg <- cg %>%
       dplyr::mutate(
         "{{ vaccine_date_stem }}_5" := NA
       )
   }
 
-  if (!paste(quoted_vaccine_date_stem, "4", sep = "_") %in% colnames(x)) {
-    x <- x %>%
+  if (!paste(quoted_vaccine_date_stem, "4", sep = "_") %in% colnames(cg)) {
+    cg <- cg %>%
       dplyr::mutate(
         "{{ vaccine_date_stem }}_4" := NA
       )
   }
 
-  if (!paste(quoted_vaccine_date_stem, "3", sep = "_") %in% colnames(x)) {
-    x <- x %>%
+  if (!paste(quoted_vaccine_date_stem, "3", sep = "_") %in% colnames(cg)) {
+    cg <- cg %>%
       dplyr::mutate(
         "{{ vaccine_date_stem }}_3" := NA
       )
   }
 
-  if (!paste(quoted_vaccine_date_stem, "2", sep = "_") %in% colnames(x)) {
-    x <- x %>%
+  if (!paste(quoted_vaccine_date_stem, "2", sep = "_") %in% colnames(cg)) {
+    cg <- cg %>%
       dplyr::mutate(
         "{{ vaccine_date_stem }}_2" := NA
       )
   }
 
   ###
-  y <- x %>%
+  y <- cg %>%
     tibble::as_tibble() %>%
     dplyr::group_by(.data[[{{ ids_column_name }}]]) %>%
     dplyr::arrange({{ calendar_date }}, .by_group = TRUE) %>%

@@ -2,12 +2,12 @@
 % Please edit documentation in R/cg_window_by_episode.R
 \name{cg_window_by_episode}
 \alias{cg_window_by_episode}
-\title{Take a window of dates from a chronogram: with respect to episode
+\title{Pick a window of dates from a chronogram: with respect to episode
 start.}
 \usage{
 cg_window_by_episode(
   cg,
-  episode_numbers_col = "episode_number",
+  episode_numbers_col = episode_number,
   episode_handling = c("first", "last", "all"),
   preceding_days,
   following_days
@@ -22,26 +22,43 @@ numbers. Default is \code{episode_number}.}
 \item{episode_handling}{which episode to reference. Must be one of
 "first", "last", or "all".}
 
-\item{preceding_days}{used as filter( date > (date_col -
-preceding_days) )}
+\item{preceding_days}{used as \code{filter( date > (date_col - preceding_days) )}}
 
-\item{following_days}{used as filter( date < (date_col +
-following_days) )}
+\item{following_days}{used as \code{filter( date < (date_col + following_days) )}}
 }
 \value{
-A subsetted chronogram
+A windowed chronogram
 }
 \description{
-Take a window of dates from a chronogram: with respect to episode
+Pick a window of dates from a chronogram: with respect to episode
 start.
 }
 \examples{
-\dontrun{
 
-SevenDaysPrePostFirstEpisode <- cg_window_by_episode(
-  annotatedChronogram, "first", 7, 7
+data("built_smallstudy")
+cg <- built_smallstudy$chronogram
+
+## add infections to chronogram
+cg <- cg_add_experiment(
+  cg,
+  built_smallstudy$infections_to_add
 )
-}
+
+## annotate infections 
+cg <- cg_annotate_episodes_find(
+   cg,
+   infection_cols = c("LFT", "PCR", "symptoms"),
+   infection_present = c("pos", "Post", "^severe")
+)
+
+SevenDaysAfterFirstEpisode <- cg_window_by_episode(
+  cg,
+  episode_numbers_col = episode_number, 
+  preceding_days = 0, 
+  following_days = 7,
+  episode_handling = "first"
+)
+
 
 }
 \seealso{

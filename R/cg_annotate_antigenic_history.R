@@ -1,6 +1,6 @@
 #' Calculate and assign flags based on infection history
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #'
 #' @param episode_number a character vector to identify the
 #'   episode_number column. Default is "episode_number".
@@ -15,17 +15,85 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' cg <- cg_annotate_label_episodes(cg)
-#' }
+#' library(dplyr)
+#' 
+#' data("built_smallstudy")
+#' cg <- built_smallstudy$chronogram
+#' 
+#' ## add infections to chronogram ##
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
+#' )
+#' 
+#' ## annotate infections ## 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
+#' )
+#'
+#' ## annotate vaccines ## 
+#' cg <- cg %>% cg_annotate_vaccines_count(
+#'  ## the prefix to the dose columns: ##
+#'  dose = dose,
+#'  ## the output column name: ##
+#'  dose_counter = dose_number,
+#'  ## the prefix to the date columns: ##
+#'  vaccine_date_stem = date_dose,
+#'  ## use 14d to 'star' after a dose ##
+#'  intermediate_days = 14)
+#' 
+#' ## annotate exposures ##
+#'cg <- cg %>% cg_annotate_exposures_count(
+#'  episode_number = episode_number,
+#'  dose_number = dose_number,
+#'  ## we have not considered episodes of seroconversion
+#'  N_seroconversion_episode_number = NULL
+#'  )
+#'  
+#' ## assign variants ##
+#' cg <- cg %>%
+#' mutate(
+#' episode_variant =
+#' case_when(
+#'     # "is an episode" & "PCR positive" -> Delta #
+#'     (!is.na(episode_number)) & PCR == "Pos" ~ "Delta",
+#'     # "is an episode" & "PCR unavailable" -> Anc/Delta #
+#'     (!is.na(episode_number)) & PCR == "not tested" ~ "Anc/Alpha"
+#' )
+#' )
+#' ## ^ this gives a variant call on a SINGLE row of each episode
+#' 
+#' ## fill the variant call ##
+#'cg <- cg %>% cg_annotate_episodes_fill(
+#'  col_to_fill = episode_variant,
+#'  col_to_return = episode_variant_filled,
+#'  .direction = "updown",
+#'  episode_numbers_col = episode_number
+#'  )
+#'  
+#'  cg <- cg %>% 
+#'  mutate(
+#'  episode_variant_summarised =    episode_variant_filled
+#'  ) %>%
+#'  cg_annotate_antigenic_history(
+#'      episode_number = episode_number,
+#'          dose_number = dose_number,
+#'          episode_variant_summarised = episode_variant_summarised,
+#'              ag_col = antigenic_history
+#'              )
+#'
+#'  ## and finally:
+#'  summary(factor(cg$antigenic_history))
 #'
 cg_annotate_antigenic_history <- function(
-    x,
+    cg,
     episode_number = episode_number,
     dose_number = dose_number,
     episode_variant_summarised = episode_variant_summarised,
     ag_col = antigenic_history) {
-  attributes_x <- attributes(x)
+  attributes_x <- attributes(cg)
 
   ids_column_name <- attributes_x$col_ids
   calendar_date <- attributes_x$col_calendar_date
@@ -36,14 +104,14 @@ cg_annotate_antigenic_history <- function(
     )
 
   stopifnot(
-    "Chronogram x must contain a \"dose_number\" column,
+    "Chronogram must contain a \"dose_number\" column,
     showing number of doses at this calendar date.
     Consider using the cg_annotate_vaccines_count()
-    function first." = "dose_number" %in% colnames(x)
+    function first." = "dose_number" %in% colnames(cg)
   )
 
   ## make a vector of with times of individuals ##
-  y <- x %>%
+  y <- cg %>%
     tibble::as_tibble() %>%
     group_by({{ ids_column_name }}) %>%
     dplyr::filter(!is.na({{ episode_number }})) %>%
@@ -97,7 +165,7 @@ cg_annotate_antigenic_history <- function(
   ## that person does not have a combined
   ## reported ag_col.
 
-  z <- x %>%
+  z <- cg %>%
     tibble::as_tibble() %>%
     dplyr::group_by(
       dplyr::across(
@@ -130,7 +198,7 @@ cg_annotate_antigenic_history <- function(
 
   y <- dplyr::bind_rows(z, y)
 
-  y <- dplyr::left_join(x, y, by = ids_column_name)
+  y <- dplyr::left_join(cg, y, by = ids_column_name)
 
   validate_chronogram(y)
 

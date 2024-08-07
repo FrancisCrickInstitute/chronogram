@@ -24,11 +24,10 @@ glimpse_experiment_data <- function(x, width = NULL, ...) {
 #'
 #' @importFrom dplyr glimpse
 #' @examples
-#' \dontrun{
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
 #' glimpse_metadata(cg)
-#' }
+#' 
 glimpse_metadata.cg_tbl <- function(x, width = NULL, ...) {
   metadata_cols <- attributes(x)$cols_metadata
 
@@ -56,11 +55,10 @@ glimpse_metadata.cg_tbl <- function(x, width = NULL, ...) {
 #' @seealso [chronogram::glimpse()]
 #' @importFrom dplyr glimpse
 #' @examples
-#' \dontrun{
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
 #' glimpse_experiment_data(cg)
-#' }
+#' 
 glimpse_experiment_data.cg_tbl <- function(x, width = NULL, ...) {
   metadata_cols <- attributes(x)$cols_metadata
   ids_col_name <- attributes(x)$col_ids
@@ -71,7 +69,7 @@ glimpse_experiment_data.cg_tbl <- function(x, width = NULL, ...) {
   experiment_data_to_glimpse <- x %>%
     tibble::as_tibble() %>%
     dplyr::select(
-      -dplyr::all_of(metadata_cols)
+      - dplyr::all_of(to_ignore)
     )
 
   cat("Experiment data & annotations\n")
@@ -88,11 +86,11 @@ glimpse_experiment_data.cg_tbl <- function(x, width = NULL, ...) {
 #' @importFrom dplyr glimpse
 #'
 #' @examples
-#' \dontrun{
+#' library(dplyr)
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
 #' glimpse(cg)
-#' }
+#' 
 glimpse.cg_tbl <- function(x, width = NULL, ...) {
   cat(
     paste(
@@ -118,11 +116,13 @@ glimpse.cg_tbl <- function(x, width = NULL, ...) {
 #' @importFrom dplyr glimpse
 #'
 #' @examples
-#' \dontrun{
+#' library(dplyr)
+#' 
 #' data("built_smallstudy")
 #' cg <- built_smallstudy$chronogram
+#' cg <- cg %>% group_by(elig_study_id)
 #' glimpse(cg)
-#' }
+#'
 glimpse.grouped_cg_df <- function(x, width = NULL, ...) {
   groups <- dplyr::group_vars(x)
 

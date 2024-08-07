@@ -2,8 +2,8 @@
 % Please edit documentation in R/chronogram_skeleton.R
 \name{chronogram_skeleton}
 \alias{chronogram_skeleton}
-\title{A helper function to build the chronogram skeleton, a two column index, for
-chronogram}
+\title{Build a chronogram skeleton, a two column index of IDs and calendar
+dates, a scaffold for a chronogram}
 \usage{
 chronogram_skeleton(
   ids = NULL,
@@ -18,7 +18,7 @@ chronogram_skeleton(
 
 \item{col_ids}{to label the ID
 column. Default is \code{column_name_for_ids} (unquoted). Studies may use
-StudyID, StudyId, PID, etc. User advised to change to suit.}
+StudyID, StudyId, PID, etc.}
 
 \item{start_date}{the start date, in a format recognised by
 \code{lubridate::dmy()}}
@@ -27,44 +27,50 @@ StudyID, StudyId, PID, etc. User advised to change to suit.}
 \code{lubridate::dmy()}}
 
 \item{col_calendar_date}{to label the date
-column. Default is \code{column_name_for_calendar_date} (unquoted).
-User advised to change to suit.}
+column. Default is \code{column_name_for_calendar_date} (unquoted).}
 }
 \value{
-A chronogram skeleton class
+A chronogram skeleton (class tbl_df, with extra attributes).
 }
 \description{
-A helper function to build the chronogram skeleton, a two column index, for
-chronogram
+Assemble a chronogram skeleton from start and end dates, and a
+vector of participant IDs. For most circumstances, \code{cg_assemble()}
+is suggested (which calls \code{chronogram_skeleton()} and
+\code{chronogram()}). See assembly vignette.
 }
 \examples{
-\dontrun{
+##-----------------------------------------------------------------
 small_study <- chronogram_skeleton(
   ids = c(1, 2, 3),
   start_date = "01012020",
   end_date = "10102021"
 )
 
+## These examples fail ##------------------------------------------
 ## Duplicate dates, or dates lubridate::dmy() does not recognise ##
-small_study <- chronogram_skeleton(
+small_study <- try(
+chronogram_skeleton(
   ids = c(1, 2, 3),
   start_date = c("01012020", "05012020"),
-  end_date = "10102021"
+  end_date = "10102021")
 )
-small_study <- chronogram_skeleton(
+small_study <- try(
+chronogram_skeleton(
   ids = c(1, 2, 3),
   start_date = c("01012020"),
-  end_date = c("10102021", "20102020")
+  end_date = c("10102021", "20102020"))
 )
-small_study <- chronogram_skeleton(
+small_study <- try(
+chronogram_skeleton(
   ids = c(1, 2, 3),
   start_date = "20200101",
-  end_date = "10102021"
+  end_date = "10102021")
 )
-small_study <- chronogram_skeleton(
+small_study <- try(
+chronogram_skeleton(
   ids = c(1, 2, 3),
   start_date = "01012020",
-  end_date = "20201010"
+  end_date = "20201010")
 )
 
 ## Duplicate participant IDs are accepted, but give a warning ##
@@ -73,5 +79,5 @@ small_study <- chronogram_skeleton(
   start_date = "01012020",
   end_date = "10102021"
 )
-}
+
 }

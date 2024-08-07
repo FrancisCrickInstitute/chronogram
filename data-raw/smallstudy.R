@@ -50,7 +50,6 @@ smallstudy <- list(
 usethis::use_data(smallstudy, overwrite = TRUE)
 
 
-
 #--------------------------------------------------------------------#
 ## Assembled chronogram_skeleton + chronogram #####
 #--------------------------------------------------------------------#
@@ -73,10 +72,27 @@ small_study_chronogram <- cg_add_experiment(
   small_study_Ab
 )
 
+#--------------------------------------------------------------------#
+## Infection data to ship with the built_chronogram #####
+#--------------------------------------------------------------------#
+## Simulate some infection data ##
+infections_to_add <- tibble::tribble(
+  ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
+  "01102020", "1", "pos", "not tested", NA,
+  "11102020", "1", "pos", NA, "severe",
+  "11042021", "2", "pos", "not tested", "mild",
+  "11082021", "2", "pos", "Pos", "mild",
+  "11112021", "2", "pos", "Pos", NA
+)
+## Make calendar_date a date ##
+infections_to_add$calendar_date <- lubridate::dmy(
+  infections_to_add$calendar_date
+)
 
 built_smallstudy <- list(
   chronogram_skeleton = small_study_chronogram_skeleton,
-  chronogram = small_study_chronogram
+  chronogram = small_study_chronogram,
+  infections_to_add = infections_to_add
 )
 
 usethis::use_data(built_smallstudy, overwrite = TRUE)

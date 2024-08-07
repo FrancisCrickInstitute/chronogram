@@ -1,4 +1,6 @@
-#' A helper function to load a chronogram
+#' Load a chronogram
+#' 
+#' Load into memory a chronogram previously written to disk by `cg_save()`.
 #'
 #' @param file quoted filename. Include an extension.
 #'
@@ -8,7 +10,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' data("built_smallstudy")
 #' cg_orig <- built_smallstudy$chronogram
 #' ff <- tempfile()
@@ -17,7 +18,7 @@
 #'
 #' summary(cg_new == cg_orig)
 #' identical(cg_new, cg_orig)
-#' }
+#' 
 cg_load <- function(file = NULL) {
   ## suppress global binding note ##
   attributesToSave <-

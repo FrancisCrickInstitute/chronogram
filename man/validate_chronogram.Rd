@@ -2,7 +2,7 @@
 % Please edit documentation in R/validate_chronogram.R
 \name{validate_chronogram}
 \alias{validate_chronogram}
-\title{validate chronogram}
+\title{Validate chronogram}
 \usage{
 validate_chronogram(x)
 }
@@ -13,5 +13,20 @@ validate_chronogram(x)
 TRUE if valid
 }
 \description{
-validate chronogram
+Checks that:
+}
+\details{
+\itemize{
+\item class is \code{cg_tbl}
+\item the date column stored in attributes is present in data
+\item the ID column stored in attributes is present in data
+\item each date x participant ID is present only once (or absent).
+}
+
+Rarely needed by the user. \code{cg_assemble()} and annotation functions
+use this to check returned \code{cg} is valid.
+}
+\seealso{
+\code{\link[=cg_assemble]{cg_assemble()}}
+\code{vignette("chronogram_class", package = "chronogram")}
 }

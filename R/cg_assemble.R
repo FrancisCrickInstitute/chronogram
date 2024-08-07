@@ -1,73 +1,71 @@
-#' Wrapper to assemble chronogram
+#'Assemble a chronogram
 #'
-#' @description `cg_assemble()` wraps `chronogram_skeleton()`,
-#'  `chronogram()` and `cg_add_experiment()`. A verbose messsaging
-#'  option (on by default) is provided to help troubleshoot input. For
-#'  further troubleshooting, running `chronogram_skeleton()`,
-#'  `chronogram()` and `cg_add_experiment()` sequentially is
-#'  suggested.
+#'@description `cg_assemble()` assembles a chronogram from 4 pieces of
+#'  input data:
+#'   - start date
+#'   - end date
+#'   - metadata
+#'   - and an optional list of experiment data.
+#'   
+#'  A verbose messsaging option (on by default) is provided to help
+#'  troubleshoot input.
 #'
-#' @param metadata_ids_col the (unquoted) column name for IDs in
-#'  metadata tibble. Studies may use StudyID, StudyId, PID, etc. No
-#'  default provided.
-#' @param calendar_date_col to label the date column  (unquoted).
-#' @param experiment_data_list a list of tibbles of experiment data.
+#'  Extra experimental can be added later with `cg_add_experiment()`.
+#'
+#'  For fine grain troubleshooting, run `chronogram_skeleton()` and
+#'  `chronogram()` sequentially (these are called in turn by
+#'  `cg_assemble()`). In all other circumstances, `cg_assemble()` is
+#'  the encouraged method.
+#'
+#'@param metadata a tibble containing metadata
+#'@param metadata_ids_col the (unquoted) column name for participant
+#'  IDs in metadata tibble. No default provided.
+#'@param calendar_date_col user-defined column name for dates
+#'  (unquoted).
+#'@param experiment_data_list a list of tibbles of experiment data.
 #'  See `cg_add_experiment()` for details. Ignored if not provided.
-#' @param verbose Default TRUE. Show progress messages?
+#'@param verbose Default TRUE. Show progress messages?
 #'
-#' @inheritParams chronogram_skeleton
-#' @inheritParams chronogram
+#'@inheritParams chronogram_skeleton
+#'@inheritParams chronogram
 #'
-#' @return a chronogram (class cg_tbl)
+#'@return a chronogram (`class cg_tbl`)
 #'
-#' @seealso [chronogram_skeleton()] [chronogram()]
-#'  [cg_add_experiment()]
-#' @export
+#'@seealso [cg_add_experiment()] [chronogram_skeleton()]
+#'[chronogram()] \code{vignette("SQL_assembly", package = "chronogram")}
+#'@export
 #'
 #' @examples
-#' \dontrun{
-#' data("smallstudy")
+#' ## Example 1: A small study ##-------------------------------------
+#' data(smallstudy)
 #'
+#' ## Setup ##
+#' start <- "01012020"
+#' end <- "10102021"
+#' meta <- smallstudy$small_study_metadata ## age, sex, vaccine dates
+#' ab <- smallstudy$small_study_Ab ## antibody response data
 #'
-#' cg <- cg_assemble(
-#'   start_date = "01012020",
-#'   end_date = "10012020",
-#'   metadata = smallstudy$small_study_metadata,
-#'   metadata_ids_col = elig_study_id,
-#'   calendar_date_col = calendar_date
+#' ## Assembly ##
+#' cg_small <- cg_assemble(
+#'
+#' ## start and end date ##
+#' start_date = start,
+#' end_date = end,
+#'
+#' ## metadata ##
+#' metadata = meta,
+#' metadata_ids_col = elig_study_id,
+#'
+#' ## experiment data ##
+#' experiment_data_list = list(ab),
+#'
+#' ## set the date column name ##
+#' calendar_date_col = calendar_date
 #' )
 #'
-#' ## Now with experiment data ##
-#' small_study_Ab <-
-#'   tibble::tribble(
-#'     ~elig_study_id, ~calendar_date, ~serum_Ab_S, ~serum_Ab_N,
-#'     1, "05/01/2021", 500, 100,
-#'     1, "15/01/2021", 4000, 100,
-#'     1, "03/02/2021", 3750, 100,
-#'     1, "15/02/2021", 10000, 100,
-#'     2, "05/01/2021", 0, 0,
-#'     2, "15/01/2021", 4000 / 2, 0,
-#'     2, "03/02/2021", 3750 / 2, 0,
-#'     2, "15/02/2021", 10000 / 2, 0,
-#'     3, "05/01/2021", 0, 0,
-#'     3, "25/01/2021", 4000 / 2, 0,
-#'     3, "03/02/2021", 3750 / 2, 0,
-#'     3, "20/03/2021", 10000 / 2, 0
-#'   )
+#' ## Example 2: now with 2 types of experimental data ##-------------
 #'
-#' small_study_Ab <- small_study_Ab %>%
-#'   mutate(across(contains("date"), ~ lubridate::dmy(.x)))
-#'
-#' cg <- cg_assemble(
-#'   start_date = "01012020",
-#'   end_date = "10012020",
-#'   metadata = smallstudy$small_study_metadata,
-#'   metadata_ids_col = elig_study_id,
-#'   calendar_date_col = calendar_date,
-#'   experiment_data_list = list(small_study_Ab)
-#' )
-#'
-#' ## Or two items of experiment data ##
+#' ## Setup as example 1, and second experimental dataset here: ##
 #' infections_to_add <- tibble::tribble(
 #'   ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
 #'   "01102020", "1", "pos", NA, NA,
@@ -84,10 +82,9 @@
 #'   metadata = smallstudy$small_study_metadata,
 #'   metadata_ids_col = elig_study_id,
 #'   calendar_date_col = calendar_date,
-#'   experiment_data_list = list(small_study_Ab, infections_to_add)
+#'   experiment_data_list = list(ab, infections_to_add)
 #' )
-#' }
-#'
+#'##------------------------------------------------------------------
 cg_assemble <- function(
     start_date,
     end_date,
@@ -96,6 +93,7 @@ cg_assemble <- function(
     metadata_ids_col,
     experiment_data_list = NULL,
     verbose = TRUE) {
+  
   ## quote NSE variables ##
   quoted_calendar_date_col <-
     rlang::as_label(rlang::enquo(calendar_date_col))
@@ -108,6 +106,14 @@ cg_assemble <- function(
     message("Checking input parameters...")
   }
 
+  if(missing(calendar_date_col)) {
+    stop("calendar_date_col must be provided.")
+  }
+  
+  if(missing(metadata_ids_col)) {
+    stop("metadata_ids_col must be provided.")
+  }
+  
   ## check start_date ##
   if (verbose) {
     message(paste("-- checking start date", start_date))

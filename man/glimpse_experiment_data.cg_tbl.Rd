@@ -21,11 +21,10 @@ print to console
 Glimpse S3 method for experiment data from chronogram objects (class cg_tbl)
 }
 \examples{
-\dontrun{
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
 glimpse_experiment_data(cg)
-}
+
 }
 \seealso{
 \code{\link[=glimpse]{glimpse()}}

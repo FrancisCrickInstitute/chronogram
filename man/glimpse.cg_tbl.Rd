@@ -18,9 +18,9 @@ print to console
 Glimpse S3 method for chronogram objects (class cg_tbl)
 }
 \examples{
-\dontrun{
+library(dplyr)
 data("built_smallstudy")
 cg <- built_smallstudy$chronogram
 glimpse(cg)
-}
+
 }

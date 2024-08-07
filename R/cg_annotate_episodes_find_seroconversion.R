@@ -2,7 +2,7 @@
 #'
 #' @description `cg_annotate_episodes_find_seroconversion()` finds
 #' episodes based on their seroconversion. Here, we use N (SARS-CoV-2
-#' nucleocapsid). The majority of covid vaccines in use contain Spike
+#' nucleocapsid). Most covid vaccines contain Spike
 #' only, so seroconversion to N means exposure to SARS-CoV-2. For
 #' symptoms, lateral flow tests and SARS-CoV-2 PCR positivity, the
 #' experimental data matches exposure to within a few days (or hours).
@@ -13,7 +13,7 @@
 #' combine the two results.
 #'
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param serum_N_titre the column containing seroconversion
 #'   information.
 #' @param serum_N_cutoff the numerical threshold for seropositivity.
@@ -31,32 +31,42 @@
 #'   `N_seroconversion_episode` to provide the column name for the
 #'   episode end date. Default is "_end"
 #'
-#' @return x a chronogram, with episode numbers annotated
+#' @return a chronogram, with episode numbers annotated
 #' @seealso [chronogram::cg_annotate_episodes_find()]
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
+#' ##Example 1: Small study##-----------------------------------------
+#' library(dplyr) # for dplyr::filter()
+#' 
 #' data("built_smallstudy")
 #'
 #' cg <- built_smallstudy$chronogram
-#' cg_annotate_episodes_find_seroconversion(cg,
+#' cg <- cg_annotate_episodes_find_seroconversion(cg,
 #'   serum_N_titre =
 #'     "serum_Ab_N"
 #' )
-#' }
+#' 
+#' ## ID==1 seroconverts to N ##
+#' ## Their first N seroconversion has dates associated ##
+#' ## Their later N positive tests are flagged without dates ##
+#' cg %>% 
+#' filter(N_seroconversion_episode_number == 1) %>% 
+#' cg_select(contains("episode"))
+#'##-------------------------------------------------------------------
 cg_annotate_episodes_find_seroconversion <- function(
-    x,
+    cg,
     serum_N_titre = NULL,
     serum_N_cutoff = 1,
     N_seroconversion_episode = "N_seroconversion_episode",
     episode_number_append = "number",
     episode_start_col_append = "start",
     episode_end_col_append = "end") {
-  calendar_date <- attributes(x)$col_calendar_date
-  ids_column_name <- attributes(x)$col_ids
+  calendar_date <- attributes(cg)$col_calendar_date
+  ids_column_name <- attributes(cg)$col_ids
 
+  x <- cg # UI consistency
+  
   ## check serum_N_titre column exists ##
   stopifnot("User entered serum_N_titre not found" = {
     {{ serum_N_titre }} %in% colnames(x)

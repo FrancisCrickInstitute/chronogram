@@ -5,9 +5,8 @@
 \alias{smallstudy}
 \title{Small study}
 \format{
-\subsection{\code{smallstudy}}{
+\subsection{\code{smallstudy} A list of three components}{
 
-A list of three components
 \describe{
 \item{small_study_ids}{IDs used in
 small study to identify these 3 individuals. A vector.}
@@ -20,7 +19,9 @@ small study to identify these 3 individuals. A vector.}
 smallstudy
 }
 \description{
-A fictional covid-19 vaccine study of 3 individuals
+A fictional covid-19 vaccine study of 3 individuals. Provided a
+vector of participant IDs, a tibble of metadata, and a tibble of
+experimental data.
 }
 \examples{
 data("smallstudy")

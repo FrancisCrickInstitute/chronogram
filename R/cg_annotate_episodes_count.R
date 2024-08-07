@@ -1,12 +1,12 @@
 #' Calculate and assign flags based on infection history
 #'
-#' This counts the total number of infections for each individual at
-#' the end of the study (or at that data freeze), and makes it
-#' available as a fresh column. this function should be run after
+#' Count the total number of infections for each individual at the end
+#' of the study (or at that data freeze), and make it available as a
+#' fresh column. `cg_annotate_episodes_count()` should be run after
 #' `cg_annotate_episodes_find()`. For the cumulative number of
 #' infections use `cg_annotate_episodes_find()` only.
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param episode_number a character vector to use to label the ID
 #'   column. Default is "episode_number".
 #' @param count_col column with infection count
@@ -17,18 +17,42 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' cg <- cg_annotate_episodes_count(cg)
-#' }
+#' library(dplyr)
+#' 
+#' data("built_smallstudy")
+#' cg <- built_smallstudy$chronogram
+#' 
+#' ## add infections to chronogram
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
+#' )
+#' 
+#' ## annotate infections 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
+#' )
+#' 
+#' ## count infections
+#' cg <- cg_annotate_episodes_count(
+#' cg)
 #'
-cg_annotate_episodes_count <- function(x,
+#' ## pull number of infections each individual has during study ##
+#' cg %>% 
+#'   dplyr::group_by(elig_study_id) %>% 
+#'   dplyr::slice_head() %>% 
+#'   dplyr::select(elig_study_id, count_col)
+#'
+cg_annotate_episodes_count <- function(cg,
                                        episode_number = episode_number,
                                        count_col = count_col) {
-  calendar_date <- attributes(x)$col_calendar_date
-  ids_column_name <- attributes(x)$col_ids
+  calendar_date <- attributes(cg)$col_calendar_date
+  ids_column_name <- attributes(cg)$col_ids
 
   ## make a vector of with number of infections per individuals ##
-  y <- x %>%
+  y <- cg %>%
     dplyr::group_by(
       dplyr::across(
         dplyr::all_of(ids_column_name)
@@ -58,6 +82,6 @@ cg_annotate_episodes_count <- function(x,
     ))
 
 
-  y <- dplyr::left_join(x, y, by = ids_column_name)
+  y <- dplyr::left_join(cg, y, by = ids_column_name)
   return(y)
 }

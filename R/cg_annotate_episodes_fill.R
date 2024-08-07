@@ -1,6 +1,6 @@
-#' Find infections per individual
+#' Fill experimental, treatment or symptom information within an infection episode
 #'
-#' @param x a chronogram
+#' @param cg a chronogram
 #' @param col_to_fill the name of the column to fill within each
 #'   episode
 #' @param col_to_return the name of the returned, filled column
@@ -8,62 +8,56 @@
 #' @param episode_numbers_col The column name to use for episode
 #'   numbers. Default is `episode_number`, unquoted.
 #'
-#' @return x a chronogram, with episode data filled within each
+#' @return a chronogram, with episode data filled within each
 #'   episode.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#'
-#' ## Simulate some infection data ##
-#' infections_to_add <- tibble::tribble(
-#'   ~calendar_date, ~elig_study_id, ~LFT, ~PCR, ~symptoms,
-#'   "01102020", "1", "pos", NA, NA,
-#'   "11102020", "1", "pos", NA, "severe"
+#' library(dplyr)
+#' 
+#' data("built_smallstudy")
+#' cg <- built_smallstudy$chronogram
+#' 
+#' ## add infections to chronogram ##
+#' cg <- cg_add_experiment(
+#'   cg,
+#'   built_smallstudy$infections_to_add
 #' )
-#' ## Make calendar_date a date ##
-#' infections_to_add$calendar_date <- lubridate::dmy(
-#'   infections_to_add$calendar_date
+#' 
+#' ## annotate infections ## 
+#' cg <- cg_annotate_episodes_find(
+#'    cg,
+#'    infection_cols = c("LFT", "PCR", "symptoms"),
+#'    infection_present = c("pos", "Post", "^severe")
 #' )
-#' ## add to chronogram
-#' small.study <- cg_add_experiment(small.study, infections_to_add,
-#'   ids_column_name = "elig_study_id",
-#'   calendar_date = "calendar_date"
+#' 
+#' ## assign variants ##
+#' cg <- cg %>%
+#' mutate(
+#' episode_variant =
+#' case_when(
+#'     # "is an episode" & "PCR positive" -> Delta #
+#'     (!is.na(episode_number)) & PCR == "Pos" ~ "Delta",
+#'     # "is an episode" & "PCR unavailable" -> Anc/Delta #
+#'     (!is.na(episode_number)) & PCR == "not tested" ~ "Anc/Alpha"
 #' )
-#'
-#' ## now infection finding ##
-#' small.study.inf <- cg_annotate_episodes_find(small.study,
-#'   infection_cols = c("LFT", "PCR", "symptoms"),
-#'   infection_present = c("pos", "Post", "^severe")
 #' )
-#' summary(small.study.inf$episode_number)
-#'
-#' ## exact text matching ##
-#' test2 <- cg_annotate_episodes_find(small.study,
-#'   infection_cols = c("LFT", "PCR", "symptoms"),
-#'   infection_present = c("Pos", "Post", "^mild")
-#' )
-#' summary(test2$episode_number)
-#'
-#' ## empty strings will error (as they otherwise match everything) ##
-#' test3a <- cg_annotate_episodes_find(small.study,
-#'   infection_cols = c("LFT", "PCR", "symptoms"),
-#'   infection_present = c("pos", "Post", "")
-#' )
-#' ## a 'random' string will not error ##
-#' test3b <- cg_annotate_episodes_find(small.study,
-#'   infection_cols = c("LFT", "PCR", "symptoms"),
-#'   infection_present = c("pos", "Post", "a")
-#' )
-#'
-#' summary(test2$episode_number)
-#' }
-cg_annotate_episodes_fill <- function(x,
+#' ## ^ this gives a variant call on a SINGLE row of each episode
+#' 
+#' ## fill the variant call ##
+#'cg <- cg %>% cg_annotate_episodes_fill(
+#'  col_to_fill = episode_variant,
+#'  col_to_return = episode_variant_filled,
+#'  .direction = "updown",
+#'  episode_numbers_col = episode_number
+#'  )
+#' 
+cg_annotate_episodes_fill <- function(cg,
                                       col_to_fill,
                                       col_to_return,
                                       .direction = "down",
                                       episode_numbers_col = episode_number) {
-  attributes_x <- attributes(x)
+  attributes_x <- attributes(cg)
 
   quoted_episode_numbers_col <-
     rlang::as_name(
@@ -73,7 +67,7 @@ cg_annotate_episodes_fill <- function(x,
   ids_column_name <- attributes_x$col_ids
   calendar_date <- attributes_x$col_calendar_date
 
-  x <- x %>%
+  x <- cg %>%
     dplyr::ungroup()
 
   xx <- x %>%
