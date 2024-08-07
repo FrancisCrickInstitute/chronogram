@@ -1,7 +1,25 @@
-#' validate chronogram
+#' Validate chronogram
+#'
+#' Checks that:
+#' 
+#' - class is `cg_tbl`
+#' 
+#' - the date column stored in attributes is present in data
+#' 
+#' - the ID column stored in attributes is present in data
+#' 
+#' - each date x participant ID is present only once (or absent).
+#' 
+#' Rarely needed by the user. `cg_assemble()` and annotation functions
+#' use this to check returned `cg` is valid.
+#' 
+#' @seealso [chronogram::cg_assemble()]
+#'   \code{vignette("chronogram_class", package = "chronogram")}
 #'
 #' @param x a chronogram object (class cg_tbl)
 #' @return TRUE if valid
+#' 
+#' @export
 #'
 validate_chronogram <- function(x) {
   stopifnot(

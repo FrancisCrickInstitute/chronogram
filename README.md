@@ -17,9 +17,7 @@ a LIMS / database style data warehouse and data that is ready for
 interrogation to test biological hypotheses.
 
 `chronogram` was designed during the SARS-CoV-2 pandemic (2019-).
-However, it is pathogen, vaccine and symptoms agnostic. It can be
-adapted for any pathogen, studies that have several pathogens/vaccines
-combinations.
+However, it is pathogen, vaccine and symptoms agnostic.
 
 ------------------------------------------------------------------------
 
@@ -40,25 +38,21 @@ R](https://usethis.r-lib.org/articles/git-credentials.html#practical-instruction
 
 ## Why should I use `chronogram`?
 
-There are three reasons:
-
-- To aggregate study data **regularly**, and **repetitively**. Perhaps
-  your study has rolling recruitment, ongoing data generation or
+- To aggregate study data **regularly 🕓**, and **repetitively 🔁**.
+  Perhaps your study has rolling recruitment, ongoing data generation or
   incremental analysis. Outsource that effort to `chronogram`.
 
 - To **reproducibly aggregate** data within and **across several studies
-  and users**. Stop troubleshooting joins by hand.
+  and users 👩‍💻👨‍💻**. Stop troubleshooting joins by hand.
 
 - To provide a **versatile** data shape **poised** for **new or
-  follow-up analyses** without needing re-aggregation.
+  follow-up analyses** without needing re-aggregation 🛫.
 
-------------------------------------------------------------------------
-
-## When shouldn’t I use `chronogram`?
+***When shouldn’t I use `chronogram`?***
 
 Your study is **completed**. You have assembled a clean, de-duplicated
 and fully annotated data object. You have **finished all data
-analysis**. Congratulations! Nothing to gain from using this package.
+analysis**. Congratulations! 🥳 Don’t reinvent the wheel here.
 
 ------------------------------------------------------------------------
 
@@ -75,18 +69,46 @@ analysis.
 
 - `cg_add_experiment()` allows the adding of further experiments
 
-See the [assembly vignette](docs/articles/assembly.html) for an in-depth
-guide. The [SQL vignette](articles/SQL_assembly.html) walks through
-chronogram assembly from an SQL database. The [input checking
-vignette](docs/articles/input_checking.html) explores how
-`cg_assemble()` checks the input data.
+Further details:
+
+- [assembly](articles/assembly.html) vignette for a step-by-step guide,
+  or the [quickstart](articles/chronogram.html).
+
+- [SQL vignette](articles/SQL_assembly.html) explains `chronogram`
+  assembly from an SQL database.
+
+- An introduction to the [chronogram
+  class](articles/chronogram_class.html)
 
 ### chronogram annotation
 
+#### Annotate vaccines
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
+Label each day for each participant with the number of doses they have
+received, including support for a lag period between the reciept of a
+dose and its immunological priming effect. [Annotate vaccines
+here](articles/annotate_vaccines.html).
+
+#### Annotate infection episodes
+
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+
 Symptoms, point-of-care tests, and laboratory tests of infection rarely
 occur on exactly the same study day. `chronogram` finds, fills and
-annotates these tests and symptoms into episodes of infection. More
-details in the [annotation vignette](docs/articles/annotation.html).
+annotates these tests and symptoms into episodes of infection. [Annotate
+episodes here](articles/annotate_episodes.html).
+
+#### Annnotate exposures
+
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+
+After annotating vaccines and infection episodes, these can be combined
+to [annotate exposures](articles/annotate_exposures.html) - encounters
+with antigen from either infection or vaccination.
+
+------------------------------------------------------------------------
 
 ### chronogram filtering, window and select
 
@@ -98,32 +120,8 @@ details in the [annotation vignette](docs/articles/annotation.html).
 
 - `cg_window_by_episode()` picks a window around infection episodes
 
-Focus on the bigger questions, let `chronogram` slice and pick your
-data.
+See these functions at work in our [brief primer](articles/stats.html)
+demonstrating how to a pass `chronogram` to a variety of statistical
+tests.
 
 ------------------------------------------------------------------------
-
-## Analysis-ready data
-
-There are two common scientific objectives to these kinds of studies.
-
-Firstly, to assess vaccine response, for example by boosts in antibody
-titres. This assessment is affected by prior exposures (infections),
-vaccine formulations (and other covariates). Vaccine responses are
-easily explored from a chronogram, as shown in the vaccine boost
-vignette.
-
-Secondly, XXX XXX XXX XXX Survival analysis
-
-## The chronogram class
-
-A chronogram is a tibble sub-class, with two extensions:
-
-- Attributes that describe XXX (and other chronogram functions use these
-  attributes slots rather than requiring user to re-specify columns).
-- Each combination of date x participant ID is present only once. Each
-  chronogram function checks this assertion.
-
-The chronogram sub-class is a light-weight extension, any tidyverse verb
-should work. We have added `print()` \[via `pillar` package\] and
-`summary()` methods, but tried to keep the `tibble` “feel”.

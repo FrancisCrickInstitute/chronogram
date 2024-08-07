@@ -16,7 +16,11 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-In this vignette, we explore how to prepare chronogram data for statistical testing. We take a provided assembled chronogram and perform filtering, windowing and selecting prior to an illustrative plot and a statistical test. This vignette does not cover when each statistical test is appropriate, nor the R functions (or arguments) for each particular statistical test.
+In this vignette, we explore how to prepare chronogram data for statistical testing. We take a chronogram and perform filtering, windowing and selecting prior to an illustrative plot and a statistical test.
+
+> **NOTE**
+>
+> This vignette does not cover when each statistical test is appropriate, nor the R functions (or arguments) for each particular statistical test.
 
 ### Libraries
 

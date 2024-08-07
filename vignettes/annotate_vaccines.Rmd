@@ -1,0 +1,132 @@
+---
+title: "Annotate vaccines"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Annotate vaccines}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{stringr}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 8
+)
+```
+
+
+## Introduction
+
+The chronogram package provides a family of functions to annotate a chronogram. These all start `cg_annotate_`. This vignette explains how to use these annotation functions. Before using this vignette, consult the `vignette("assembly")`.
+
+## Setup
+
+```{r setup}
+library(chronogram)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+```
+
+We will use the example pre-built chronogram, introduced in the `vignette("assembly")`, and add on some example infection data.
+
+```{r}
+data(built_smallstudy)
+cg <- built_smallstudy$chronogram
+infections_to_add <-  built_smallstudy$infections_to_add
+
+## add to chronogram
+cg <- cg_add_experiment(
+  cg,
+  infections_to_add
+)
+```
+
+## Vaccine annotation
+
+Annotation is required to allow the selection sub-cohorts of individuals (and corresponding dates) that are relevant to test your biological hypothesis.
+
+For vaccines, use `cg_annotate_vaccines_count()`
+
+-- adds a column which counts the number of vaccines each participant has received over time.
+
+-- includes a "star" system, to allow the first few days after a vaccine to be easily identified. For example, 24hrs after the first dose of a vaccine ("1star") is probably not biologically reflect of that dose's effect. The user can set the value of days to "star" to suit their analysis.
+
+`cg_annotate_vaccines_count()` requires that metadata columns follow this pattern:
+
+- dose_1, dose_2, dose_3, ..., dose_i
+
+- date_dose_1, date_dose_2, date_dose_3, ..., date_dose_i
+
+The trailing digit reflects the dose number for both `dose_i` and `date_dose_i`.
+
+The {dose} and {date_dose} prefixes should be provided to the function, as shown in the chunk below. You might envisage a study with {sarscov2_dose}, {sarscov2_date_dose}, {influenza_dose} & {influenza_date_dose} for which two runs of `cg_annotate_vaccines_count()` would be needed.
+
+### Worked example
+
+```{r}
+cg <- cg_annotate_vaccines_count(
+  cg,
+  ## the prefix to the dose columns: ##
+  dose = dose,
+  ## the output column name: ##
+  dose_counter = dose_number,
+  ## the prefix to the date columns: ##
+  vaccine_date_stem = date_dose,
+  ## use 14d to 'star' after a dose ##
+  intermediate_days = 14
+)
+
+## plot over time ##
+cg %>%
+  ggplot(
+    aes(
+      x = calendar_date,
+      y = elig_study_id,
+      fill = dose_number
+    )
+  ) +
+  geom_tile(height = 0.5) +
+  scale_fill_grey(end = 0.2, start = 0.8) +
+  theme_bw()
+```
+
+In the above plot, the character vector `dose_number` is coerced to a factor. The resulting levels of the factor are counter-intuitive. To improve the plot, you can manually specify the factor: 
+
+```{r}
+cg %>%
+  mutate(dose_number = factor(dose_number,
+    levels = c(
+      "0",
+      "1star",
+      "1",
+      "2star",
+      "2"
+    )
+  )) %>%
+  ggplot(
+    aes(
+      x = calendar_date,
+      y = elig_study_id,
+      fill = dose_number
+    )
+  ) +
+  geom_tile(height = 0.5) +
+  scale_fill_grey(end = 0.2, start = 0.8) +
+  theme_bw()
+```
+
+The `dose_number` column is intentionally returned to `cg` as character vector rather than converting to a factor. There is the possibility for mishandling if a factor: `as.numeric(dose_number) == 1`, refers to the situation `dose == 0`, and `as.numeric(dose_number) == 2`, refers to the situation `dose == 1`.
+
+# Summary
+
+This vignette has provided examples of the cg_annotate family in action. If you are conducting a multi-pathogen study (RSV, flu, covid), then run a set of `cg_annotate` family functions for each pathogen - and you may wish to prefix the output columns eg `RSV_`,  `flu_` & `covid_`.
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```

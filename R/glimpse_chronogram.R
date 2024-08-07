@@ -69,7 +69,7 @@ glimpse_experiment_data.cg_tbl <- function(x, width = NULL, ...) {
   experiment_data_to_glimpse <- x %>%
     tibble::as_tibble() %>%
     dplyr::select(
-      -dplyr::all_of(metadata_cols)
+      - dplyr::all_of(to_ignore)
     )
 
   cat("Experiment data & annotations\n")

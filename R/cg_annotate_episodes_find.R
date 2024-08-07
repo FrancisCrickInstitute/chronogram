@@ -127,7 +127,7 @@ cg_annotate_episodes_find <- function(
     ids_column_name, quoted_episode_numbers_col
   )
 
-  cat(columns_to_select)
+  # cat(columns_to_select)
 
   episode.counts <- episode.counts %>%
     dplyr::select(dplyr::all_of(

@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 The goal of `chronogram` is to "cast" and annotate metadata, laboratory and clinical data into a tidy-like data structure. This bridges between a LIMS / database style data warehouse and data that is ready for interrogation to test biological hypotheses.
 
-`chronogram` was designed during the SARS-CoV-2 pandemic (2019-). However, it is pathogen, vaccine and symptoms agnostic. It can be adapted for any pathogen, studies that have several pathogens/vaccines combinations.
+`chronogram` was designed during the SARS-CoV-2 pandemic (2019-). However, it is pathogen, vaccine and symptoms agnostic.
 
 ------------------------------------------------------------------------
 
@@ -43,19 +43,15 @@ If you have not installed packages from github before, you will to [setup your G
 
 ## Why should I use `chronogram`?
 
-There are three reasons:
+-   To aggregate study data **regularly 🕓**, and **repetitively 🔁**. Perhaps your study has rolling recruitment, ongoing data generation or incremental analysis. Outsource that effort to `chronogram`.
 
--   To aggregate study data **regularly**, and **repetitively**. Perhaps your study has rolling recruitment, ongoing data generation or incremental analysis. Outsource that effort to `chronogram`.
+-   To **reproducibly aggregate** data within and **across several studies and users 👩‍💻👨‍💻**. Stop troubleshooting joins by hand.
 
--   To **reproducibly aggregate** data within and **across several studies and users**. Stop troubleshooting joins by hand.
+-   To provide a **versatile** data shape **poised** for **new or follow-up analyses** without needing re-aggregation 🛫.
 
--   To provide a **versatile** data shape **poised** for **new or follow-up analyses** without needing re-aggregation.
+***When shouldn't I use `chronogram`?***
 
-------------------------------------------------------------------------
-
-## When shouldn't I use `chronogram`?
-
-Your study is **completed**. You have assembled a clean, de-duplicated and fully annotated data object. You have **finished all data analysis**. Congratulations! Nothing to gain from using this package.
+Your study is **completed**. You have assembled a clean, de-duplicated and fully annotated data object. You have **finished all data analysis**. Congratulations! 🥳 Don't reinvent the wheel here.
 
 ------------------------------------------------------------------------
 
@@ -69,11 +65,235 @@ The `chronogram` workflow can be divided into assembly, annotation and finally, 
 
 -   `cg_add_experiment()` allows the adding of further experiments
 
-See the [assembly vignette](docs/articles/assembly.html) for an in-depth guide. The [SQL vignette](articles/SQL_assembly.html) walks through chronogram assembly from an SQL database. The [input checking vignette](docs/articles/input_checking.html) explores how `cg_assemble()` checks the input data.
+Further details:
+
+-   [assembly](articles/assembly.html) vignette for a step-by-step guide, or the [quickstart](articles/chronogram.html).
+
+-   [SQL vignette](articles/SQL_assembly.html) explains `chronogram` assembly from an SQL database.
+
+-   An introduction to the [chronogram class](articles/chronogram_class.html)
 
 ### chronogram annotation
 
-Symptoms, point-of-care tests, and laboratory tests of infection rarely occur on exactly the same study day. `chronogram` finds, fills and annotates these tests and symptoms into episodes of infection. More details in the [annotation vignette](docs/articles/annotation.html).
+#### Annotate vaccines
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.height=3}
+library(chronogram)
+library(dplyr)
+library(ggplot2)
+
+data(built_smallstudy)
+cg <- built_smallstudy$chronogram
+cg <- cg_add_experiment(cg, built_smallstudy$infections_to_add)
+
+cg <- cg_annotate_vaccines_count(
+  cg,
+  ## the prefix to the dose columns: ##
+  dose = dose,
+  ## the output column name: ##
+  dose_counter = dose_number,
+  ## the prefix to the date columns: ##
+  vaccine_date_stem = date_dose,
+  ## use 14d to 'star' after a dose ##
+  intermediate_days = 14
+) %>%
+  mutate(dose_number = factor(dose_number,
+    levels = c(
+      "0",
+      "1star",
+      "1",
+      "2star",
+      "2"
+    )
+  ))
+
+## plot over time ##
+cg %>%
+  ggplot(
+    aes(
+      x = calendar_date,
+      y = elig_study_id,
+      fill = dose_number
+    )
+  ) +
+  geom_tile(height = 0.5) +
+  scale_fill_grey(end = 0.2, start = 0.8) +
+  theme_bw()
+
+```
+
+Label each day for each participant with the number of doses they have received, including support for a lag period between the reciept of a dose and its immunological priming effect. [Annotate vaccines here](articles/annotate_vaccines.html).
+
+#### Annotate infection episodes
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, results="none"}
+library(chronogram)
+library(dplyr)
+library(ggplot2)
+
+data(built_smallstudy)
+cg <- built_smallstudy$chronogram
+cg <- cg_add_experiment(cg, built_smallstudy$infections_to_add)
+
+cg <- cg_annotate_episodes_find(
+  cg,
+  infection_cols = c("LFT", "PCR", "symptoms"),
+  infection_present = c("pos", "Post", "^severe"),
+  episode_days = 90
+)
+
+cg <- cg %>%
+  mutate(
+    episode_variant =
+      case_when(
+        # "is an episode" & "PCR positive" -> Delta #
+        (!is.na(episode_number)) & PCR == "Pos" ~ "Delta",
+        # "is an episode" & "PCR unavailable" -> Anc/Delta #
+        (!is.na(episode_number)) & PCR == "not tested" ~ "Anc/Alpha"
+      )
+  )
+
+cg <- cg %>%
+  cg_annotate_episodes_fill(col_to_fill = episode_variant,
+                            col_to_return = episode_variant_filled)
+
+## plot over time ##
+cg %>%
+  ggplot(
+    aes(
+      x = calendar_date,
+      y = elig_study_id,
+      fill = episode_variant_filled
+    )
+  ) +
+  geom_tile(height = 0.1, width = 5) +
+  geom_point(data = . %>% 
+               ## filter to LFT results that are present ##
+               filter(!is.na(LFT)) %>% 
+               ## preceed with "LFT" to allow a single colour guide ##
+               mutate(LFT = paste("LFT", LFT)),
+             aes(col = LFT),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.4)) +
+  ## repeat LFT approach for PCR
+  geom_point(data = . %>% 
+               filter(!is.na(PCR)) %>%
+               mutate(PCR = paste("PCR", PCR)),
+             aes(col = PCR),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.6)) +
+  ## repeat LFT approach for symptoms
+  geom_point(data = . %>% 
+               filter(!is.na(symptoms)) %>%
+               mutate(symptoms = paste("symptoms", symptoms)),
+             aes(col = symptoms),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.2)) +
+  ## swap the fill scale, and stop colour being included in this guide ##
+  scale_fill_grey(name = "infection episode",
+                  na.translate = FALSE,
+                  na.value = NA, 
+                  
+                  guide = guide_legend(override.aes = list(color = NA))) +
+  ## swap the colour scale ##
+  scale_color_brewer(type = "qual",palette = 2,
+                     name = "nasopharyngeal testing & symptoms") + 
+  theme_bw() + 
+  theme(legend.position = "right",
+        legend.direction = "vertical")
+
+```
+
+Symptoms, point-of-care tests, and laboratory tests of infection rarely occur on exactly the same study day. `chronogram` finds, fills and annotates these tests and symptoms into episodes of infection. [Annotate episodes here](articles/annotate_episodes.html).
+
+#### Annnotate exposures
+
+```{r echo=FALSE, warning=FALSE, message=FALSE,results="none", fig.height=7}
+library(chronogram)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+
+cg <- cg_annotate_vaccines_count(
+  cg,
+  ## the prefix to the dose columns: ##
+  dose = dose,
+  ## the output column name: ##
+  dose_counter = dose_number,
+  ## the prefix to the date columns: ##
+  vaccine_date_stem = date_dose,
+  ## use 14d to 'star' after a dose ##
+  intermediate_days = 14
+) %>%
+  mutate(dose_number = factor(dose_number,
+    levels = c(
+      "0",
+      "1star",
+      "1",
+      "2star",
+      "2"
+    )
+  ))
+
+cg_exposures <- cg %>% cg_annotate_exposures_count(
+  episode_number = episode_number,
+  dose_number = dose_number,
+  ## we have not considered episodes of seroconversion
+  N_seroconversion_episode_number = NULL
+)
+
+
+cg_exposures <- cg_exposures %>%
+  mutate(
+    episode_variant_summarised =
+      episode_variant_filled
+  ) %>%
+  cg_annotate_antigenic_history(
+    episode_number = episode_number,
+    dose_number = dose_number,
+    episode_variant_summarised = episode_variant_summarised,
+    ag_col = antigenic_history
+  )
+
+## Plot ##
+top_panel <- cg_exposures %>%
+  select(calendar_date, 
+         exposure_number,
+         elig_study_id,
+         antigenic_history) %>%
+  ggplot(aes(
+    x = calendar_date, y = exposure_number,
+    col = elig_study_id
+  )) +
+  geom_line() +
+  facet_grid(antigenic_history ~ .)
+
+
+swimmers_panel <- cg_plot_meta(cg_exposures,
+  visit = serum_Ab_S
+) +
+  ## set the axes to match top_panel ##
+  xlim(
+    min(cg_exposures$calendar_date),
+    max(cg_exposures$calendar_date)
+  ) +
+  scale_y_discrete(limits = factor(c(3, 2, 1)))
+
+top_panel / swimmers_panel & theme_bw() &
+  theme(
+    legend.position = "bottom",
+    strip.text.y = element_text(angle = 0),
+    strip.background = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+```
+
+After annotating vaccines and infection episodes, these can be combined to [annotate exposures](articles/annotate_exposures.html) - encounters with antigen from either infection or vaccination.
+
+------------------------------------------------------------------------
 
 ### chronogram filtering, window and select
 
@@ -83,23 +303,6 @@ Symptoms, point-of-care tests, and laboratory tests of infection rarely occur on
 
 -   `cg_window_by_episode()` picks a window around infection episodes
 
-Focus on the bigger questions, let `chronogram` slice and pick your data.
+See these functions at work in our [brief primer](articles/stats.html) demonstrating how to a pass `chronogram` to a variety of statistical tests.
 
 ------------------------------------------------------------------------
-
-## Analysis-ready data
-
-There are two common scientific objectives to these kinds of studies.
-
-Firstly, to assess vaccine response, for example by boosts in antibody titres. This assessment is affected by prior exposures (infections), vaccine formulations (and other covariates). Vaccine responses are easily explored from a chronogram, as shown in the vaccine boost vignette.
-
-Secondly, XXX XXX XXX XXX Survival analysis
-
-## The chronogram class
-
-A chronogram is a tibble sub-class, with two extensions:
-
--   Attributes that describe XXX (and other chronogram functions use these attributes slots rather than requiring user to re-specify columns).
--   Each combination of date x participant ID is present only once. Each chronogram function checks this assertion.
-
-The chronogram sub-class is a light-weight extension, any tidyverse verb should work. We have added `print()` [via `pillar` package] and `summary()` methods, but tried to keep the `tibble` "feel".

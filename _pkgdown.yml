@@ -68,6 +68,8 @@ reference:
   
   
 navbar:
+ structure:
+    right: [search, github, lightswitch]
  components:
    articles:
     text: Articles
@@ -79,12 +81,18 @@ navbar:
       href: articles/SQL_assembly.html
     - text: -------
     - text: Annotation
-    - text: Chronogram annotation
-      href: articles/annotation.html 
-    - text: Episode annotation
+    - text: Annotate vaccines
+      href: articles/annotate_vaccines.html 
+    - text: Annotate infection episodes
       href: articles/annotate_episodes.html
+    - text: Annotate exposures
+      href: articles/annotate_exposure.html
     - text: -------
     - text: Analysis
     - text: Chronogram statistics
       href: articles/stats.html
+    - text: -------
+    - text: Chronogram class
+    - text: Introducing the chronogram class
+      href: articles/chronogram_class.html
 

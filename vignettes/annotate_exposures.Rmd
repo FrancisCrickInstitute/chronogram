@@ -1,0 +1,164 @@
+---
+title: "Annotate exposures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Annotate exposures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{stringr}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 8
+)
+```
+
+
+## Introduction
+
+The chronogram package provides a family of functions to annotate a chronogram. These all start `cg_annotate_`. This vignette explains how to use these annotation functions. Before using this vignette, consult the `vignette("assembly")`.
+
+This vignette demonstrates annotation of exposures. Exposures can be either from vaccines, or infection episodes - these require annotation first. See: `vignette("annotate vaccines")` & `vignette("annotate episodes")`.
+
+## Setup
+
+```{r setup}
+library(chronogram)
+library(dplyr)
+library(ggplot2)
+library(patchwork)
+```
+
+We will use the example pre-built chronogram, introduced in the `vignette("assembly")`, with vaccines and episodes annotated: `vignette("annotate vaccines")` & `vignette("annotate episodes")`. The code chunk below is discussed in those vignettes.
+
+```{r}
+data(built_smallstudy)
+cg <- built_smallstudy$chronogram
+infections_to_add <-  built_smallstudy$infections_to_add
+
+## add to chronogram
+cg <- cg_add_experiment(
+  cg,
+  infections_to_add
+)
+
+## annotate vaccines
+cg <- cg_annotate_vaccines_count(
+  cg,
+  ## the prefix to the dose columns: ##
+  dose = dose,
+  ## the output column name: ##
+  dose_counter = dose_number,
+  ## the prefix to the date columns: ##
+  vaccine_date_stem = date_dose,
+  ## use 14d to 'star' after a dose ##
+  intermediate_days = 14
+)
+
+## annotate episodes
+cg <- cg %>%
+  cg_annotate_episodes_find(
+  infection_cols = c("LFT", "PCR", "symptoms"),
+  infection_present = c("pos", "Post", "^severe")
+) %>%
+  mutate(
+    episode_variant =
+      case_when(
+        # "is an episode" & "PCR positive" -> Delta #
+        (!is.na(episode_number)) & PCR == "Pos" ~ "Delta",
+        # "is an episode" & "PCR unavailable" -> Anc/Delta #
+        (!is.na(episode_number)) & PCR == "not tested" ~ "Anc/Alpha"
+      )
+  ) %>%
+  cg_annotate_episodes_fill(
+    col_to_fill = episode_variant,
+    col_to_return = episode_variant_filled,
+    .direction = "updown"
+  )
+```
+
+## Outline
+
+Annotation is required to allow the selection sub-cohorts of individuals (and corresponding dates) that are relevant to test your biological hypothesis.
+
+Exposures can be either from vaccine doses or from infection episodes. `cg_annotate_exposure_count()` provides a cumulative counter for each individual's personal history. `cg_annotate_antigenic_history()` returns a text string summarising the sequence of encounters.
+
+
+### Worked example
+
+`cg_annotate_exposure_count()` takes the column names for episode number, dose number and seroconversion episode numbers, to calculate a per day, per individual running count of exposures.
+
+`cg_annotate_antigenic_history()` provides a character vector of length 1 to summarise each person's course over the study.
+
+These are both best explored with an example, and a plot.
+
+
+```{r}
+cg_exposures <- cg %>% cg_annotate_exposures_count(
+  episode_number = episode_number,
+  dose_number = dose_number,
+  ## we have not considered episodes of seroconversion
+  N_seroconversion_episode_number = NULL
+)
+
+
+cg_exposures <- cg_exposures %>%
+  mutate(
+    episode_variant_summarised =
+      episode_variant_filled
+  ) %>%
+  cg_annotate_antigenic_history(
+    episode_number = episode_number,
+    dose_number = dose_number,
+    episode_variant_summarised = episode_variant_summarised,
+    ag_col = antigenic_history
+  )
+
+## Plot ##
+top_panel <- cg_exposures %>%
+  select(calendar_date, 
+         exposure_number,
+         elig_study_id,
+         antigenic_history) %>%
+  ggplot(aes(
+    x = calendar_date, y = exposure_number,
+    col = elig_study_id
+  )) +
+  geom_line() +
+  facet_grid(antigenic_history ~ .)
+
+
+swimmers_panel <- cg_plot_meta(cg_exposures,
+  visit = serum_Ab_S
+) +
+  ## set the axes to match top_panel ##
+  xlim(
+    min(cg_exposures$calendar_date),
+    max(cg_exposures$calendar_date)
+  ) +
+  scale_y_discrete(limits = factor(c(3, 2, 1)))
+
+top_panel / swimmers_panel & theme_bw() &
+  theme(
+    legend.position = "bottom",
+    strip.text.y = element_text(angle = 0),
+    strip.background = element_blank(),
+    panel.grid.minor = element_blank()
+  )
+```
+
+The plot above shows how each infection, or vaccination impacts the exposure number. For participant 3, their only exposures are vaccination, whereas both participants 1 and 2 have additional exposures from infection. By the end of this example, participant 2 has experienced 4 encounters with Spike, participant 1 has had 3 encounters and participant 3 just two from vaccination alone.
+
+# Summary
+
+This vignette has provided examples of the cg_annotate family in action. If you are conducting a multi-pathogen study (RSV, flu, covid), then run a set of cg_annotate family functions for each pathogen - and you may wish to prefix the output columns eg `RSV_`,  `flu_` & `covid_`. As these have differing considerations for eg variants, chronogram leaves the cg_annotate family without an overall wrapper to let users easily omit unneeded annotations.
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```
