@@ -10,7 +10,8 @@ articles:
   chronogram: chronogram.html
   SQL_assembly: SQL_assembly.html
   stats: stats.html
-last_built: 2024-08-07T13:58Z
+  symptoms_diary: symptoms_diary.html
+last_built: 2024-08-08T10:20Z
 urls:
   reference: https://franciscrickinstitute.github.io/chronogram/reference
   article: https://franciscrickinstitute.github.io/chronogram/articles
