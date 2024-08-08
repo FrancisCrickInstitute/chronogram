@@ -1,0 +1,211 @@
+---
+title: "Symptoms_diary"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Symptoms_diary}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(chronogram)
+library(dplyr)
+library(ggplot2)
+```
+
+We re-use the `smallstudy` dataset with two modifications:
+
+- addition of participant #4, who has only dose 1
+
+- addition of symptoms diary information, including that participant #4 had a serious reaction to vaccination and therefore opted not to have further vaccinations.
+
+> This is a plausible, but fictitious dataset.
+
+```{r}
+data(smallstudy)
+metadata <- smallstudy$small_study_metadata
+ab <- smallstudy$small_study_Ab
+
+
+## Add a 4th participant's metadata ##
+## [in real use, a bigger metadata tibble should be made, not two tibbles combined via bind_rows()]
+metadata  <- bind_rows(
+  metadata,
+  tibble::tribble(
+      ~elig_study_id,   ~age, ~sex,   ~dose_1,   ~date_dose_1, ~dose_2,   ~date_dose_2,
+      4,             25,    "M",   "AZD1222", lubridate::dmy('07012021'), NA, NA
+)
+)
+
+metadata <- metadata %>%
+  mutate(sex = factor(sex)) %>%
+  mutate(dose_1 = factor(dose_1))
+
+metadata
+
+##--------------------------------------------------------------------
+## Add symptoms diary info
+
+symptoms_to_add <- tibble::tribble(
+  ~elig_study_id, ~calendar_date, ~symptom_fever, ~symptom_headache, ~symptom_joint_pain, ~symptom_rash,
+  1,              "06012021",     "mild",          "moderate",           NA,                  NA,
+  1,              "07012021",     "mild",              NA ,              NA,                  NA,
+  1,              "08012021",       NA,                NA ,            "severe",              NA,
+  4,              "10012021",       NA,                 NA,               NA,          "required_hospitalisation")
+
+symptoms_to_add <- symptoms_to_add %>%
+  mutate(calendar_date = lubridate::dmy(calendar_date))
+
+```
+
+Assemble this new chronogram
+
+```{r}
+start <- "01012020"
+end <- "10102021"
+
+cg <- cg_assemble(
+ start_date = start,
+ end_date = end,
+ calendar_date_col = calendar_date,
+ metadata = metadata,
+ metadata_ids_col = elig_study_id,
+ experiment_data_list = list(ab, symptoms_to_add)
+)
+
+
+```
+
+First annotate the vaccines
+
+```{r}
+cg <- cg_annotate_vaccines_count(
+  cg,
+  ## the prefix to the dose columns: ##
+  dose = dose,
+  ## the output column name: ##
+  dose_counter = dose_number,
+  ## the prefix to the date columns: ##
+  vaccine_date_stem = date_dose,
+  ## use 14d to 'star' after a dose ##
+  intermediate_days = 14
+)
+
+## plot over time ##
+cg %>%
+  ## refactor for gradient fill ##
+  mutate(dose_number = factor(dose_number,
+    levels = c(
+      "0",
+      "1star",
+      "1",
+      "2star",
+      "2"  ))) %>%
+  ggplot(
+    aes(
+      x = calendar_date,
+      y = elig_study_id,
+      fill = dose_number
+    )
+  ) +
+  geom_tile(height = 0.5) +
+  scale_fill_grey(end = 0.2, start = 0.8) +
+  theme_bw()
+
+```
+
+Now we can plot how these symptoms to see how they map in time to vaccinations.
+
+```{r}
+
+cg %>%
+  ## refactor for gradient fill ##
+  mutate(dose_number = factor(dose_number,
+    levels = c(
+      "0",
+      "1star",
+      "1",
+      "2star",
+      "2" ))) %>%
+  ggplot(
+    aes(
+      x = calendar_date,
+      y = elig_study_id,
+      fill = dose_number
+    )
+  ) +
+  geom_tile(height = 0.3) +
+  scale_fill_grey(end = 0.2, start = 0.8) +
+   geom_point(data = . %>% 
+               ## filter to symptoms that are present ##
+               filter(!is.na(symptom_rash)) %>% 
+               mutate(symptom_rash = paste("rash", symptom_rash)),
+             aes(col = symptom_rash),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.2)) +
+   geom_point(data = . %>% 
+               
+               filter(!is.na(symptom_headache)) %>% 
+               
+               mutate(symptom_headache = paste("headache", symptom_headache)),
+             aes(col = symptom_headache),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.2)) +
+  geom_point(data = . %>% 
+               
+               filter(!is.na(symptom_fever)) %>% 
+               
+               mutate(symptom_fever = paste("fever", symptom_fever)),
+             aes(col = symptom_fever),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.3)) +
+   geom_point(data = . %>% 
+               
+               filter(!is.na(symptom_joint_pain)) %>% 
+               
+               mutate(symptom_joint_pain = paste("joint pain", symptom_joint_pain)),
+             aes(col = symptom_joint_pain),
+             shape = "I",
+             size = 4,
+             position = position_nudge(y=0.4)) +
+  ## swap the fill scale, and stop colour being included in this guide ##
+  scale_fill_grey(
+    end = 0.2, start = 0.8,
+    name = "dose_number",
+                  na.translate = FALSE,
+                  na.value = NA, 
+                  
+                  guide = guide_legend(override.aes = list(color = NA))) +
+  ## swap the colour scale ##
+  scale_color_brewer(type = "qual",palette = 2,
+                     name = "symptoms") + 
+  theme_bw() + 
+  theme(legend.position = "right",
+        legend.direction = "vertical")
+  
+```
+
+In our test dataset:
+
+- participant 1 reported a post-first-dose fever, headache, and joint pain a few days later.
+
+- participants 2 and 3 reported no symptoms after either dose.
+
+- participant 4 reported a significant symptom after dose 1 and did not receive further doses.
+
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```

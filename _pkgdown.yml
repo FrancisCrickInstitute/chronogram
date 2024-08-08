@@ -95,4 +95,8 @@ navbar:
     - text: Chronogram class
     - text: Introducing the chronogram class
       href: articles/chronogram_class.html
+    - text: -------
+    - text: Extras
+    - text: Symptom diaries
+      href: articles/symptoms_diary.html
 
