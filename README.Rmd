@@ -37,7 +37,7 @@ Install the current version from [GitHub](https://github.com/):
 devtools::install_github("FrancisCrickInstitute/chronogram")
 ```
 
-If you have not installed packages from github before, you will to [setup your GitHub account to interact with R](https://usethis.r-lib.org/articles/git-credentials.html#practical-instructions).
+If you have not installed packages from github before, you will need to [setup your GitHub account to interact with R](https://usethis.r-lib.org/articles/git-credentials.html#practical-instructions).
 
 ------------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ The `chronogram` workflow can be divided into assembly, annotation and finally, 
 
 -   `cg_assemble()` combines cleaned metadata, experimental data, and a range of calendar dates into a chronogram.
 
--   `cg_add_experiment()` allows the adding of further experiments
+-   `cg_add_experiment()` allows the adding of further experiments.
 
 Further details:
 
@@ -71,7 +71,7 @@ Further details:
 
 -   [SQL vignette](articles/SQL_assembly.html) explains `chronogram` assembly from an SQL database.
 
--   An introduction to the [chronogram class](articles/chronogram_class.html)
+-   An introduction to the [chronogram class](articles/chronogram_class.html).
 
 ### chronogram annotation
 
