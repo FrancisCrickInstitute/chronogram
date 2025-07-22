@@ -16,8 +16,8 @@
 # Tomic, Ivan (Data curator)
 # de Silva, Thushan (Data collector)
 
-# Pre-print available here:
-# https://pubmed.ncbi.nlm.nih.gov/39896552/
+# Published article available here:
+# https://pubmed.ncbi.nlm.nih.gov/40663396/
 # Accessed 21/07/25
 
 
@@ -31,7 +31,6 @@ library(lubridate)
 library(chronogram)
 
 input_data_path = "inst/extdata/LAIV_Immune_Response_Integrated_Dataset.csv"
-output_data_dir = "data/"
 
 #--------------------------------------------------------------------#
 ## Load the laiv dataset from csv
@@ -238,7 +237,7 @@ pivoted_subsets = map(long_subsets, pivot_subset)
 #--------------------------------------------------------------------#
 ##  Implement cg_assemble() 
 #--------------------------------------------------------------------#
-cg <- cg_assemble(
+laiv_chronogram <- cg_assemble(
   start_date = "01112017",
   end_date = "01122018",
   ## the provided metadata ##
@@ -256,4 +255,4 @@ message("Success! Chronogram object has been built from the LAIV dataset.")
 #--------------------------------------------------------------------#
 ##   Save the chronogram object 
 #--------------------------------------------------------------------#
-save(cg, file = file.path(output_data_dir, paste0("laiv_dataset_chronogram.rda")))
+usethis::use_data(laiv_chronogram, compress = "xz", overwrite = T)
