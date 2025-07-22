@@ -1,4 +1,30 @@
-# ---- Set up required libraries and paths ----
+## This script utilises data from the Comprehensive Multimodal Immune Response 
+## Dataset for LAIV Vaccination in Pediatric Cohorts
+## This is not data produced at the Francis Crick Institute and is only used 
+## here to demonstrate the implementation of the Chronogram package on LAIV data
+
+#--------------------------------------------------------------------#
+## Background ####
+#--------------------------------------------------------------------#
+
+# Data available here:
+# https://zenodo.org/records/14719593
+# Published: 22 January 2025
+# Version 1
+# DOI:10.5281/zenodo.14719592.
+# Contributors:  Tomic, Adriana (Project leader)
+# Tomic, Ivan (Data curator)
+# de Silva, Thushan (Data collector)
+
+# Pre-print available here:
+# https://pubmed.ncbi.nlm.nih.gov/39896552/
+# Accessed 21/07/25
+
+
+#--------------------------------------------------------------------#
+## Libraries and Paths ####
+#--------------------------------------------------------------------#
+
 library(tidyverse)
 library(dplyr)
 library(lubridate)
@@ -7,16 +33,19 @@ library(chronogram)
 input_data_path = "inst/extdata/LAIV_Immune_Response_Integrated_Dataset.csv"
 output_data_dir = "data/"
 
-# load the laiv dataset from csv
+#--------------------------------------------------------------------#
+## Load the laiv dataset from csv
+#--------------------------------------------------------------------#
 laiv_df = read.csv(input_data_path)
 
-
-# ---- Isolate metadata and static variables ----
+#--------------------------------------------------------------------#
+##  Isolate metadata and static variables
+#--------------------------------------------------------------------#
 meta_data_cols = c("subject_ID", "sex", "year", "z_score_continuous", "v0_resp_virus_positive", "cluster")
 meta_df = laiv_df %>% 
   select(all_of(meta_data_cols)) %>%
   mutate(vaccine_date = dmy(paste0("01/11/", year)))
-
+meta_df <- as_tibble(meta_df)
 
 # drop any static columns from primary data.frame and create as seperate for optional saving 
 static_laiv_df <- laiv_df %>%
@@ -25,8 +54,9 @@ static_laiv_df <- laiv_df %>%
 laiv_df <- laiv_df %>%
   select(-matches("FC|responder"))
 
-
-# ---- Subset assay data ----
+#--------------------------------------------------------------------#
+##  Subset assay data 
+#--------------------------------------------------------------------#
 assay_dict = list(
   hai = "hai",
   IgA = "IgA|H1N1|N2",
@@ -57,7 +87,10 @@ create_subsets <- function(df, dict) {
 subsets <- create_subsets(laiv_df, assay_dict)
 names(subsets) <- names(assay_dict)
 
-### Check if any columns are missing from the sub-setting ###
+#--------------------------------------------------------------------#
+##  Check if any columns are missing from the sub-setting
+#--------------------------------------------------------------------#
+
 # Get all unique columns included in any subset
 subset_cols <- subsets %>% 
   map(colnames) %>% 
@@ -72,10 +105,11 @@ if (length(missing_cols) > 0) {
   warning("Double check columns missing from assay subsets:", paste(missing_cols, collapse = ", "))
 }
 
-
-# ---- Function for processing the  ----
+#--------------------------------------------------------------------#
+##   Function for processing the assay data 
+#--------------------------------------------------------------------#
 process_subset <- function(df) {
-
+  
   timepoint_pattern = "v0|v2|v7|v21"
   timepoint_cols = colnames(df)[
     str_detect(colnames(df), regex(timepoint_pattern, ignore_case = TRUE))
@@ -156,14 +190,14 @@ process_subset <- function(df) {
     ) %>%
     mutate(
       assay = assay %>% 
-      # Strip the timepoint info from assay names
+        # Strip the timepoint info from assay names
         # 1. Remove timepoint at start or end (with optional underscore)
         str_remove_all(regex("^v(0|2|7|21)_?|_?v(0|2|7|21)$", ignore_case = TRUE)) %>%
-          
+        
         # 2. Replace _vX_ (middle of string) with _
         str_replace_all(regex("_v(0|2|7|21)_", ignore_case = TRUE), "_")
     ) %>% 
-      mutate(
+    mutate(
       # Create the date column based on rel_day and year 
       date = case_when(
         rel_day == 0  ~ paste0("01/11/", year),
@@ -180,31 +214,35 @@ process_subset <- function(df) {
   
 }
 
-
-# ---- Function for pivoting the assay data ----
+#--------------------------------------------------------------------#
+##  Function for pivoting the assay data
+#--------------------------------------------------------------------#
 pivot_subset = function(df){
   combined = df %>% 
-  filter(!is.na(value)) %>% 
-     pivot_wider(id_cols = c(subject_ID,date),
-                 names_from = assay,
-                 values_from = value)
+    filter(!is.na(value)) %>% 
+    pivot_wider(id_cols = c(subject_ID,date),
+                names_from = assay,
+                values_from = value)
   
   return(combined)
 }
 
-
-# ---- Apply the preprocess_subset() and pivot_subset() functions ----
+#--------------------------------------------------------------------#
+##  Apply the preprocess_subset() and pivot_subset() functions
+#--------------------------------------------------------------------#
 long_subsets = map(subsets, process_subset)
 names(long_subsets) = names(subsets)
 pivoted_subsets = map(long_subsets, pivot_subset)
 
 
-# ---- Implement cg_assemble() ----
+#--------------------------------------------------------------------#
+##  Implement cg_assemble() 
+#--------------------------------------------------------------------#
 cg <- cg_assemble(
   start_date = "01112017",
   end_date = "01122018",
   ## the provided metadata ##
-  metadata = meta_data,
+  metadata = meta_df,
   ## the column name in the metadata that contains participant IDs ##
   metadata_ids_col = subject_ID,
   ## column name for dates ##
@@ -215,6 +253,7 @@ cg <- cg_assemble(
 
 message("Success! Chronogram object has been built from the LAIV dataset.")
 
-
-# ---- Save the chronogram object ----
+#--------------------------------------------------------------------#
+##   Save the chronogram object 
+#--------------------------------------------------------------------#
 save(cg, file = file.path(output_data_dir, paste0("laiv_dataset_chronogram.rda")))
