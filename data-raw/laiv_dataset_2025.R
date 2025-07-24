@@ -109,7 +109,7 @@ if (length(missing_cols) > 0) {
 #--------------------------------------------------------------------#
 process_subset <- function(df) {
   
-  timepoint_pattern = "v0|v2|v7|v21"
+  timepoint_pattern = "(^|_)v(0|2|7|21)($|_)"
   timepoint_cols = colnames(df)[
     str_detect(colnames(df), regex(timepoint_pattern, ignore_case = TRUE))
   ]
@@ -128,10 +128,10 @@ process_subset <- function(df) {
       ) %>%
       mutate(
         rel_day = case_when(
-          str_detect(assay, regex("v0", ignore_case = TRUE)) ~ 0L,
-          str_detect(assay, regex("v2", ignore_case = TRUE)) ~ 2L,
-          str_detect(assay, regex("v7", ignore_case = TRUE)) ~ 7L,
           str_detect(assay, regex("v21", ignore_case = TRUE)) ~ 21L,
+          str_detect(assay, regex("v7", ignore_case = TRUE)) ~ 7L,
+          str_detect(assay, regex("v2", ignore_case = TRUE)) ~ 2L,
+          str_detect(assay, regex("v0", ignore_case = TRUE)) ~ 0L,
           TRUE ~ NA_integer_
         )
       )

@@ -1,0 +1,111 @@
+---
+title: "LAIV Dataset HAI Titer Plotting Example"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LAIV Dataset Plotting Example}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+The LAIV dataset provides detailed immune profiling of 244 children from The Gambia who received the trivalent live attenuated influenza vaccine (LAIV, Nasovac-S) during the 2016–2017 and 2017–2018 influenza seasons. It integrates multi-dimensional immune parameters across baseline and post-vaccination timepoints (day 0, day 2, day 7, and day 21) to capture individual immunogenicity profiles. It has been obtained from https://zenodo.org/records/14719593 with the associated paper (https://pubmed.ncbi.nlm.nih.gov/40663396/ DOI: 10.1172/JCI189300). 
+
+Haemagglutination inhibition (HAI) assays were utilised to assess responses to vaccine-matched and cross-reactive influenza strains, including H1N1, H3N2, and B/Victoria. Here, we provide an illustration of how to utilise Chronogram to window the chronogram object for a specific data subset and visualise the subsetted dataset. This code can be used and extended to evaluate different assays. 
+
+```{r setup}
+library(tidyverse)
+library(chronogram)
+library(ggforce)
+```
+
+## Requirements
+
+The dataset of choice, in this case the LAIV dataset, needs to be set-up as a chronogram R object. Please see `vignette("assembly")` for details on how to assemble a chronogram object from a dataset. 
+
+
+### Load the chronogram data object
+```{r}
+load("../data/laiv_chronogram.rda")
+```
+
+
+## Step-by-step
+
+### Window the data for plotting 
+For the LAIV dataset HAI titers are available for baseline (v0) and post-vaccination (v21) for three virus strains H1N1, H3N2 and influenza B. Therefore, data can be split into two datasets, one windowed to the day of vaccination (v0), and one for any dates after 20 days to capture 21 days post-vaccination. 
+
+> **NOTE**
+>
+> Additional windows can be added here for further comparisons by further windowing to capture other timepoints if they are available for the assay of choice.
+
+```{r fig.width=20, fig.height=12}
+# filter by dates: pre and post vaccine 
+cohort_d0 <- 
+  laiv_chronogram %>% 
+  filter(date == vaccine_date) %>% 
+  mutate(cohort = "d0")
+
+cohort_d21 <- 
+  laiv_chronogram %>% 
+  cg_window_by_metadata(windowing_date_col = vaccine_date,
+                        preceding_days = -20,
+                        following_days = 22)  %>%
+  mutate(cohort = "d21")
+```
+
+### Combine cohort data and pivot 
+To visualise each of the strains in the same plot, the data can be pivoted into a longer format, where an additional column called virus contains the label for the virus in question, and the result column indicates the value of the HAI titer for that virus for baseline and post-vaccination dates.
+
+```{r}
+# bind baseline data to data from 21 days post-vaccination
+cohort_all <- bind_rows(cohort_d0, cohort_d21)
+
+# Pivot the data so the column virus labels each strain 
+# The result is the value measured at each timepoint
+cohort_all_long <- cohort_all %>%
+  select(cohort, subject_ID, h1_hai_gmt, h3_hai_gmt, b_hai_gmt) %>%
+  pivot_longer(
+    cols = c(h1_hai_gmt, h3_hai_gmt, b_hai_gmt),
+    names_to = "virus",
+    values_to = "result"
+  ) %>%
+  filter(!is.na(result))
+```
+
+
+### Violin plot for the HAI titer across all three strains
+Use a violin plot `geom_violin()` to visualise each virus in a faceted grid to compare the HAI titer pre and post-vaccination for each subject. 
+
+```{r fig.width=7, fig.height=4, out.width='\\textwidth'}
+# Plot violin plots by assay for h1 h3 and b variants
+ggplot(cohort_all_long, aes(x = cohort, y = result)) + 
+  geom_violin(fill = NA, color="black") +    
+  ggforce::geom_sina(aes(color=cohort)) +
+  facet_wrap(~ virus, scales = "free_y") +
+  theme_bw() + 
+  scale_y_continuous(limits = c(NA, NA), trans="log10") +
+  labs(y = "HAI", x = "Cohort", title = "Violin plots for HAI titers")
+```
+
+
+------------------------------------------------------------------------
+
+## Summary
+
+This vignette shows code to window the chronogram object to specific dates and plot HAI titer data for three influenza strains pre and post-vaccination.  
+
+------------------------------------------------------------------------
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```
